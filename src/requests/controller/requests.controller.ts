@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { RequestsService } from '../service/requests.service';
 import { Logger } from '@nestjs/common';
 
@@ -6,4 +6,10 @@ import { Logger } from '@nestjs/common';
 export class RequestsController {
   private logger = new Logger('RequestsController');
   constructor(private requestsService: RequestsService) {}
+
+  @Get()
+  getRequests(): string {
+    this.logger.verbose('Getting all requests');
+    return this.requestsService.getRequests();
+  }
 }

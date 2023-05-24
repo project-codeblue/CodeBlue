@@ -4,4 +4,8 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class RequestsService {
   // constructor(private reportsRepository: ReportsRepository) {}
+
+  getRequests() {
+    return 'All requests';
+  }
 }
