@@ -4,8 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Reports } from '../reports/reports.entity';
 
@@ -35,7 +34,6 @@ export class Hospitals extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Reports, (report) => report.hospital, { eager: false })
-  @JoinColumn({ name: 'report_id' })
-  report_id: number;
+  @OneToMany(() => Reports, (report) => report.hospital)
+  reports: Reports[];
 }
