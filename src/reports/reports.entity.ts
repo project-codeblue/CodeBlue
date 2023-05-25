@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   ManyToOne,
-  OneToMany,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -37,8 +37,7 @@ export class Reports extends BaseEntity {
   @ManyToOne(() => Patients, (patient) => patient.reports, { eager: false })
   patient: Patients;
 
-  @OneToMany(() => Hospitals, (hospital) => hospital.report, { eager: true })
+  @ManyToOne(() => Hospitals, (hospital) => hospital.reports)
+  @JoinColumn({ name: 'hospital_id' })
   hospital: Hospitals;
 }
-
-// timestamp
