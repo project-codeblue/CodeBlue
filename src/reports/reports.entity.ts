@@ -41,5 +41,3 @@ export class Reports extends BaseEntity {
   @JoinColumn({ name: 'hospital_id' })
   hospital: Hospitals;
 }
-
-// timestamp
