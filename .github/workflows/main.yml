@@ -1,8 +1,8 @@
-# workflow title
+# Workflow title
 # 명시하지 않는 경우 파일의 경로가 타이틀이 된다.
 name: CodeBLUE-CI-CD
 
-# 환경변수
+# main.yml에서 사용할 환경변수
 env:
   DOCKER_IMAGE: ghcr.io/siwon-kim/vog-nest
   DOCKER_CONTAINER: vog-nest-container
