@@ -4,7 +4,7 @@ name: CodeBLUE-CI-CD
 
 # 환경변수
 env:
-  DOCKER_IMAGE: ghcr.io/siwon-kim/vog-nest
+  DOCKER_IMAGE: ghcr.io/project-codeblue/vog-nest
   DOCKER_CONTAINER: vog-nest-container
 
 # 이벤트
@@ -43,7 +43,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - run: npm run test
-
   # Docker image build
   build:
     # build가 시작되려면 test를 완료해야함
