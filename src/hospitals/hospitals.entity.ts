@@ -25,10 +25,10 @@ export class Hospitals extends BaseEntity {
   @Column('int')
   available_beds: number;
 
-  @Column()
+  @Column('float')
   latitude: number;
 
-  @Column()
+  @Column('float')
   longitude: number;
 
   @CreateDateColumn()
