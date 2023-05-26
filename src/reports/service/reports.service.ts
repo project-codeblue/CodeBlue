@@ -31,10 +31,12 @@ export class ReportsService {
         latitude,
       );
     } catch (error) {
-      console.log('error: ', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new HttpException(
-        error.response || '사용자 현재 위치 변경에 실패하였습니다.',
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        '사용자 현재 위치 변경에 실패하였습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

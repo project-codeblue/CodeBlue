@@ -7,13 +7,14 @@ import {
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 
 @Injectable()
 export class RequestsService {
   constructor(
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
-    private readonly entityManager: EntityManager,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   getAllRequests() {
@@ -57,7 +58,9 @@ export class RequestsService {
           // 해당 report의 is_sent를 true로 변경
           return await this.reportsRepository.updateReportBeingSent(report_id);
         } catch (error) {
-          console.log('error: ', error);
+          if (error instanceof NotFoundException) {
+            throw error;
+          }
           throw new HttpException(
             error.response || '증상 보고서 전송에 실패하였습니다.',
             error.status || HttpStatus.INTERNAL_SERVER_ERROR,
