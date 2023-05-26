@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -13,12 +13,11 @@ export class ReportsController {
   updatePatientLocation(
     @Param('report_id') report_id: number,
     @Body() updatedLocation: UpdateReportDto,
-    @Res() res,
-  ): string {
+  ) {
     this.logger.verbose('사용자 위치 변경 PATCH API');
-    this.reportsService.updatePatientLocation(report_id, updatedLocation);
-    return res
-      .status(200)
-      .send({ message: '사용자의 현재 위치가 변경되었습니다.' });
+    return this.reportsService.updatePatientLocation(
+      report_id,
+      updatedLocation,
+    );
   }
 }

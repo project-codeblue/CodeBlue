@@ -18,14 +18,14 @@ export class ReportsRepository extends Repository<Reports> {
     report_id: number,
     longitude: number,
     latitude: number,
-  ): Promise<void> {
-    await this.update(
-      { report_id },
-      {
-        longitude,
-        latitude,
-      },
-    );
+  ) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+    report.longitude = longitude;
+    report.latitude = latitude;
+    console.log('report: ', report);
+    return await report.save();
   }
 
   async updateReportBeingSent(report_id: number) {
