@@ -14,16 +14,16 @@ export class Patients extends BaseEntity {
   @PrimaryGeneratedColumn()
   patients_id: number;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   name: string;
 
-  @Column()
+  @Column({ nullable: false })
   gender: Gender;
 
-  @Column()
+  @Column({ type: 'int', nullable: false })
   age: number;
 
-  @Column()
+  @Column({ nullable: false })
   blood_type: BloodType;
 
   @CreateDateColumn()
