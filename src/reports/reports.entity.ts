@@ -22,10 +22,10 @@ export class Reports extends BaseEntity {
   @Column('text')
   symptoms: string;
 
-  @Column()
+  @Column('float')
   latitude: number;
 
-  @Column()
+  @Column('float')
   longitude: number;
 
   @CreateDateColumn()
