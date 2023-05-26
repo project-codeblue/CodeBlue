@@ -7,7 +7,7 @@ import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
 import { Reports } from 'src/reports/reports.entity';
 
-describe('RequestsService', () => {
+describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
   let hospitalsRepository: HospitalsRepository;
   let reportsRepository: ReportsRepository;
@@ -51,7 +51,7 @@ describe('RequestsService', () => {
     entityManager = moduleRef.get(EntityManager);
   });
 
-  describe('createRequest', () => {
+  describe('createRequest()', () => {
     it('should create a request successfully', async () => {
       const hospital_id = 1;
       const report_id = 1;

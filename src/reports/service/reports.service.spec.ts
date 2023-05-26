@@ -4,7 +4,7 @@ import { ReportsRepository } from '../reports.repository';
 import { NotFoundException, HttpException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 
-describe('ReportsService', () => {
+describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
 
@@ -26,7 +26,7 @@ describe('ReportsService', () => {
     reportsRepository = moduleRef.get(ReportsRepository);
   });
 
-  describe('updatePatientLocation', () => {
+  describe('updatePatientLocation()', () => {
     const report_id = 1;
     const updatedLocation = {
       longitude: 123.456,

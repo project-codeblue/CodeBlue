@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { RequestsService } from './../service/requests.service';
 import { RequestsController } from './requests.controller';
 
-describe('Request Controller Unit Testing', () => {
+describe('RequestsController Unit Testing', () => {
   let requestsController;
   let requestsService;
 
