@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './commons/exceptions/http-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -14,6 +15,9 @@ async function bootstrap() {
       transform: true, // 네트워크를 통해 받는 페이로드가 DTO 클래스에 따라 지정된 개체로 자동 변환되도록 하는 옵션
     }),
   );
+
+  // global HTTP exception filter
+  app.useGlobalFilters(new HttpExceptionFilter()); // global filter
 
   // cors
   app.enableCors();

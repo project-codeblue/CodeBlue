@@ -8,7 +8,31 @@ export class ReportsRepository extends Repository<Reports> {
     super(Reports, dataSource.createEntityManager());
   }
 
-  async getAllReports(): Promise<Reports[]> {
-    return await this.find();
+  async findReport(report_id: number): Promise<Reports> {
+    return await this.findOne({
+      where: { report_id },
+    });
+  }
+
+  async updatePatientLocation(
+    report_id: number,
+    longitude: number,
+    latitude: number,
+  ) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+    report.longitude = longitude;
+    report.latitude = latitude;
+    console.log('report: ', report);
+    return await report.save();
+  }
+
+  async updateReportBeingSent(report_id: number) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+    report.is_sent = true;
+    return await report.save();
   }
 }
