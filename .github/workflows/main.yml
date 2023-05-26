@@ -11,9 +11,9 @@ env:
 # main 브랜치에 push나 pull request가 일어난우경우
 on:
   push:
-    branches: ['main']
+    branches: [ main ]
   pull_request:
-    branches: ['main']
+    branches: [ main ]
 
 # 이벤트가 일어나면 해야할 작업들을 명시
 # 테스트, 빌드, 배포 단위로 명시
