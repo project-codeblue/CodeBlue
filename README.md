@@ -1,3 +1,27 @@
+# Project. CodeBlue #
+![image](https://github.com/backEndKwon/CodeBlue/assets/128948886/851aa11f-e71d-4518-81b1-1a47da694003)
+
+## 🏠 HOME 페이지 [Home Page Link](링크 작업ing)
+## 📹 소개 영상 [youtube](링크 작업ing)
+## 🧑🏾‍💻 세부 작업 현황 [Notion](https://www.notion.so/siwonmadang/Code-BLUE-ec7906910dec4f4b9d34da72fc334dd6)
+
+<hr>
+
+<br>
+
+# 👨‍👩‍👧‍👦Team Members
+
+| Position      | Name          | Github                                            |
+|:--------------|:--------------|:--------------------------------------------------|
+| Backend       | 김시원        | [Siwon-Kim](https://github.com/Siwon-Kim)         |
+| Backend       | 권용재        | [backEndKwon](https://github.com/backEndKwon)     |
+| Backend       | 이병훈        | [ksnx3684](https://github.com/ksnx3684)           |
+| Backend       | 정혜승        | [hclo99](https://github.com/hclo99)               |
+
+<br>
+
+# 📝Commit Convention
+
 제목은 최대 50글자까지 아래에 작성: ex) feat: Add Key mapping
 
 본문은 아래에 작성  
