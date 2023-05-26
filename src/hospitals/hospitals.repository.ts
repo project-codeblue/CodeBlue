@@ -11,4 +11,17 @@ export class HospitalsRepository extends Repository<Hospitals> {
   async getHospitals(): Promise<Hospitals[]> {
     return await this.find();
   }
+
+  async findHospital(hospital_id: number): Promise<Hospitals> {
+    return await this.findOne({ where: { hospital_id } });
+  }
+
+  async updateAvailableBeds(hospital_id: number): Promise<void> {
+    await this.update(
+      { hospital_id },
+      {
+        available_beds: () => 'available_beds - 1',
+      },
+    );
+  }
 }
