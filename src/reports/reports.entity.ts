@@ -34,7 +34,8 @@ export class Reports extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Patients, (patient) => patient.reports, { eager: false })
+  @ManyToOne(() => Patients, (patient) => patient.reports)
+  @JoinColumn({ name: 'patient_id' })
   patient: Patients;
 
   @ManyToOne(() => Hospitals, (hospital) => hospital.reports)
