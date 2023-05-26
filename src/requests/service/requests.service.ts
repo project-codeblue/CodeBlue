@@ -20,10 +20,10 @@ export class RequestsService {
     return 'All requests';
   }
 
-  async createRequest(report_id: number, hospital_id: number): Promise<void> {
-    await this.entityManager.transaction(
+  async createRequest(report_id: number, hospital_id: number) {
+    const updatedReport = await this.entityManager.transaction(
       'READ COMMITTED',
-      async (entityManager) => {
+      async () => {
         try {
           const hospital = await this.hospitalsRepository.findHospital(
             hospital_id,
@@ -51,24 +51,20 @@ export class RequestsService {
             );
           }
 
-          // 해당 report의 is_sent를 true로 변경
-          await this.reportsRepository.updateReportBeingSent(
-            report_id,
-            entityManager,
-          );
-
           // 해당 병원의 available_beds를 1 감소
-          await this.hospitalsRepository.updateAvailableBeds(
-            hospital_id,
-            entityManager,
-          );
+          await this.hospitalsRepository.updateAvailableBeds(hospital_id);
+
+          // 해당 report의 is_sent를 true로 변경
+          return await this.reportsRepository.updateReportBeingSent(report_id);
         } catch (error) {
+          console.log('error: ', error);
           throw new HttpException(
-            '증상 보고서 전송에 실패하였습니다.',
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            error.response || '증상 보고서 전송에 실패하였습니다.',
+            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
       },
     );
+    return updatedReport;
   }
 }

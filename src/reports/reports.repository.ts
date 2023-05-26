@@ -1,4 +1,4 @@
-import { Repository, DataSource, EntityManager } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 
@@ -28,16 +28,11 @@ export class ReportsRepository extends Repository<Reports> {
     );
   }
 
-  async updateReportBeingSent(
-    report_id: number,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    await entityManager.update(
-      Reports,
-      { report_id },
-      {
-        is_sent: true,
-      },
-    );
+  async updateReportBeingSent(report_id: number) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+    report.is_sent = true;
+    return await report.save();
   }
 }

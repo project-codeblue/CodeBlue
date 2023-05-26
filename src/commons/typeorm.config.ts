@@ -13,5 +13,6 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   password: process.env.RDS_PASSWORD,
   database: process.env.RDS_DB_NAME,
   entities: [Hospitals, Patients, Reports],
-  synchronize: true, // 한번 true한 뒤로 false해줘야지 db에 데이터가 안날라감
+  synchronize: false, // 한번 true한 뒤로 false해줘야지 db에 데이터가 안날라감
+  logging: true,
 };

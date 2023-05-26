@@ -1,7 +1,6 @@
 import { Repository, DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Hospitals } from './hospitals.entity';
-import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class HospitalsRepository extends Repository<Hospitals> {
@@ -17,12 +16,8 @@ export class HospitalsRepository extends Repository<Hospitals> {
     return await this.findOne({ where: { hospital_id } });
   }
 
-  async updateAvailableBeds(
-    hospital_id: number,
-    entityManage: EntityManager,
-  ): Promise<void> {
-    await entityManage.update(
-      Hospitals,
+  async updateAvailableBeds(hospital_id: number): Promise<void> {
+    await this.update(
       { hospital_id },
       {
         available_beds: () => 'available_beds - 1',
