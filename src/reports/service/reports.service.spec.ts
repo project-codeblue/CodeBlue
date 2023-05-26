@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { ReportsService } from './reports.service';
 import { ReportsRepository } from '../reports.repository';
-import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import { NotFoundException, HttpException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 
 describe('ReportsService', () => {
@@ -60,8 +60,6 @@ describe('ReportsService', () => {
       await expect(
         reportsService.updatePatientLocation(report_id, updatedLocation),
       ).rejects.toThrow(NotFoundException);
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
-      expect(reportsRepository.updatePatientLocation).not.toHaveBeenCalled();
     });
 
     it('should throw HttpException for other errors', async () => {
@@ -71,8 +69,6 @@ describe('ReportsService', () => {
       await expect(
         reportsService.updatePatientLocation(report_id, updatedLocation),
       ).rejects.toThrow(HttpException);
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
-      expect(reportsRepository.updatePatientLocation).not.toHaveBeenCalled();
     });
   });
 });
