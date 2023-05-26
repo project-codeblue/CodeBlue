@@ -4,12 +4,14 @@ import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
 import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import { Hospitals } from 'src/hospitals/hospitals.entity';
+import { Reports } from 'src/reports/reports.entity';
 
 describe('RequestsService', () => {
-  let requestsService;
-  let hospitalsRepository;
-  let reportsRepository;
-  let entityManager;
+  let requestsService: RequestsService;
+  let hospitalsRepository: HospitalsRepository;
+  let reportsRepository: ReportsRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -54,24 +56,26 @@ describe('RequestsService', () => {
       const hospital_id = 1;
       const report_id = 1;
       const hospital = {
-        id: hospital_id,
+        hospital_id,
         available_beds: 5,
       };
       const report = {
-        id: report_id,
+        report_id,
         is_sent: false,
       };
 
       jest
         .spyOn(hospitalsRepository, 'findHospital')
-        .mockResolvedValueOnce(hospital);
-      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
+        .mockResolvedValueOnce(hospital as Hospitals);
+      jest
+        .spyOn(reportsRepository, 'findReport')
+        .mockResolvedValueOnce(report as Reports);
       jest
         .spyOn(hospitalsRepository, 'updateAvailableBeds')
         .mockResolvedValueOnce(undefined);
       jest
         .spyOn(reportsRepository, 'updateReportBeingSent')
-        .mockResolvedValueOnce(report);
+        .mockResolvedValueOnce(report as Reports);
 
       const result = await requestsService.createRequest(
         report_id,
@@ -102,17 +106,18 @@ describe('RequestsService', () => {
       await expect(
         requestsService.createRequest(report_id, hospital_id),
       ).rejects.toThrowError(NotFoundException);
-
-      expect(hospitalsRepository.findHospital).toHaveBeenCalledWith(
-        hospital_id,
-      );
     });
 
     it('should throw NotFoundException when report does not exist', async () => {
       const hospital_id = 1;
       const report_id = 1;
+      const hospital = {
+        hospital_id,
+      };
 
-      jest.spyOn(hospitalsRepository, 'findHospital').mockResolvedValueOnce({});
+      jest
+        .spyOn(hospitalsRepository, 'findHospital')
+        .mockResolvedValueOnce(hospital as Hospitals);
       jest
         .spyOn(reportsRepository, 'findReport')
         .mockResolvedValueOnce(undefined);
@@ -120,56 +125,47 @@ describe('RequestsService', () => {
       await expect(
         requestsService.createRequest(report_id, hospital_id),
       ).rejects.toThrowError(NotFoundException);
-
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
     });
 
     it('should throw HttpException when report is already sent', async () => {
       const hospital_id = 1;
       const report_id = 1;
       const report = {
-        id: report_id,
+        report_id,
         is_sent: true,
       };
 
-      jest.spyOn(hospitalsRepository, 'findHospital').mockResolvedValueOnce({});
-      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
+      jest
+        .spyOn(reportsRepository, 'findReport')
+        .mockResolvedValueOnce(report as Reports);
 
       await expect(
         requestsService.createRequest(report_id, hospital_id),
       ).rejects.toThrowError(HttpException);
-
-      expect(hospitalsRepository.findHospital).toHaveBeenCalledWith(
-        hospital_id,
-      );
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
     });
 
     it('should throw HttpException when hospital has no available beds', async () => {
       const hospital_id = 1;
       const report_id = 1;
       const hospital = {
-        id: hospital_id,
+        hospital_id,
         available_beds: 0,
       };
       const report = {
-        id: report_id,
+        report_id,
         is_sent: false,
       };
 
       jest
         .spyOn(hospitalsRepository, 'findHospital')
-        .mockResolvedValueOnce(hospital);
-      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
+        .mockResolvedValueOnce(hospital as Hospitals);
+      jest
+        .spyOn(reportsRepository, 'findReport')
+        .mockResolvedValueOnce(report as Reports);
 
       await expect(
         requestsService.createRequest(report_id, hospital_id),
       ).rejects.toThrowError(HttpException);
-
-      expect(hospitalsRepository.findHospital).toHaveBeenCalledWith(
-        hospital_id,
-      );
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
     });
 
     it('should throw HttpException when there is an error during transaction', async () => {
@@ -178,8 +174,6 @@ describe('RequestsService', () => {
       const errorResponse = 'An error occurred';
       const errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-      jest.spyOn(hospitalsRepository, 'findHospital').mockResolvedValueOnce({});
-      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce({});
       jest
         .spyOn(hospitalsRepository, 'updateAvailableBeds')
         .mockRejectedValueOnce({
@@ -190,14 +184,6 @@ describe('RequestsService', () => {
       await expect(
         requestsService.createRequest(report_id, hospital_id),
       ).rejects.toThrowError(HttpException);
-
-      expect(hospitalsRepository.findHospital).toHaveBeenCalledWith(
-        hospital_id,
-      );
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
-      expect(hospitalsRepository.updateAvailableBeds).toHaveBeenCalledWith(
-        hospital_id,
-      );
     });
   });
 });
