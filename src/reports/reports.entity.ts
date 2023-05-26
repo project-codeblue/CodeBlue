@@ -25,6 +25,9 @@ export class Reports extends BaseEntity {
   @Column('float')
   latitude: number;
 
+  @Column({ default: false })
+  is_sent: boolean;
+
   @Column('float')
   longitude: number;
 

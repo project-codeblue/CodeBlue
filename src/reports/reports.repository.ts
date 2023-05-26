@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, EntityManager } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 
@@ -24,6 +24,19 @@ export class ReportsRepository extends Repository<Reports> {
       {
         longitude,
         latitude,
+      },
+    );
+  }
+
+  async updateReportBeingSent(
+    report_id: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    await entityManager.update(
+      Reports,
+      { report_id },
+      {
+        is_sent: true,
       },
     );
   }
