@@ -8,9 +8,9 @@ export class RequestsController {
   constructor(private requestsService: RequestsService) {}
 
   @Get()
-  getRequests(): string {
+  getAllRequests(): string {
     this.logger.verbose('Getting all requests');
-    return this.requestsService.getRequests();
+    return this.requestsService.getAllRequests();
   }
 
   @Post('/:report_id/:hospital_id')

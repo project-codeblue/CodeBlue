@@ -16,7 +16,7 @@ export class RequestsService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  getRequests() {
+  getAllRequests() {
     return 'All requests';
   }
 
