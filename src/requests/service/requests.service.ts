@@ -8,6 +8,7 @@ import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { RequestsRepository } from '../../requests/requests.repository';
 import { EntityManager } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { Reports } from 'src/reports/reports.entity';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class RequestsService {
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
     private readonly requestsRepository: RequestsRepository,
-    private readonly entityManager: EntityManager,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async getAllRequests() {
@@ -45,12 +46,12 @@ export class RequestsService {
           if (!report) {
             throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
           }
-          // if (report.is_sent) {
-          //   throw new HttpException(
-          //     '이미 전송된 증상 보고서입니다.',
-          //     HttpStatus.BAD_REQUEST,
-          //   );
-          // }
+          if (report.is_sent) {
+            throw new HttpException(
+              '이미 전송된 증상 보고서입니다.',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
 
           const availableBeds = hospital.available_beds;
           if (availableBeds === 0) {
@@ -66,7 +67,9 @@ export class RequestsService {
           // 해당 report의 is_sent를 true로 변경
           return await this.reportsRepository.updateReportBeingSent(report_id);
         } catch (error) {
-          console.log('error: ', error);
+          if (error instanceof NotFoundException) {
+            throw error;
+          }
           throw new HttpException(
             error.response || '증상 보고서 전송에 실패하였습니다.',
             error.status || HttpStatus.INTERNAL_SERVER_ERROR,

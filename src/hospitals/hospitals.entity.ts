@@ -13,22 +13,22 @@ export class Hospitals extends BaseEntity {
   @PrimaryGeneratedColumn()
   hospital_id: number;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   address: string;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   phone: string;
 
-  @Column('int')
+  @Column({ type: 'int', nullable: false, default: 5 })
   available_beds: number;
 
-  @Column('decimal')
+  @Column({ type: 'decimal', nullable: false })
   latitude: number;
 
-  @Column('decimal')
+  @Column({ type: 'decimal', nullable: false })
   longitude: number;
 
   @CreateDateColumn()

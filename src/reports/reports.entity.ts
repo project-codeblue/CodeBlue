@@ -16,20 +16,20 @@ export class Reports extends BaseEntity {
   @PrimaryGeneratedColumn()
   report_id: number;
 
-  @Column('int')
+  @Column({ type: 'int', nullable: false })
   symptom_level: number;
 
-  @Column('text')
+  @Column({ type: 'text', nullable: false })
   symptoms: string;
 
-  @Column('decimal')
+  @Column({ type: 'decimal', nullable: false })
   latitude: number;
 
-  @Column({ default: false })
-  is_sent: boolean;
-
-  @Column('decimal')
+  @Column({ type: 'decimal', nullable: false })
   longitude: number;
+
+  @Column({ nullable: false, default: false })
+  is_sent: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

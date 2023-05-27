@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './commons/exceptions/http-exception.filter';
+import { ConfigType } from '@nestjs/config';
+import appConfig from '../config/app.config';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -22,9 +24,10 @@ async function bootstrap() {
   // cors
   app.enableCors();
 
-  const port = parseInt(process.env.PORT);
+  // config
+  const config = app.get<ConfigType<typeof appConfig>>(appConfig.KEY);
+  const port = config.port;
   await app.listen(port);
-  if (process.env.MODE === 'development')
-    logger.log(`서버 돌아가는 듕~ ${port}`);
+  if (config.mode === 'development') logger.log(`서버 돌아가는 듕~ ${port}`);
 }
 bootstrap();
