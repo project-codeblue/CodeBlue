@@ -9,46 +9,22 @@ export class RequestsRepository extends Repository<Reports> {
   }
 
   async getSearchRequests(queries: string[]): Promise<Reports[]> {
-    // queries['symptom_level']
-    // queries['symptoms'] // 여러개
-    // queries['date'] // 범위
-    // queries['hospital']
-    // const allReports = await this.find({
-    //   where: {
-    //     symptom_level: queries['symptom_level'],
-    //     symptoms: Like(`%${queries['symptoms']}%`),
-    //     createdAt: queries['date'],
-    //     hospital: queries['hospital'],
-    //   },
-    // });
-    
-    // const allReports = await this.createQueryBuilder()
-    //     .where('symptom_level = :symptom_level', { symptom_level: queries['symptom_level'] })
-    //     .andWhere('symptoms = :symptoms', { symptoms: queries['symptoms'].map((query) => ({symptoms: `%${query}%`}))  })
-    //     .andWhere('createdAt = :createdAt', { createdAt: queries['date'] })
-    //     // .andWhere('hospital = :hospital', { hospital: queries['hospital'] })
-    //     .getRawMany();
-
     let query = this.createQueryBuilder('reports')
-                    // .select('reports')
-                    // .from(Reports, 'reports')
                     .leftJoinAndSelect('reports.hospital', 'hospital')
                     .where('1 = 1')
+                    .where('is_sent = 1')
     
     if (queries['date']) { // URL 쿼리에 날짜가 존재하면 실행
-      const dates = queries['date'].split('~');
+      const dates = queries['date'].split('~'); // '~' 를 기준으로 날짜 범위 구분
       await query.andWhere(
-          new Brackets((qb) => {
-              // symptoms.forEach((symptom: string) => {
-              //   qb.andWhere(`reports.symptoms LIKE '%${symptom}%'`)
-              // })
-              qb.andWhere(`reports.createdAt BETWEEN '${dates[0]}' AND '${dates[1]}'`)
-          })
+        new Brackets((qb) => {
+          qb.andWhere(`reports.createdAt BETWEEN '${dates[0]}' AND '${dates[1]}'`)
+        })
       );
     };
 
     if (queries['symptoms']) { // URL 쿼리에 증상이 존재하면 실행
-      const symptoms = queries['symptoms'].split(' ');
+      const symptoms = queries['symptoms'].split(' '); // 공백을 기준으로 증상 구분
       symptoms.forEach((symptom: string) => {
         query.andWhere(`reports.symptoms LIKE '%${symptom}%'`)
       });
