@@ -7,6 +7,7 @@ import { MysqlConfigProvider } from './commons/config/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidator } from 'config/config.validator';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConfigValidator } from 'config/config.validator';
     TypeOrmModule.forRootAsync({
       useClass: MysqlConfigProvider,
     }),
+    ScheduleModule.forRoot(),
     ReportsModule,
     HospitalsModule,
     RequestsModule,
