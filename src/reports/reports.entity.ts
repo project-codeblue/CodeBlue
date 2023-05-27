@@ -22,13 +22,13 @@ export class Reports extends BaseEntity {
   @Column('text')
   symptoms: string;
 
-  @Column('float')
+  @Column('decimal')
   latitude: number;
 
   @Column({ default: false })
   is_sent: boolean;
 
-  @Column('float')
+  @Column('decimal')
   longitude: number;
 
   @CreateDateColumn()

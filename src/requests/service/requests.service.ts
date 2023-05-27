@@ -6,18 +6,27 @@ import {
 } from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
+import { RequestsRepository } from '../../requests/requests.repository';
 import { EntityManager } from 'typeorm';
+import { Reports } from 'src/reports/reports.entity';
 
 @Injectable()
 export class RequestsService {
   constructor(
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
+    private readonly requestsRepository: RequestsRepository,
     private readonly entityManager: EntityManager,
   ) {}
 
-  getAllRequests() {
-    return 'All requests';
+  async getAllRequests() {
+    const allReports = await this.reportsRepository.find();
+    return allReports;
+  }
+
+  async getSearchRequests(queries: string[]): Promise<Reports[]> {
+    const allReports = await this.requestsRepository.getSearchRequests(queries);
+    return allReports;
   }
 
   async createRequest(report_id: number, hospital_id: number) {
@@ -36,12 +45,12 @@ export class RequestsService {
           if (!report) {
             throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
           }
-          if (report.is_sent) {
-            throw new HttpException(
-              '이미 전송된 증상 보고서입니다.',
-              HttpStatus.BAD_REQUEST,
-            );
-          }
+          // if (report.is_sent) {
+          //   throw new HttpException(
+          //     '이미 전송된 증상 보고서입니다.',
+          //     HttpStatus.BAD_REQUEST,
+          //   );
+          // }
 
           const availableBeds = hospital.available_beds;
           if (availableBeds === 0) {
