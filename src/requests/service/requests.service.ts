@@ -6,19 +6,28 @@ import {
 } from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
+import { RequestsRepository } from '../../requests/requests.repository';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
+import { Reports } from 'src/reports/reports.entity';
 
 @Injectable()
 export class RequestsService {
   constructor(
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
+    private readonly requestsRepository: RequestsRepository,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
-  getAllRequests() {
-    return 'All requests';
+  async getAllRequests() {
+    const allReports = await this.reportsRepository.find();
+    return allReports;
+  }
+
+  async getSearchRequests(queries: string[]): Promise<Reports[]> {
+    const allReports = await this.requestsRepository.getSearchRequests(queries);
+    return allReports;
   }
 
   async createRequest(report_id: number, hospital_id: number) {

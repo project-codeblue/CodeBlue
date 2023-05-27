@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query } from '@nestjs/common';
 import { RequestsService } from '../service/requests.service';
 import { Logger } from '@nestjs/common';
+import { Reports } from 'src/reports/reports.entity';
 
 @Controller('request')
 export class RequestsController {
@@ -8,17 +9,31 @@ export class RequestsController {
   constructor(private requestsService: RequestsService) {}
 
   @Get()
-  getAllRequests(): string {
+  getAllRequests(): Promise<Reports[]> {
     this.logger.verbose('Getting all requests');
     return this.requestsService.getAllRequests();
   }
 
-  @Post('/:report_id/:hospital_id')
-  createRequest(
-    @Param('report_id') report_id: number,
-    @Param('hospital_id') hospital_id: number,
-  ) {
-    this.logger.verbose('환자 이송 신청 POST API');
-    return this.requestsService.createRequest(report_id, hospital_id);
+  @Get('/search')
+  getSearchRequests(
+      @Query() queries: string[]
+      // @Query('symptom_level') symptom_level: string,
+      // @Query('symptoms') symptoms: string,
+      // @Query('date') date: string,
+      // @Query('hospital') hospital: string,
+    ): Promise<Reports[]> {
+    this.logger.verbose('Getting search requests');
+    console.log(queries);
+    return this.requestsService.getSearchRequests(queries);
   }
+
+  // @Post('/:report_id/:hospital_id')
+  // createRequest(
+  //   @Param('report_id') report_id: number,
+  //   @Param('hospital_id') hospital_id: number,
+  // ) {
+  //   this.logger.verbose('환자 이송 신청 POST API');
+  //   return this.requestsService.createRequest(report_id, hospital_id);
+  // }
+
 }
