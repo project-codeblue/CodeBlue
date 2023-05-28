@@ -16,24 +16,23 @@ export class RequestsController {
 
   @Get('/search')
   getSearchRequests(
-      @Query() queries: string[]
-      // @Query('symptom_level') symptom_level: string,
-      // @Query('symptoms') symptoms: string,
-      // @Query('date') date: string,
-      // @Query('hospital') hospital: string,
-    ): Promise<Reports[]> {
+    @Query() queries: string[],
+    // @Query('symptom_level') symptom_level: string,
+    // @Query('symptoms') symptoms: string,
+    // @Query('date') date: string,
+    // @Query('hospital') hospital: string,
+  ): Promise<Reports[]> {
     this.logger.verbose('Getting search requests');
     console.log(queries);
     return this.requestsService.getSearchRequests(queries);
   }
 
-  // @Post('/:report_id/:hospital_id')
-  // createRequest(
-  //   @Param('report_id') report_id: number,
-  //   @Param('hospital_id') hospital_id: number,
-  // ) {
-  //   this.logger.verbose('환자 이송 신청 POST API');
-  //   return this.requestsService.createRequest(report_id, hospital_id);
-  // }
-
+  @Post('/:report_id/:hospital_id')
+  createRequest(
+    @Param('report_id') report_id: number,
+    @Param('hospital_id') hospital_id: number,
+  ) {
+    this.logger.verbose('환자 이송 신청 POST API');
+    return this.requestsService.createRequest(report_id, hospital_id);
+  }
 }

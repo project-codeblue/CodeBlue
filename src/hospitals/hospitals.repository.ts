@@ -1,6 +1,8 @@
 import { Repository, DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Hospitals } from './hospitals.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
+const DEFAULT_AVAILABLE_BEDS = 5;
 
 @Injectable()
 export class HospitalsRepository extends Repository<Hospitals> {
@@ -23,5 +25,14 @@ export class HospitalsRepository extends Repository<Hospitals> {
         available_beds: () => 'available_beds - 1',
       },
     );
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async setDefaultAvailableBeds(): Promise<void> {
+    const hospitals = await this.find();
+    hospitals.forEach(async (hospital) => {
+      hospital.available_beds = DEFAULT_AVAILABLE_BEDS;
+      await this.save(hospital);
+    });
   }
 }
