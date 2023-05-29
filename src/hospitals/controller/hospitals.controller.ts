@@ -1,8 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { HospitalsService } from '../service/hospitals.service';
-import { Logger } from '@nestjs/common';
+import { Logger, Param } from '@nestjs/common';
 import { Hospitals } from '../hospitals.entity';
-
 @Controller('hospital')
 export class HospitalsController {
   private logger = new Logger('HospitalsController');
@@ -30,5 +29,13 @@ export class HospitalsController {
   getNearbyHospitals() {
     this.logger.verbose('Getting Nearby Hospitals')
     return this.hospitalsService.getNearByHospitals(/*emogList: string[]*/);
+  }
+  
+  @Get('/hospital/:report_id')
+  getReccomandHospitals(
+    @Param('report_id') report_id: number,
+  ): Promise<Hospitals[]> {
+    this.logger.verbose('Getting all hospitals');
+    return this.hospitalsService.getReccomandHospitals(report_id);
   }
 }

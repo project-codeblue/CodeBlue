@@ -37,7 +37,6 @@ export class KakaoMapService {
     });
 
     const duration = response.data.routes[0].summary.duration;
-    console.log('duration: ', duration, 'seconds');
     return duration;
   }
 }
