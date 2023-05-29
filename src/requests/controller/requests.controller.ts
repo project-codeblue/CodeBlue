@@ -15,13 +15,7 @@ export class RequestsController {
   }
 
   @Get('/search')
-  getSearchRequests(
-    @Query() queries: string[],
-    // @Query('symptom_level') symptom_level: string,
-    // @Query('symptoms') symptoms: string,
-    // @Query('date') date: string,
-    // @Query('hospital') hospital: string,
-  ): Promise<Reports[]> {
+  getSearchRequests(@Query() queries: string[]): Promise<Reports[]> {
     this.logger.verbose('Getting search requests');
     console.log(queries);
     return this.requestsService.getSearchRequests(queries);
