@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
-import { crawl } from 'src/commons/middlewares/crawl';
+import { Crawling } from 'src/commons/middlewares/crawling';
 import { KakaoMapService } from 'src/commons/utils/kakao-map.service';
 import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
 
@@ -8,6 +8,8 @@ import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
 export class HospitalsService {
   constructor(
       private hospitalsRepository: HospitalsRepository,
+      private crawling: Crawling,
+      private kakaoMapService: KakaoMapService,
       private openAPI: MedicalOpenAPI,
     ) {}
 
@@ -15,8 +17,8 @@ export class HospitalsService {
     return this.hospitalsRepository.getHospitals();
   }
 
-  // 크롤링 미들웨어 실행 (string[], 메디서비스 기반)
-  getNearByHospitals() {
+  // 지역 병상 데이터 조회 (string[], 메디서비스 기반)
+  getLocalHospitals() {
     /*
       지역 옵션 선택
       매개변수 site에 아래 지역 중 하나가 들어옵니다.
@@ -26,13 +28,19 @@ export class HospitalsService {
       충청남도 / 충청북도
     */
     let site = '경기도'; // 여기에 지역명이 들어가며, 지역리스트는 미들웨어를 참고해주세요.
-    const results = crawl(site);
+    const results = this.crawling.getLocalHospitaldata(site);
     return results;
   }
 
-  // 전국 데이터 조회 (JSON, 공공데이터 API 기반)
+  // 전국 병상 데이터 조회 (JSON, 공공데이터 API 기반)
   getNationHospitals() {
     const results = this.openAPI.getMedicalData();
+    return results;
+  }
+
+  // 주변 병상 데이터 조회
+  getNearByHospitals() {
+    const results = this.crawling.getNearbyHospitals(/*emogList: string[]*/);
     return results;
   }
 }

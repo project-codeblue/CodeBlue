@@ -10,19 +10,25 @@ export class HospitalsController {
 
   @Get()
   getHospitals(): Promise<Hospitals[]> {
-    this.logger.verbose('Getting all hospitals');
+    this.logger.verbose('Getting all Hospitals');
     return this.hospitalsService.getHospitals();
   }
 
-  @Get('/site')
-  getNearByHospitals() {
-    this.logger.verbose('Getting nearby hospitals');
-    return this.hospitalsService.getNearByHospitals();
+  @Get('/local')
+  getLocalHospitals() {
+    this.logger.verbose('Getting Local Hospitals');
+    return this.hospitalsService.getLocalHospitals();
   } 
 
-  @Get('/all')
+  @Get('/nation')
   getNationHospitals() {
-    this.logger.verbose('Getting Nationwide hospitals');
+    this.logger.verbose('Getting Nationwide Hospitals');
     return this.hospitalsService.getNationHospitals();
   } 
+
+  @Get('nearBy')
+  getNearbyHospitals() {
+    this.logger.verbose('Getting Nearby Hospitals')
+    return this.hospitalsService.getNearByHospitals(/*emogList: string[]*/);
+  }
 }
