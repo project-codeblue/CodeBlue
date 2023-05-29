@@ -3,7 +3,7 @@ import { ReportsService } from './reports.service';
 import { ReportsRepository } from '../reports.repository';
 import { NotFoundException, HttpException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
-import { KakaoMapService } from 'src/commons/utils/kakao-map.service';
+import { KakaoMapService } from '../../commons/utils/kakao-map.service';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
