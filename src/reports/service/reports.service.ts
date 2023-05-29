@@ -29,7 +29,7 @@ export class ReportsService {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
       }
 
-      const site = await this.kakaoMapApi.convertCoordinatesToAddress(
+      const site = await this.kakaoMapApi.convertCoordinatesToRegion(
         latitude,
         longitude,
       );

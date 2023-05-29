@@ -9,7 +9,7 @@ export class KakaoMapService {
     @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
   ) {}
 
-  async convertCoordinatesToAddress(
+  async convertCoordinatesToRegion(
     latitude: number,
     longitude: number,
   ): Promise<string> {
@@ -20,5 +20,24 @@ export class KakaoMapService {
       },
     });
     return response.data.documents[0].region_1depth_name;
+  }
+
+  async getDrivingDuration(
+    startLat: number,
+    startLng: number,
+    endLat: number,
+    endLng: number,
+  ): Promise<number> {
+    const url = `https://apis-navi.kakaomobility.com/v1/directions?origin=${startLng},${startLat}&destination=${endLng},${endLat}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `KakaoAK ${this.config.kakaoApiKey}`,
+      },
+    });
+
+    const duration = response.data.routes[0].summary.duration;
+    console.log('duration: ', duration, 'seconds');
+    return duration;
   }
 }
