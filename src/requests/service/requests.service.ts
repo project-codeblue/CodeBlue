@@ -15,12 +15,12 @@ export class RequestsService {
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
-  async getAllRequests() {
-    const allReports = await this.reportsRepository.find();
+  async getAllRequests(): Promise<Reports[]> {
+    const allReports = await this.requestsRepository.getAllRequests();
     return allReports;
   }
 
-  async getSearchRequests(queries: string[]): Promise<Reports[]> {
+  async getSearchRequests(queries: object): Promise<Reports[]> {
     const allReports = await this.requestsRepository.getSearchRequests(queries);
     return allReports;
   }

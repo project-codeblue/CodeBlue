@@ -15,7 +15,7 @@ export class RequestsController {
   }
 
   @Get('/search')
-  getSearchRequests(@Query() queries: string[]): Promise<Reports[]> {
+  getSearchRequests(@Query() queries: object): Promise<Reports[]> {
     this.logger.verbose('Getting search requests');
     console.log(queries);
     return this.requestsService.getSearchRequests(queries);

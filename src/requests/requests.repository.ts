@@ -8,7 +8,12 @@ export class RequestsRepository extends Repository<Reports> {
     super(Reports, dataSource.createEntityManager());
   }
 
-  async getSearchRequests(queries: string[]): Promise<Reports[]> {
+  async getAllRequests(): Promise<Reports[]> {
+    const allReports = await this.find();
+    return allReports;
+  }
+
+  async getSearchRequests(queries: object): Promise<Reports[]> {
     let query = this.createQueryBuilder('reports')
                     .leftJoinAndSelect('reports.hospital', 'hospital')
                     .where('1 = 1')
