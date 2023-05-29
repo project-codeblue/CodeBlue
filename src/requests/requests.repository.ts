@@ -26,19 +26,20 @@ export class RequestsRepository extends Repository<Reports> {
           qb.andWhere(`reports.createdAt BETWEEN '${dates[0]}' AND '${dates[1]}'`)
         })
       );
-    };
+    }
 
     if (queries['symptoms']) { // URL 쿼리에 증상이 존재하면 실행
       const symptoms = queries['symptoms'].split(' '); // 공백을 기준으로 증상 구분
       symptoms.forEach((symptom: string) => {
-        query.andWhere(`reports.symptoms LIKE '%${symptom}%'`)
+        query.andWhere(`reports.symptoms LIKE '%${symptom}%'`);
       });
-    };
-    
-    if (queries['symptom_level']) { // URL 쿼리에 증상도가 존재하면 실행
-      query.andWhere(`reports.symptom_level = ${queries['symptom_level']}`)
-    };
-    
+    }
+
+    if (queries['symptom_level']) {
+      // URL 쿼리에 증상도가 존재하면 실행
+      query.andWhere(`reports.symptom_level = ${queries['symptom_level']}`);
+    }
+
     const allReports = query.getRawMany();
 
     return allReports;
