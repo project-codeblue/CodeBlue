@@ -21,7 +21,7 @@ export class RequestsRepository extends Repository<Reports> {
     //     hospital: queries['hospital'],
     //   },
     // });
-    
+
     // const allReports = await this.createQueryBuilder()
     //     .where('symptom_level = :symptom_level', { symptom_level: queries['symptom_level'] })
     //     .andWhere('symptoms = :symptoms', { symptoms: queries['symptoms'].map((query) => ({symptoms: `%${query}%`}))  })
@@ -30,34 +30,39 @@ export class RequestsRepository extends Repository<Reports> {
     //     .getRawMany();
 
     let query = this.createQueryBuilder('reports')
-                    // .select('reports')
-                    // .from(Reports, 'reports')
-                    .leftJoinAndSelect('reports.hospital', 'hospital')
-                    .where('1 = 1')
-    
-    if (queries['date']) { // URL 쿼리에 날짜가 존재하면 실행
+      // .select('reports')
+      // .from(Reports, 'reports')
+      .leftJoinAndSelect('reports.hospital', 'hospital')
+      .where('1 = 1');
+
+    if (queries['date']) {
+      // URL 쿼리에 날짜가 존재하면 실행
       const dates = queries['date'].split('~');
       await query.andWhere(
-          new Brackets((qb) => {
-              // symptoms.forEach((symptom: string) => {
-              //   qb.andWhere(`reports.symptoms LIKE '%${symptom}%'`)
-              // })
-              qb.andWhere(`reports.createdAt BETWEEN '${dates[0]}' AND '${dates[1]}'`)
-          })
+        new Brackets((qb) => {
+          // symptoms.forEach((symptom: string) => {
+          //   qb.andWhere(`reports.symptoms LIKE '%${symptom}%'`)
+          // })
+          qb.andWhere(
+            `reports.createdAt BETWEEN '${dates[0]}' AND '${dates[1]}'`,
+          );
+        }),
       );
-    };
+    }
 
-    if (queries['symptoms']) { // URL 쿼리에 증상이 존재하면 실행
+    if (queries['symptoms']) {
+      // URL 쿼리에 증상이 존재하면 실행
       const symptoms = queries['symptoms'].split(' ');
       symptoms.forEach((symptom: string) => {
-        query.andWhere(`reports.symptoms LIKE '%${symptom}%'`)
+        query.andWhere(`reports.symptoms LIKE '%${symptom}%'`);
       });
-    };
-    
-    if (queries['symptom_level']) { // URL 쿼리에 증상도가 존재하면 실행
-      query.andWhere(`reports.symptom_level = ${queries['symptom_level']}`)
-    };
-    
+    }
+
+    if (queries['symptom_level']) {
+      // URL 쿼리에 증상도가 존재하면 실행
+      query.andWhere(`reports.symptom_level = ${queries['symptom_level']}`);
+    }
+
     const allReports = query.getRawMany();
 
     return allReports;
