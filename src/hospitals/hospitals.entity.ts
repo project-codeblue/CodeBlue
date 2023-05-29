@@ -17,7 +17,7 @@ export class Hospitals extends BaseEntity {
   name: string;
 
   @Column()
-  address: string;
+  address?: string;
 
   @Column()
   phone: string;
@@ -26,13 +26,13 @@ export class Hospitals extends BaseEntity {
   available_beds: number;
 
   @Column()
-  latitude: number;
+  latitude?: number;
 
   @Column()
-  longitude: number;
+  longitude?: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 
   @OneToMany(() => Reports, (report) => report.hospital)
   reports: Reports[];

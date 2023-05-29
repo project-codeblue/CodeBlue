@@ -5,9 +5,15 @@ import { RequestsModule } from './requests/requests.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './commons/typeorm.config';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import appConfig from 'config/app.config';
+
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [appConfig],
+    }),
     TypeOrmModule.forRoot(typeORMConfig),
     ReportsModule,
     HospitalsModule,
@@ -15,6 +21,8 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
   ],
 })
 export class AppModule implements NestModule {
+  constructor(private readonly configService: ConfigService) {}
+
   private readonly isDev: boolean =
     process.env.MODE === 'development' ? true : false;
 
