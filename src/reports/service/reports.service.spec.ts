@@ -3,10 +3,12 @@ import { ReportsService } from './reports.service';
 import { ReportsRepository } from '../reports.repository';
 import { NotFoundException, HttpException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
+import { KakaoMapService } from '../../commons/utils/kakao-map.service';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
+  let kakaoMapService: KakaoMapService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -19,11 +21,19 @@ describe('ReportsService Unit Testing', () => {
             updatePatientLocation: jest.fn(),
           },
         },
+        {
+          provide: KakaoMapService,
+          useValue: {
+            convertCoordinatesToAddress: jest.fn(),
+            convertCoordinatesToSite: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     reportsService = moduleRef.get(ReportsService);
     reportsRepository = moduleRef.get(ReportsRepository);
+    kakaoMapService = moduleRef.get(KakaoMapService);
   });
 
   describe('updatePatientLocation()', () => {
