@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { RequestsService } from './requests.service';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
+import { RequestsRepository } from '../requests.repository';
 import { EntityManager } from 'typeorm';
 import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
@@ -11,6 +12,7 @@ describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
   let hospitalsRepository: HospitalsRepository;
   let reportsRepository: ReportsRepository;
+  let requestsRepository: RequestsRepository;
   let entityManager: EntityManager;
 
   beforeEach(async () => {
@@ -32,6 +34,12 @@ describe('RequestsService Unit Testing', () => {
           },
         },
         {
+          provide: RequestsRepository,
+          useValue: {
+            getSearchRequests: jest.fn(),
+          },
+        },
+        {
           provide: EntityManager,
           useValue: {
             transaction: jest
@@ -48,6 +56,7 @@ describe('RequestsService Unit Testing', () => {
     requestsService = moduleRef.get(RequestsService);
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
+    requestsRepository = moduleRef.get(RequestsRepository);
     entityManager = moduleRef.get(EntityManager);
   });
 
