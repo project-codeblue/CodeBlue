@@ -13,4 +13,10 @@ export class HospitalsController {
     this.logger.verbose('Getting all hospitals');
     return this.hospitalsService.getHospitals();
   }
+
+  @Get('/crawl')
+  getNearByHospitals(): Promise<string[]> {
+    this.logger.verbose('Getting nearby hospitals');
+    return this.hospitalsService.getNearByHospitals();
+  } 
 }
