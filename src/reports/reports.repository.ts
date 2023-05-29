@@ -35,4 +35,14 @@ export class ReportsRepository extends Repository<Reports> {
     report.is_sent = true;
     return await report.save();
   }
+
+//hospital 조회시 사용하는 메서드
+  async userLocation(report_id: number) {
+    //사용자 위치(단일)
+    const reports: Reports = (await this.find()).find(
+      (data) => data.report_id === report_id,
+    );
+    return [reports.latitude, reports.longitude];
+  }
+
 }

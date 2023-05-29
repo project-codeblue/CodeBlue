@@ -2,17 +2,12 @@ import { Repository, DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Hospitals } from './hospitals.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Reports } from 'src/reports/reports.entity';
 
 const DEFAULT_AVAILABLE_BEDS = 5;
 
 @Injectable()
 export class HospitalsRepository extends Repository<Hospitals> {
-  constructor(
-    private dataSource: DataSource,
-    private reportsRepository: Repository<Reports>,
-    private hospitalsRepository: Repository<Hospitals>,
-  ) {
+  constructor(private dataSource: DataSource) {
     super(Hospitals, dataSource.createEntityManager());
   }
 
@@ -42,16 +37,8 @@ export class HospitalsRepository extends Repository<Hospitals> {
     });
   }
 
-  async userLocation(report_id: number): Promise<number[]> {
-    //사용자 위치(단일)
-    const reports: Reports = (await this.reportsRepository.find()).find(
-      (data) => data.report_id === report_id,
-    );
-    return [reports.latitude, reports.longitude];
-  }
-
   async AllHospitals(): Promise<Hospitals[]> {
     //병원 위치(복수)
-    return this.hospitalsRepository.find();
+    return this.find();
   }
 }
