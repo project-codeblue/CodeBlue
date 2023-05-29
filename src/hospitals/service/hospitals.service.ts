@@ -24,21 +24,23 @@ export class HospitalsService {
   }
 
   async getReccomandHospitals(report_id: number) {
-   //사용자 위치
+    //사용자 위치
     const userLocation = await this.hospitalsRepository.userLocation(report_id);
     let startLat = userLocation[0];
     let startLng = userLocation[1];
-   
+
     //추천 병원 배열
     const getRecommandHopitals = [];
-    
+
     //거리 계산 로직
     const HospitalsData = await this.hospitalsRepository.AllHospitals();
     for (const hospital of HospitalsData) {
       const endLat = hospital.latitude;
       const endLng = hospital.longitude;
       if (startLat === null || startLng === null) {
-        throw new NotFoundException('현재위치가 정상적으로 반영되지않았습니다. 새로고침을 눌러주세요');
+        throw new NotFoundException(
+          '현재위치가 정상적으로 반영되지않았습니다. 새로고침을 눌러주세요',
+        );
       }
       try {
         const duration = await this.kakaomapService.getDrivingDuration(

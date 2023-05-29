@@ -6,7 +6,7 @@ import { Hospitals } from '../hospitals.entity';
 export class HospitalsController {
   private logger = new Logger('HospitalsController');
   constructor(private hospitalsService: HospitalsService) {}
-  
+
   @Get()
   getHospitals(): Promise<Hospitals[]> {
     this.logger.verbose('Getting all hospitals');
@@ -17,10 +17,12 @@ export class HospitalsController {
   getNearByHospitals(): Promise<string[]> {
     this.logger.verbose('Getting nearby hospitals');
     return this.hospitalsService.getNearByHospitals();
-  } 
- 
+  }
+
   @Get('/hospital/:report_id')
-  getReccomandHospitals(@Param('report_id') report_id: number): Promise<Hospitals[]> {
+  getReccomandHospitals(
+    @Param('report_id') report_id: number,
+  ): Promise<Hospitals[]> {
     this.logger.verbose('Getting all hospitals');
     return this.hospitalsService.getReccomandHospitals(report_id);
   }
