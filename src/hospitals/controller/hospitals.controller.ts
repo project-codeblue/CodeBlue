@@ -14,9 +14,15 @@ export class HospitalsController {
     return this.hospitalsService.getHospitals();
   }
 
-  @Get('/crawl')
-  getNearByHospitals(): Promise<string[]> {
+  @Get('/site')
+  getNearByHospitals() {
     this.logger.verbose('Getting nearby hospitals');
     return this.hospitalsService.getNearByHospitals();
+  } 
+
+  @Get('/all')
+  getNationHospitals() {
+    this.logger.verbose('Getting Nationwide hospitals');
+    return this.hospitalsService.getNationHospitals();
   } 
 }
