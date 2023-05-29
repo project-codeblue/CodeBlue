@@ -36,6 +36,7 @@ describe('RequestsService Unit Testing', () => {
         {
           provide: RequestsRepository,
           useValue: {
+            getAllRequests: jest.fn(),
             getSearchRequests: jest.fn(),
           },
         },
@@ -58,6 +59,37 @@ describe('RequestsService Unit Testing', () => {
     reportsRepository = moduleRef.get(ReportsRepository);
     requestsRepository = moduleRef.get(RequestsRepository);
     entityManager = moduleRef.get(EntityManager);
+  });
+
+  describe('getAllRequests()', () => {
+    it('getAllRequests request must be performed successfully', async () => {
+      const allReports = [];
+      jest
+        .spyOn(requestsRepository, 'getSearchRequests')
+        .mockResolvedValueOnce(allReports as Reports[])
+
+      expect(await requestsService.getAllRequests()).toBe(allReports);
+      expect(requestsRepository.getAllRequests).toBeCalledTimes(1);
+    });
+  });
+
+  describe('getSearchRequests()', () => {
+    it('getSearchRequests request must be performed successfully', async () => {
+      const allReports = [];
+      jest
+        .spyOn(requestsRepository, 'getSearchRequests')
+        .mockResolvedValueOnce(allReports as Reports[])
+
+      const queries: object = {
+        date: '2023-05-27~2023-05-28',
+        symptoms: '체중감소',
+        symptom_level: 1
+      }
+
+      expect(await requestsService.getSearchRequests(queries)).toBe(allReports);
+      expect(requestsRepository.getSearchRequests).toBeCalledTimes(1);
+      expect(requestsRepository.getSearchRequests).toHaveBeenCalledWith(queries);
+    });
   });
 
   describe('createRequest()', () => {
@@ -195,4 +227,5 @@ describe('RequestsService Unit Testing', () => {
       ).rejects.toThrowError(HttpException);
     });
   });
+
 });

@@ -8,6 +8,8 @@ describe('RequestsController Unit Testing', () => {
 
   beforeEach(async () => {
     const mockRequestsService = {
+      getAllRequests: jest.fn().mockReturnValue({}),
+      getSearchRequests: jest.fn().mockReturnValue({}),
       createRequest: jest.fn().mockReturnValue({}),
     };
 
@@ -19,6 +21,37 @@ describe('RequestsController Unit Testing', () => {
     requestsService = moduleRef.get(RequestsService);
     requestsController = moduleRef.get(RequestsController);
   });
+
+  describe('getAllRequests()', () => {
+    it('should get all obejct', async () => {
+      const allReports = [];
+      jest
+        .spyOn(requestsService, 'getAllRequests')
+        .mockImplementation(() => allReports);
+      
+      expect(await requestsController.getAllRequests()).toBe(allReports);
+      expect(requestsService.getAllRequests).toBeCalledTimes(1);
+    });
+  });
+
+  describe('getSearchRequests()', () => {
+    it('should get searched object', async () => {
+      const allReports = [];
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockImplementation(() => allReports);
+
+      const queries: object = {
+        date: '2023-05-27~2023-05-28',
+        symptoms: '체중감소',
+        symptom_level: 1
+      }
+
+      expect(await requestsController.getSearchRequests(queries)).toBe(allReports);
+      expect(requestsService.getSearchRequests).toBeCalledTimes(1);
+      expect(requestsService.getSearchRequests).toHaveBeenCalledWith(queries);
+    })
+  })
 
   describe('createRequest()', () => {
     it('should return object', async () => {
@@ -39,4 +72,5 @@ describe('RequestsController Unit Testing', () => {
       );
     });
   });
+
 });
