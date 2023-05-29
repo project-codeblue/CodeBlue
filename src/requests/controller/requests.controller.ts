@@ -29,5 +29,4 @@ export class RequestsController {
     this.logger.verbose('환자 이송 신청 POST API');
     return this.requestsService.createRequest(report_id, hospital_id);
   }
-
 }
