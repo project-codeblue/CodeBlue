@@ -1,6 +1,7 @@
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { HospitalsService } from '../service/hospitals.service';
 import { Hospitals } from '../hospitals.entity';
+
 @Controller('hospital')
 export class HospitalsController {
   private logger = new Logger('HospitalsController');
@@ -13,13 +14,10 @@ export class HospitalsController {
   }
 
   @Get('/local') // hospital/local?site=경기도
-  getLocalHospitals(
-    @Query('site') site: string
-  ): Promise<string[]> {
+  getLocalHospitals(@Query('site') site: string): Promise<string[]> {
     this.logger.verbose('Getting Local Hospitals');
     return this.hospitalsService.getLocalHospitals(site);
-  } 
-
+  }
 
   @Get('/nation')
   getNationHospitals(): Promise<JSON> {
@@ -29,10 +27,8 @@ export class HospitalsController {
 
   // 이쪽 API는 Query로 배열 파라미터를 넘겨줘야 합니다.
   @Get('nearby') // hospital/nearBy?emogList=A1100010&emogList=A1100011&emogList=A1400015
-  getNearbyHospitals(
-    @Query('emogList') emogList: string[]
-  ): Promise<string[]> {
-    this.logger.verbose('Getting Nearby Hospitals')
+  getNearbyHospitals(@Query('emogList') emogList: string[]): Promise<string[]> {
+    this.logger.verbose('Getting Nearby Hospitals');
     return this.hospitalsService.getNearByHospitals(emogList);
   }
 
