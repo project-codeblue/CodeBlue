@@ -12,10 +12,12 @@ export class HospitalsController {
     return this.hospitalsService.getHospitals();
   }
 
-  @Get('/local')
-  getLocalHospitals(): Promise<string[]> {
+  @Get('/local') // hospital/local?site=경기도
+  getLocalHospitals(
+    @Query('site') site: string
+  ): Promise<string[]> {
     this.logger.verbose('Getting Local Hospitals');
-    return this.hospitalsService.getLocalHospitals();
+    return this.hospitalsService.getLocalHospitals(site);
   } 
 
   @Get('/nation')
@@ -25,8 +27,7 @@ export class HospitalsController {
   } 
 
   // 이쪽 API는 Query로 배열 파라미터를 넘겨줘야 합니다.
-  // nearBy/?emogList=A1100010&emogList=A1100011&emogList=A1400015
-  @Get('nearby')
+  @Get('nearby') // hospital/nearBy?emogList=A1100010&emogList=A1100011&emogList=A1400015
   getNearbyHospitals(
     @Query('emogList') emogList: string[]
   ): Promise<string[]> {
