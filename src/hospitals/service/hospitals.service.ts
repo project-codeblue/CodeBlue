@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
+import { ReportsRepository } from 'src/reports/reports.repository';
 import { Crawling } from 'src/commons/middlewares/crawling';
 import { KakaoMapService } from 'src/commons/utils/kakao-map.service';
 import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
@@ -9,6 +10,7 @@ import { Hospitals } from '../hospitals.entity';
 export class HospitalsService {
   constructor(
       private hospitalsRepository: HospitalsRepository,
+      private reportRepository : ReportsRepository,
       private crawling: Crawling,
       private kakaoMapService: KakaoMapService,
       private openAPI: MedicalOpenAPI,
@@ -47,7 +49,7 @@ export class HospitalsService {
 
   async getReccomandHospitals(report_id: number) {
     //사용자 위치
-    const userLocation = await this.hospitalsRepository.userLocation(report_id);
+    const userLocation = await this.reportRepository.userLocation(report_id);
     let startLat = userLocation[0];
     let startLng = userLocation[1];
 
