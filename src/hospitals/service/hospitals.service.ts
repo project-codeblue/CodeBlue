@@ -30,7 +30,7 @@ export class HospitalsService {
       경상북도 / 세종특별자치시 / 전라남도 / 전라북도 / 제주특별자치도
       충청남도 / 충청북도
     */
-    let site = '경기도'; // 여기에 지역명이 들어가며, 지역리스트는 미들웨어를 참고해주세요.
+    const site = '경기도'; // 여기에 지역명이 들어가며, 지역리스트는 미들웨어를 참고해주세요.
     const results = await this.crawling.getLocalHospitaldata(site);
     return results;
   }

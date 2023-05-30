@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Param } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { HospitalsService } from '../service/hospitals.service';
 import { Hospitals } from '../hospitals.entity';
 @Controller('hospital')
@@ -24,13 +24,11 @@ export class HospitalsController {
     return this.hospitalsService.getNationHospitals();
   } 
 
-  // 이쪽 API는 쿼리스트링으로 배열 파라미터를 넘겨줘야 합니다.
-  // nearBy/?emogList=A1100010+A1100011+A1400015
-  // 또는
+  // 이쪽 API는 Query로 배열 파라미터를 넘겨줘야 합니다.
   // nearBy/?emogList=A1100010&emogList=A1100011&emogList=A1400015
-  @Get('nearBy')
+  @Get('nearby')
   getNearbyHospitals(
-    @Param('emogList') emogList: string[]
+    @Query('emogList') emogList: string[]
   ): Promise<string[]> {
     this.logger.verbose('Getting Nearby Hospitals')
     return this.hospitalsService.getNearByHospitals(emogList);
