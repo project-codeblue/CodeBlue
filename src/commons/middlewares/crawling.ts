@@ -8,39 +8,39 @@ import { chromium } from 'playwright';
 export class Crawling {
   async getLocalHospitaldata(site: string) {
     const start: any = new Date();
-  
+    
     // 브라우저 실행
-    const browser = await puppeteer.launch({headless: 'new'});
-  
+    const browser = await puppeteer.launch({ headless: 'new' });
+
     // 페이지 생성
     const page = await browser.newPage();
-  
+
     // Request 요청
     await page.setRequestInterception(true);
-  
-    page.on('request', interceptedRequest => {
-      let data = {
-        'method': 'POST',
-        'postData': `emrusi_sidoname=${site}`,
-        'headers': {
+
+    page.on('request', (interceptedRequest) => {
+      const data = {
+        method: 'POST',
+        postData: `emrusi_sidoname=${site}`,
+        headers: {
           ...interceptedRequest.headers(),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       };
       interceptedRequest.continue(data);
-    })
-  
+    });
+
     // 크롤링할 대상 사이트로 이동
     await page.goto('https://www.medisvc.com/hospital/fo/availablebedslist.sd');
-  
+
     // 데이터 가져오기
     const content = await page.content();
-  
+
     // Close browser.
     await browser.close();
-  
+
     const $ = cheerio.load(content);
-    const time = $('#wrapper > div > section:nth-child(2) > div.container.pb-0 > div > div > div > div > h3');
+    const time = $('#wrapper > div > section:nth-child(2) > div.container.pb-0 > div > div > div > div > h3',);
     const results = [];
     results.push(time.text().replace(/\s+/g,' '));
     $('#frm > div:nth-child(6) > div > div.table-responsive > table').each((idx, element) => {
@@ -51,9 +51,9 @@ export class Crawling {
     const end: any = new Date()
     const t = end - start;
     console.log(`소요시간(${site}) : ${t}ms`);
-  
+
     return results;
-  };
+  }
 
   async getNearbyHospitals(emogList: string[]) {
     const start: any = new Date();

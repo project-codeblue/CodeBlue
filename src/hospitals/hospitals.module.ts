@@ -12,7 +12,14 @@ import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
 @Module({
   imports: [TypeOrmModule.forFeature([Hospitals])],
   controllers: [HospitalsController],
-  providers: [HospitalsService, HospitalsRepository, ReportsRepository, Crawling, KakaoMapService, MedicalOpenAPI],
+  providers: [
+    HospitalsService,
+    HospitalsRepository,
+    ReportsRepository,
+    Crawling,
+    KakaoMapService,
+    MedicalOpenAPI,
+  ],
   exports: [HospitalsService, HospitalsRepository],
 })
 export class HospitalsModule {}
