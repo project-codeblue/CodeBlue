@@ -2,12 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { crawl } from 'src/commons/middlewares/crawl';
 import { KakaoMapService } from '../../commons/utils/kakao-map.service';
-
+import { ReportsRepository } from 'src/reports/reports.repository';
 @Injectable()
 export class HospitalsService {
   constructor(
     private hospitalsRepository: HospitalsRepository,
     private kakaomapService: KakaoMapService,
+    private reportRepository : ReportsRepository
   ) {}
 
   getHospitals() {
@@ -25,7 +26,7 @@ export class HospitalsService {
 
   async getReccomandHospitals(report_id: number) {
     //사용자 위치
-    const userLocation = await this.hospitalsRepository.userLocation(report_id);
+    const userLocation = await this.reportRepository.userLocation(report_id);
     let startLat = userLocation[0];
     let startLng = userLocation[1];
 
