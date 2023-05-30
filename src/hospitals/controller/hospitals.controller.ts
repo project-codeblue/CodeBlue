@@ -19,7 +19,7 @@ export class HospitalsController {
     return this.hospitalsService.getNearByHospitals();
   }
 
-  @Get('/hospital/:report_id')
+  @Get('/:report_id')
   getReccomandHospitals(
     @Param('report_id') report_id: number,
   ): Promise<Hospitals[]> {

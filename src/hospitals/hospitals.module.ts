@@ -10,7 +10,12 @@ import { ReportsRepository } from 'src/reports/reports.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([Hospitals])],
   controllers: [HospitalsController],
-  providers: [HospitalsService, HospitalsRepository,KakaoMapService,ReportsRepository],
+  providers: [
+    HospitalsService,
+    HospitalsRepository,
+    KakaoMapService,
+    ReportsRepository,
+  ],
   exports: [HospitalsService, HospitalsRepository],
 })
 export class HospitalsModule {}
