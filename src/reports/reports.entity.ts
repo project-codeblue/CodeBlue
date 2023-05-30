@@ -37,6 +37,12 @@ export class Reports extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ type: 'int', nullable: false })
+  patient_id: number;
+
+  @Column({ type: 'int', nullable: false })
+  hospital_id: number;
+
   @ManyToOne(() => Patients, (patient) => patient.reports)
   @JoinColumn({ name: 'patient_id' })
   patient: Patients;

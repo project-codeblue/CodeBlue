@@ -39,9 +39,9 @@ export class Crawling {
     // Close browser.
     await browser.close();
 
+    const results: string[] = [];
     const $ = cheerio.load(content);
     const time = $('#wrapper > div > section:nth-child(2) > div.container.pb-0 > div > div > div > div > h3',);
-    const results = [];
     results.push(time.text().replace(/\s+/g,' '));
     $('#frm > div:nth-child(6) > div > div.table-responsive > table').each((idx, element) => {
       const $data = cheerio.load(element);
@@ -58,14 +58,12 @@ export class Crawling {
   async getNearbyHospitals(emogList: string[]) {
     const start: any = new Date();
 
-    const results: string[] = [];
-
     // 브라우저 실행
     const browser = await chromium.launch({
       headless: true,
     })
 
-    // 컨텐스트 생성
+    // 컨텍스트 생성
     const context = await browser.newContext({});
 
     // 페이지 생성
@@ -84,6 +82,7 @@ export class Crawling {
     await browser.close();
 
     // 크롤링
+    const results: string[] = [];
     const $ = cheerio.load(content);
     const time = $('#area_top_info > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)');
     results.push(time.text().replace(/\s+/g,' '));
@@ -102,7 +101,7 @@ export class Crawling {
       const weggwa = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(5) > div.data_data.data_td_O007`).text().replace(/\s+/g,' ');
       const singyeongwe = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(6) > div.data_data.data_td_O012`).text().replace(/\s+/g,' ');
       
-      results.push(`${name} 응급실: ${ungeup}, 수술실: ${susul}, 신경중환자실: ${singyeong}, 신생아중환자실: ${sinseng}, 흉부중환자실: ${hyungbu}, 일반중환자실: ${ilban}, 입원실: ${ibwon}, 내과중환자실: ${naeggwa}, 외괴중환자실: ${weggwa}, 신경외과중환자실: ${singyeongwe}`);
+      results.push(`${name} 응급실: ${ungeup}, 수술실: ${susul}, 신경중환자실: ${singyeong}, 신생아중환자실: ${sinseng}, 흉부중환자실: ${hyungbu}, 일반중환자실: ${ilban}, 입원실: ${ibwon}, 내과중환자실: ${naeggwa}, 외과중환자실: ${weggwa}, 신경외과중환자실: ${singyeongwe}`);
     });
 
     const end: any = new Date()

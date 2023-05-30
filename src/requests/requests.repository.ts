@@ -33,7 +33,7 @@ export class RequestsRepository extends Repository<Reports> {
 
     if (queries['symptoms']) {
       // URL 쿼리에 증상이 존재하면 실행
-      const symptoms = queries['symptoms'].split(' '); // 공백을 기준으로 증상 구분
+      const symptoms = queries['symptoms'].split(','); // 쉼표를 기준으로 증상 구분
       symptoms.forEach((symptom: string) => {
         query.andWhere(`reports.symptoms LIKE '%${symptom}%'`);
       });
@@ -42,6 +42,11 @@ export class RequestsRepository extends Repository<Reports> {
     if (queries['symptom_level']) {
       // URL 쿼리에 증상도가 존재하면 실행
       query.andWhere(`reports.symptom_level = ${queries['symptom_level']}`);
+    }
+
+    if (queries['site']) {
+      // URL 쿼리에 지역이 존재하면 실행
+      query.andWhere(`hospital.address LIKE '%${queries['site']}%'`);
     }
 
     const allReports = query.getRawMany();
