@@ -55,10 +55,10 @@ export class Crawling {
     return results;
   };
 
-  async getNearbyHospitals() {
-    let start: any = new Date(/*emogList: string[]*/);
+  async getNearbyHospitals(emogList: string[]) {
+    let start: any = new Date();
 
-    let emogList = ['A1100010', 'A1100011', 'A1400015'];
+    emogList = ['A1100010', 'A1100011', 'A1400015'];
     const results = [];
 
     // await axios({
@@ -112,7 +112,6 @@ export class Crawling {
         let singyeongwe = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(6) > div.data_data.data_td_O012`).text().replace(/\s+/g,' ');
         
         results.push(`${name} 응급실: ${ungeup}, 수술실: ${susul}, 신경중환자실: ${singyeong}, 신생아중환자실: ${sinseng}, 흉부중환자실: ${hyungbu}, 일반중환자실: ${ilban}, 입원실: ${ibwon}, 내과중환자실: ${naeggwa}, 외괴중환자실: ${weggwa}, 신경외과중환자실: ${singyeongwe}`);
-
       });
     // })
       

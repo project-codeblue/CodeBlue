@@ -3,6 +3,7 @@ import { HospitalsRepository } from '../hospitals.repository';
 import { Crawling } from 'src/commons/middlewares/crawling';
 import { KakaoMapService } from 'src/commons/utils/kakao-map.service';
 import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
+import { Hospitals } from '../hospitals.entity';
 
 @Injectable()
 export class HospitalsService {
@@ -13,12 +14,12 @@ export class HospitalsService {
       private openAPI: MedicalOpenAPI,
     ) {}
 
-  getHospitals() {
-    return this.hospitalsRepository.getHospitals();
+  async getHospitals(): Promise<Hospitals[]>{
+    return await this.hospitalsRepository.getHospitals();
   }
 
   // 지역 병상 데이터 조회 (string[], 메디서비스 기반)
-  getLocalHospitals() {
+  async getLocalHospitals(): Promise<string[]> {
     /*
       지역 옵션 선택
       매개변수 site에 아래 지역 중 하나가 들어옵니다.
@@ -28,19 +29,19 @@ export class HospitalsService {
       충청남도 / 충청북도
     */
     let site = '경기도'; // 여기에 지역명이 들어가며, 지역리스트는 미들웨어를 참고해주세요.
-    const results = this.crawling.getLocalHospitaldata(site);
+    const results = await this.crawling.getLocalHospitaldata(site);
     return results;
   }
 
   // 전국 병상 데이터 조회 (JSON, 공공데이터 API 기반)
-  getNationHospitals() {
-    const results = this.openAPI.getMedicalData();
+  async getNationHospitals(): Promise<JSON> {
+    const results = await this.openAPI.getMedicalData();
     return results;
   }
 
   // 주변 병상 데이터 조회
-  getNearByHospitals() {
-    const results = this.crawling.getNearbyHospitals(/*emogList: string[]*/);
+  async getNearByHospitals(emogList: string[]): Promise<string[]> {
+    const results = await this.crawling.getNearbyHospitals(emogList);
     return results;
   }
 
