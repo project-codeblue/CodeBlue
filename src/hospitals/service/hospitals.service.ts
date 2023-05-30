@@ -1,9 +1,9 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
-import { ReportsRepository } from 'src/reports/reports.repository';
-import { Crawling } from 'src/commons/middlewares/crawling';
-import { KakaoMapService } from 'src/commons/utils/kakao-map.service';
-import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
+import { ReportsRepository } from '../../reports/reports.repository';
+import { Crawling } from '../../commons/middlewares/crawling';
+import { KakaoMapService } from '../../commons/utils/kakao-map.service';
+import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { number } from 'joi';
 
@@ -41,13 +41,10 @@ export class HospitalsService {
     return results;
   }
 
-  // 주변 병상 데이터 조회
-  async getNearByHospitals(emogList: string[]): Promise<string[]> {
-    const results = await this.crawling.getNearbyHospitals(emogList);
-    return results;
-  }
+  // 병원 추천
+  async getRecommendedHospitals(report_id: number): Promise<Hospitals[]> {
+    const start: any = new Date();
 
-  async getReccomendedHospitals(report_id: number) {
     //사용자 위치
     const userLocation = await this.reportRepository.userLocation(report_id);
 
@@ -84,12 +81,13 @@ export class HospitalsService {
         available_beds: hospital.available_beds,
         latitude: hospital.latitude,
         longitude: hospital.longitude,
+        emogList: hospital.emogList,
       });
     }
     harversineHospitalsData.sort((a, b) => a.distance - b.distance);
     harversineHospitalsData = harversineHospitalsData.slice(0, 20);
     //데이터 필터링 구간 종료//
-    console.log(harversineHospitalsData);
+    // console.log(harversineHospitalsData);
     //최종 추천 병원 배열 세팅
     const getRecommandHopitals = [];
 
@@ -117,6 +115,7 @@ export class HospitalsService {
         name: hospital.name,
         phone: hospital.phone,
         available_beds: hospital.available_beds,
+        emogList: hospital.emogList,
       });
 
       // console.log('duration', duration);
@@ -127,7 +126,28 @@ export class HospitalsService {
     getRecommandHopitals.sort((a, b) => a.duration - b.duration);
     const top10RecommandHospitals = getRecommandHopitals.slice(0, 10);
 
-    return top10RecommandHospitals;
+    let emogList = [];
+    for(let hospital of top10RecommandHospitals) {
+      emogList.push(hospital['emogList']);
+    }
+    const datas = await this.crawling.getNearbyHospitals(emogList);
+
+    const results = top10RecommandHospitals.map((hospital) => {
+      const result = { ...hospital };
+      for (const data of datas) {
+        if (data.slice(0,8) === hospital.emogList) {
+          result.data = data;
+        }
+      }
+      return result;
+    })
+
+    results.unshift(datas[0]);
+    
+    const end: any = new Date()
+    const t = end - start;
+    console.log(`응답 시간 : ${t}ms`);
+    return results;
   }
 
   //하버사인(데이터 필터링용)
