@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from 'src/reports/reports.repository';
 import { Crawling } from 'src/commons/middlewares/crawling';
@@ -50,10 +50,10 @@ export class HospitalsService {
   async getReccomendedHospitals(report_id: number) {
     //사용자 위치
     const userLocation = await this.reportRepository.userLocation(report_id);
+
     // report_id가 없는 경우 예외처리
-    if (!userLocation) {
-      throw new NotFoundException('해당 아이디의 위치를 찾을 수 없습니다.');
-    }
+    // 고민중
+    
     const startLat = userLocation[0];
     const startLng = userLocation[1];
 
@@ -70,7 +70,12 @@ export class HospitalsService {
     for (const hospital of HospitalsData) {
       const endLat = hospital.latitude;
       const endLng = hospital.longitude;
-      const distance = this.harversine(startLat, startLng, endLat, endLng);
+      const distance = await this.harversine(
+        startLat,
+        startLng,
+        endLat,
+        endLng,
+      );
       harversineHospitalsData.push({
         hospital_id: hospital.hospital_id,
         name: hospital.name,
@@ -84,7 +89,7 @@ export class HospitalsService {
     harversineHospitalsData.sort((a, b) => a.distance - b.distance);
     harversineHospitalsData = harversineHospitalsData.slice(0, 20);
     //데이터 필터링 구간 종료//
-
+    console.log(harversineHospitalsData);
     //최종 추천 병원 배열 세팅
     const getRecommandHopitals = [];
 
@@ -99,21 +104,30 @@ export class HospitalsService {
         endLat,
         endLng,
       );
+      if (!duration) {
+        throw new NotFoundException('해당 아이디의 위치를 찾을 수 없습니다.');
+      }
+      const minutes = Math.floor(duration / 60);
+      const seconds = Math.floor(duration % 60);
       getRecommandHopitals.push({
         duration: duration,
-        distance: hospital.distance,
+        minute: `${minutes}분`,
+        secondes: `${seconds}초`,
         hospital_id: hospital.hospital_id,
         name: hospital.name,
         phone: hospital.phone,
         available_beds: hospital.available_beds,
       });
-      console.log('duration', duration);
+
+      // console.log('duration', duration);
       //추후 결과값 반영시 `${hospital.name}까지 예상소요시간 ${Math.floor(duration/60)}분 ${Math.floor(duration%60)초}
     }
 
     //최단거리 병원 duration 낮은 순(단위:sec)
     getRecommandHopitals.sort((a, b) => a.duration - b.duration);
-    return getRecommandHopitals.slice(0, 10);
+    const top10RecommandHospitals = getRecommandHopitals.slice(0, 10);
+
+    return top10RecommandHospitals;
   }
 
   //하버사인(데이터 필터링용)
