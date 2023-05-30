@@ -35,10 +35,10 @@ export class HospitalsController {
   }
 
   @Get('/:report_id')
-  getReccomandHospitals(
+  getReccomendedHospitals(
     @Param('report_id') report_id: number,
   ): Promise<Hospitals[]> {
     this.logger.verbose('Getting all hospitals');
-    return this.hospitalsService.getReccomandHospitals(report_id);
+    return this.hospitalsService.getReccomendedHospitals(report_id);
   }
 }
