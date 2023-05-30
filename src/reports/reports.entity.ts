@@ -22,10 +22,10 @@ export class Reports extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   symptoms: string;
 
-  @Column({ type: 'decimal', nullable: false })
+  @Column('decimal', { precision: 15, scale: 10 })
   latitude: number;
 
-  @Column({ type: 'decimal', nullable: false })
+  @Column('decimal', { precision: 15, scale: 10 })
   longitude: number;
 
   @Column({ nullable: false, default: false })

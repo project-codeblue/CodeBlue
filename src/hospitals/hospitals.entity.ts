@@ -25,11 +25,14 @@ export class Hospitals extends BaseEntity {
   @Column({ type: 'int', nullable: false, default: 5 })
   available_beds: number;
 
-  @Column({ type: 'decimal', nullable: false })
+  @Column('decimal', { precision: 15, scale: 10 })
   latitude: number;
 
-  @Column({ type: 'decimal', nullable: false })
+  @Column('decimal', { precision: 15, scale: 10 })
   longitude: number;
+
+  @Column({ type: 'varchar', nullable: false })
+  emogList: string;
 
   @CreateDateColumn()
   createdAt: Date;
