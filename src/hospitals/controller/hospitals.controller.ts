@@ -28,7 +28,7 @@ export class HospitalsController {
   @Get('/:report_id')
   getRecommendedHospitals(
     @Param('report_id') report_id: number,
-  ): Promise<Hospitals[]> {
+  ): Promise<string[] | object> {
     this.logger.verbose('Getting Recommended hospitals');
     return this.hospitalsService.getRecommendedHospitals(report_id);
   }

@@ -22,12 +22,12 @@ export class KakaoMapService {
     return response.data.documents[0].region_1depth_name;
   }
 
-  async getDrivingDuration(
+  async getDrivingResult(
     startLat: number,
     startLng: number,
     endLat: number,
     endLng: number,
-  ): Promise<number> {
+  ): Promise<object> {
     const url = `https://apis-navi.kakaomobility.com/v1/directions?origin=${startLng},${startLat}&destination=${endLng},${endLat}`;
 
     const response = await axios.get(url, {
@@ -37,6 +37,7 @@ export class KakaoMapService {
     });
 
     const duration = response.data.routes[0].summary.duration;
-    return duration;
+    const distance = response.data.routes[0].summary.distance;
+    return { duration, distance };
   }
 }
