@@ -8,6 +8,8 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidator } from 'config/config.validator';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PatientsService } from './patients/service/patients.service';
+import { PatientsController } from './patients/controller/patients.controller';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     HospitalsModule,
     RequestsModule,
   ],
+  providers: [PatientsService],
+  controllers: [PatientsController],
 })
 export class AppModule implements NestModule {
   private readonly isDev: boolean =
