@@ -25,18 +25,11 @@ export class HospitalsController {
     return this.hospitalsService.getNationHospitals();
   }
 
-  // 이쪽 API는 Query로 배열 파라미터를 넘겨줘야 합니다.
-  @Get('nearby') // hospital/nearBy?emogList=A1100010&emogList=A1100011&emogList=A1400015
-  getNearbyHospitals(@Query('emogList') emogList: string[]): Promise<string[]> {
-    this.logger.verbose('Getting Nearby Hospitals');
-    return this.hospitalsService.getNearByHospitals(emogList);
-  }
-
   @Get('/:report_id')
-  getReccomendedHospitals(
+  getRecommendedHospitals(
     @Param('report_id') report_id: number,
   ): Promise<Hospitals[]> {
-    this.logger.verbose('Getting all hospitals');
-    return this.hospitalsService.getReccomendedHospitals(report_id);
+    this.logger.verbose('Getting Recommended hospitals');
+    return this.hospitalsService.getRecommendedHospitals(report_id);
   }
 }

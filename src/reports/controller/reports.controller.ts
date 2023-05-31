@@ -20,4 +20,9 @@ export class ReportsController {
       updatedLocation,
     );
   }
+
+  @Get('/createdummy')
+  createDummyReport() {
+    return this.reportsService.createDummyReport();
+  }
 }
