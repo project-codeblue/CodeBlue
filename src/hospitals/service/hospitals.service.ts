@@ -11,7 +11,7 @@ import { number } from 'joi';
 export class HospitalsService {
   constructor(
     private hospitalsRepository: HospitalsRepository,
-    private reportRepository: ReportsRepository,
+    private reportsRepository: ReportsRepository,
     private crawling: Crawling,
     private kakaoMapService: KakaoMapService,
     private openAPI: MedicalOpenAPI,
@@ -46,7 +46,7 @@ export class HospitalsService {
     const start: any = new Date();
 
     //사용자 위치
-    const userLocation = await this.reportRepository.userLocation(report_id);
+    const userLocation = await this.reportsRepository.userLocation(report_id);
 
     // report_id가 없는 경우 예외처리
     // 고민중
@@ -199,7 +199,7 @@ export class HospitalsService {
       },
     );
 
-    results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
+    // results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
 
     const end: any = new Date();
     const t = end - start;
