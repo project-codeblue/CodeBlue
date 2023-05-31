@@ -45,4 +45,15 @@ export class ReportsRepository extends Repository<Reports> {
     console.log('report: ', report);
     return [report.latitude, report.longitude];
   }
+
+  async createDummyReport(hospital_id, patient_id, symptom_level, symptom, latitude, longitude) {
+    await this.save({
+      hospital_id,
+      patient_id,
+      symptom_level,
+      symptoms: `[${symptom}]`,
+      latitude,
+      longitude
+  })
+  }
 }
