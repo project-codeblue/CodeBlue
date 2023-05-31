@@ -68,7 +68,7 @@ export class Crawling {
     await axios({
       url: url,
       method: 'GET',
-      timeout: 2000,
+      // timeout: 2000,
       responseType: 'arraybuffer',
     }).then(response => {
 

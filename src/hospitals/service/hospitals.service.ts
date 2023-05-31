@@ -136,7 +136,7 @@ export class HospitalsService {
       const result = { ...hospital };
       for (const data of datas) {
         if (data.slice(0,8) === hospital.emogList) {
-          result.data = data;
+          result['data'] = data;
         }
       }
       return result;
