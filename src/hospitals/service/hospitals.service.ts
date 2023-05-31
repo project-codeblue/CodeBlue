@@ -42,7 +42,7 @@ export class HospitalsService {
   }
 
   // 병원 추천
-  async getRecommendedHospitals(report_id: number): Promise<Hospitals[]> {
+  async getRecommendedHospitals(report_id: number): Promise<string[] | object> {
     const start: any = new Date();
 
     //사용자 위치
@@ -89,10 +89,10 @@ export class HospitalsService {
     //데이터 필터링 구간 종료//
     // console.log(harversineHospitalsData);
     //최종 추천 병원 배열 세팅
-    const getRecommandHopitals = [];
 
     // 카카오map API적용 최단시간 거리 계산
-    for (const hospital of harversineHospitalsData) {
+    console.time('kakaoMapAPI');
+    const promises = harversineHospitalsData.map(async (hospital) => {
       const endLat = hospital.latitude;
       const endLng = hospital.longitude;
 
@@ -109,7 +109,7 @@ export class HospitalsService {
       }
       const minutes = Math.floor(duration / 60);
       const seconds = Math.floor(duration % 60);
-      getRecommandHopitals.push({
+      return {
         duration,
         minute: `${minutes}분`,
         secondes: `${seconds}초`,
@@ -119,33 +119,35 @@ export class HospitalsService {
         phone: hospital.phone,
         available_beds: hospital.available_beds,
         emogList: hospital.emogList,
-      });
+      };
+    });
 
-      // console.log('duration', duration);
-      //추후 결과값 반영시 `${hospital.name}까지 예상소요시간 ${Math.floor(duration/60)}분 ${Math.floor(duration%60)초}
-    }
+    // 카카오 API 병렬 처리
+    const recommendedHospitals = await Promise.all(promises);
+    console.timeEnd('kakaoMapAPI');
 
     // 최단거리 병원 duration 낮은 순(단위:sec)
-    getRecommandHopitals.sort((a, b) => a.duration - b.duration);
-    const top10RecommandHospitals = getRecommandHopitals.slice(0, 10);
+    recommendedHospitals.sort((a, b) => a.duration - b.duration);
+    const top10RecommendedHospitals = recommendedHospitals.slice(0, 10);
 
     const emogList = [];
-    for (const hospital of top10RecommandHospitals) {
+    for (const hospital of top10RecommendedHospitals) {
       emogList.push(hospital['emogList']);
     }
     const datas = await this.crawling.getNearbyHospitals(emogList);
-
-    const results = top10RecommandHospitals.map((hospital) => {
-      const result = { ...hospital };
-      for (const data of datas) {
-        if (data.slice(0, 8) === hospital.emogList) {
-          result.data = data;
+    const results: Array<string | object> = top10RecommendedHospitals.map(
+      (hospital) => {
+        const result = { ...hospital };
+        for (const data of datas) {
+          if (data.slice(0, 8) === hospital.emogList) {
+            result['real_time_beds_info'] = data;
+          }
         }
-      }
-      return result;
-    });
+        return result;
+      },
+    );
 
-    results.unshift(datas[0]);
+    results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
 
     const end: any = new Date();
     const t = end - start;
