@@ -96,21 +96,24 @@ export class HospitalsService {
       const endLat = hospital.latitude;
       const endLng = hospital.longitude;
 
-      const duration = await this.kakaoMapService.getDrivingDuration(
+      const result = await this.kakaoMapService.getDrivingResult(
         startLat,
         startLng,
         endLat,
         endLng,
       );
-      if (!duration) {
+      const duration = result['duration'];
+      const distance = result['distance'];
+      if (!duration || !distance) {
         throw new NotFoundException('해당 아이디의 위치를 찾을 수 없습니다.');
       }
       const minutes = Math.floor(duration / 60);
       const seconds = Math.floor(duration % 60);
       getRecommandHopitals.push({
-        duration: duration,
+        duration,
         minute: `${minutes}분`,
         secondes: `${seconds}초`,
+        distance: `${distance / 1000}km`,
         hospital_id: hospital.hospital_id,
         name: hospital.name,
         phone: hospital.phone,
