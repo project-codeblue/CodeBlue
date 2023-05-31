@@ -42,18 +42,24 @@ export class ReportsRepository extends Repository<Reports> {
     const report = await this.findOne({
       where: { report_id },
     });
-    console.log('report: ', report);
     return [report.latitude, report.longitude];
   }
 
-  async createDummyReport(hospital_id, patient_id, symptom_level, symptom, latitude, longitude) {
+  async createDummyReport(
+    hospital_id,
+    patient_id,
+    symptom_level,
+    symptom,
+    latitude,
+    longitude,
+  ) {
     await this.save({
       hospital_id,
       patient_id,
       symptom_level,
       symptoms: `[${symptom}]`,
       latitude,
-      longitude
-  })
+      longitude,
+    });
   }
 }
