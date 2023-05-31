@@ -42,7 +42,6 @@ export class ReportsRepository extends Repository<Reports> {
     const report = await this.findOne({
       where: { report_id },
     });
-    console.log('report: ', report);
     return [report.latitude, report.longitude];
   }
 
