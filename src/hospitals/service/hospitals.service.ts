@@ -48,13 +48,15 @@ export class HospitalsService {
     const start: any = new Date();
 
     //사용자 위치
-    const userLocation = await this.reportsRepository.userLocation(report_id);
+    const report = await this.reportsRepository.findReport(report_id);
+    if (!report) {
+      throw new NotFoundException('해당 증상 보고서가 존재하지 않습니다.');
+    }
 
-    // report_id가 없는 경우 예외처리
-    // 고민중
+    console.log('report', report);
 
-    const startLat = userLocation[0];
-    const startLng = userLocation[1];
+    const startLat = queries['latitude'];
+    const startLng = queries['longitude'];
 
     let dataSource = [];
     let hospitals = [];

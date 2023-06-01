@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PatientsController } from './patients.controller';
-import { PatientInfoDTO } from '../dto/patientinfo.dto';
+import { PatientInfoDTO } from '../../reports/dto/patientinfo.dto';
 import { PatientsService } from '../service/patients.service';
-import { BloodType, Gender } from '../patients-info.enum';
+import { BloodType, Gender } from '../../reports/patients-info.enum';
 
 describe('PatientsController', () => {
   let controller: PatientsController;

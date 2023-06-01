@@ -6,31 +6,32 @@ import {
   CreateDateColumn,
   OneToMany,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
-import { Gender, BloodType } from './patients-info.enum';
+import { Gender, BloodType } from '../reports/patients-info.enum';
 import { Reports } from '../reports/reports.entity';
+import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Entity()
 export class Patients extends BaseEntity {
   @PrimaryGeneratedColumn()
   patients_id: number;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
   name: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   gender: Gender;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   age: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   blood_type: BloodType;
+
+  @Column({ type: 'int', nullable: false })
+  symptom_level: number;
 
   @CreateDateColumn()
   createdAt: Date;
-
-  @OneToMany(() => Reports, (report) => report.patient)
-  @JoinColumn({ name: 'report_id' })
-  reports: Reports;
 }

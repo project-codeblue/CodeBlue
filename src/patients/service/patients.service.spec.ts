@@ -7,7 +7,7 @@ import {
   circulatorySymptoms,
   injurySymptoms,
   otherSymptoms,
-} from '../constants/symtoms';
+} from '../../reports/constants/symtoms';
 
 describe('PatientsService', () => {
   let service: PatientsService;

@@ -7,10 +7,11 @@ import {
   neurologicalSymptoms,
   otherSymptoms,
   respiratorySymptoms,
-} from '../constants/symtoms';
+} from '../../reports/constants/symtoms';
 import { Patients } from '../patients.entity';
-import { PatientInfoDTO } from '../dto/patientinfo.dto';
+import { PatientInfoDTO } from '../../reports/dto/patientinfo.dto';
 import { PatientsRepository } from '../patients.repository';
+import { Reports } from 'src/reports/reports.entity';
 
 @Injectable()
 export class PatientsService {
@@ -88,20 +89,5 @@ export class PatientsService {
 
   private getSymptomScore(symptom: string, symptomCategory: Symptom): number {
     return symptomCategory[symptom] || 0;
-  }
-
-  async savePatientInfo(patientInfoDTO: PatientInfoDTO): Promise<Patients> {
-    const patient = new Patients();
-    patient.name = patientInfoDTO.name;
-    patient.gender = patientInfoDTO.gender;
-    patient.age = patientInfoDTO.age;
-    patient.blood_type = patientInfoDTO.blood_type;
-    // patient.symptoms = patientInfoDTO.symptoms;
-    // patient.location = patientInfoDTO.location;
-    // patient.hospital_id = patientInfoDTO.hospital_id;
-    // patient.symptom_level = this.calculateEmergencyLevel(
-    //   patientInfoDTO.symptoms,
-    // );
-    return this.patientsRepository.save(patient);
   }
 }
