@@ -22,12 +22,6 @@ export class Reports extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   symptoms: string;
 
-  @Column('decimal', { precision: 15, scale: 10 })
-  latitude: number;
-
-  @Column('decimal', { precision: 15, scale: 10 })
-  longitude: number;
-
   @Column({ nullable: false, default: false })
   is_sent: boolean;
 
@@ -40,7 +34,7 @@ export class Reports extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   patient_id: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   hospital_id: number;
 
   @ManyToOne(() => Patients, (patient) => patient.reports)

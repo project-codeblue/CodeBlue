@@ -9,17 +9,17 @@ export class ReportsController {
   private logger = new Logger('ReportsController');
   constructor(private readonly reportsService: ReportsService) {}
 
-  @Patch(':report_id')
-  updatePatientLocation(
-    @Param('report_id') report_id: number,
-    @Body() updatedLocation: UpdateReportDto,
-  ) {
-    this.logger.verbose('사용자 위치 변경 PATCH API');
-    return this.reportsService.updatePatientLocation(
-      report_id,
-      updatedLocation,
-    );
-  }
+  // @Patch(':report_id')
+  // updatePatientLocation(
+  //   @Param('report_id') report_id: number,
+  //   @Body() updatedLocation: UpdateReportDto,
+  // ) {
+  //   this.logger.verbose('사용자 위치 변경 PATCH API');
+  //   return this.reportsService.updatePatientLocation(
+  //     report_id,
+  //     updatedLocation,
+  //   );
+  // }
 
   @Get('/createdummy')
   createDummyReport() {
