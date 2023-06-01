@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
 import { Reports } from '../reports.entity';
 import { UpdateReportDto } from '../dto/update-report.dto';
@@ -67,26 +62,7 @@ export class ReportsService {
                           '사지 부종', '혈압 상승', '빈혈', '황달', '목의 부종',
                           '혈액 흘림', '혈뇨', '점막 출혈', '근육통', '화상',
                           '코피', '고열', '음식 섭취 곤란', '알레르기 반응', '가려운 발진',
-                          '체중감소',];
-    let latitude = 35;
-    let longitude = 127;
-    const count = 0;
-    for (let i = 40; i <= 79; i++) {
-      // 병원
-      for (let j = 1; j <= 5; j++) {
-        // 환자
-        for (let k = 1; k <= 5; k++) {
-          // 증상도
-
-    const symptom_list = ['소실된 의식', '심부전', '뇌경색 증상', '사지 마비', '의식 변화',
-                          '기억 상실', '발작', '혼란 상태', '가슴 통증', '청각 손실',
-                          '시야 손실', '감각 소실', '경련', '저림 혹은 저속한 손발', '심한 두통',
-                          '기운 없음', '오심', '구토', '호흡곤란', '호흡음',
-                          '흉부 압박감', '코막힘', '기침', '저체온증', '혈압 저하',
-                          '사지 부종', '혈압 상승', '빈혈', '황달', '목의 부종',
-                          '혈액 흘림', '혈뇨', '점막 출혈', '근육통', '화상',
-                          '코피', '고열', '음식 섭취 곤란', '알레르기 반응', '가려운 발진',
-                          '체중감소',];
+                          '체중감소'];
     let latitude = 35; let longitude = 127; const count = 0;
     for (let i = 40; i <= 79; i++) { // 병원
       for (let j = 1; j <= 5; j++) { // 환자
