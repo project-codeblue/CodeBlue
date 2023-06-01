@@ -13,7 +13,7 @@ export class RequestsService {
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
     private readonly requestsRepository: RequestsRepository,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
+    @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
   ) {}
 
   async getAllRequests(): Promise<Reports[]> {

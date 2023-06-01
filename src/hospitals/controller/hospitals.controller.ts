@@ -16,8 +16,9 @@ export class HospitalsController {
   @Get('/:report_id')
   getRecommendedHospitals(
     @Param('report_id') report_id: number,
+    @Query() queries: object,
   ): Promise<string[] | object> {
     this.logger.verbose('Getting Recommended hospitals');
-    return this.hospitalsService.getRecommendedHospitals(report_id);
+    return this.hospitalsService.getRecommendedHospitals(report_id, queries);
   }
 }

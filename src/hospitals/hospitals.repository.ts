@@ -37,9 +37,31 @@ export class HospitalsRepository extends Repository<Hospitals> {
     });
   }
 
-  async AllHospitals(): Promise<Hospitals[]> {
-    //병원 위치(복수)
-    return this.find();
+  async getHospitalsWithinRadius(
+    startLat: number,
+    startLng: number,
+    radius: number,
+  ) {
+    return await this.query(
+      `
+        SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+        point) as 'distance'
+        FROM geohospital
+        WHERE ST_Distance_Sphere(POINT(${startLng}, ${startLat}), point) < (${radius})
+        order by distance;
+      `,
+    );
+  }
+
+  async getHospitalsWithoutRadius(startLng: number, startLat: number) {
+    return await this.query(
+      `
+          SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+          point) as 'distance'
+          FROM geohospital
+          order by distance;
+      `,
+    );
   }
 
   //harversine
