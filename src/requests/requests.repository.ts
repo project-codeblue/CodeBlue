@@ -14,7 +14,7 @@ export class RequestsRepository extends Repository<Reports> {
   }
 
   async getSearchRequests(queries: object): Promise<Reports[]> {
-    let query = this.createQueryBuilder('reports')
+    const query = this.createQueryBuilder('reports')
       .leftJoinAndSelect('reports.hospital', 'hospital')
       .where('1 = 1')
       .where('is_sent = 1');

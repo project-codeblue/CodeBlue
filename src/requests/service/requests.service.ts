@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { RequestsRepository } from '../../requests/requests.repository';
@@ -12,7 +17,7 @@ export class RequestsService {
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
     private readonly requestsRepository: RequestsRepository,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
+    @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
   ) {}
 
   async getAllRequests(): Promise<Reports[]> {
