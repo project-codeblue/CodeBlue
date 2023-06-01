@@ -1,4 +1,4 @@
-import { BloodType, Gender } from '../patients-info.enum';
+import { BloodType, Gender } from '../reports.enum';
 
 export class PatientInfoDTO {
   name: string;

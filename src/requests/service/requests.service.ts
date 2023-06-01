@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
-import { RequestsRepository } from '../../requests/requests.repository';
 import { EntityManager, Brackets } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Reports } from 'src/reports/reports.entity';
@@ -17,17 +16,16 @@ export class RequestsService {
   constructor(
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
-    private readonly requestsRepository: RequestsRepository,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
   ) {}
 
   async getAllRequests(): Promise<Reports[]> {
-    const allReports = await this.requestsRepository.getAllRequests();
-    return allReports;
+    // is_sent === true인 증상 보고서만 가져옴
+    return await this.reportsRepository.getAllRequests();
   }
 
   async getSearchRequests(queries: object): Promise<Reports[]> {
-    const query = this.requestsRepository
+    const query = this.reportsRepository
       .createQueryBuilder('reports')
       .leftJoinAndSelect('reports.hospital', 'hospital')
       .where('1 = 1')
@@ -112,6 +110,12 @@ export class RequestsService {
               HttpStatus.SERVICE_UNAVAILABLE,
             );
           }
+
+          // 증상 보고서에 hospital_id 추가
+          await this.reportsRepository.addTargetHospital(
+            report_id,
+            hospital_id,
+          );
 
           // 해당 병원의 available_beds를 1 감소
           await this.hospitalsRepository.updateAvailableBeds(hospital_id);
