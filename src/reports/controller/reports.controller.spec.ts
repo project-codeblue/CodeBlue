@@ -21,25 +21,25 @@ describe('ReportsController Unit Testing', () => {
     reportsController = moduleRef.get(ReportsController);
   });
 
-  describe('updatePatientLocation()', () => {
+  describe('updateReportPatientInfo()', () => {
     it('should return object', async () => {
       const result = {};
       jest
-        .spyOn(reportsService, 'updatePatientLocation')
+        .spyOn(reportsService, 'updateReportPatientInfo')
         .mockImplementation(() => result);
 
       const report_id = 1;
-      const updatedLocation = new UpdateReportDto();
+      const updatedPatientInfo = new UpdateReportDto();
 
       expect(
-        await reportsController.updatePatientLocation(
+        await reportsController.updateReportPatientInfo(
           report_id,
-          updatedLocation,
+          updatedPatientInfo,
         ),
       ).toBe(result);
-      expect(reportsService.updatePatientLocation).toHaveBeenCalledWith(
+      expect(reportsService.updateReportPatientInfo).toHaveBeenCalledWith(
         report_id,
-        updatedLocation,
+        updatedPatientInfo,
       );
     });
   });

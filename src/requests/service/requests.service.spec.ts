@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing';
 import { RequestsService } from './requests.service';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
-import { RequestsRepository } from '../requests.repository';
 import { EntityManager } from 'typeorm';
 import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
@@ -12,7 +11,6 @@ describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
   let hospitalsRepository: HospitalsRepository;
   let reportsRepository: ReportsRepository;
-  let requestsRepository: RequestsRepository;
   let entityManager: EntityManager;
 
   beforeEach(async () => {
@@ -34,13 +32,6 @@ describe('RequestsService Unit Testing', () => {
           },
         },
         {
-          provide: RequestsRepository,
-          useValue: {
-            getAllRequests: jest.fn(),
-            getSearchRequests: jest.fn(),
-          },
-        },
-        {
           provide: EntityManager,
           useValue: {
             transaction: jest
@@ -57,7 +48,6 @@ describe('RequestsService Unit Testing', () => {
     requestsService = moduleRef.get(RequestsService);
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
-    requestsRepository = moduleRef.get(RequestsRepository);
     entityManager = moduleRef.get(EntityManager);
   });
 
@@ -65,11 +55,11 @@ describe('RequestsService Unit Testing', () => {
     it('getAllRequests request must be performed successfully', async () => {
       const allReports = [];
       jest
-        .spyOn(requestsRepository, 'getSearchRequests')
-        .mockResolvedValueOnce(allReports as Reports[])
+        .spyOn(reportsRepository, 'getAllRequests')
+        .mockResolvedValueOnce(allReports as Reports[]);
 
       expect(await requestsService.getAllRequests()).toBe(allReports);
-      expect(requestsRepository.getAllRequests).toBeCalledTimes(1);
+      expect(reportsRepository.getAllRequests).toBeCalledTimes(1);
     });
   });
 
@@ -78,17 +68,19 @@ describe('RequestsService Unit Testing', () => {
       const allReports = [];
       jest
         .spyOn(requestsRepository, 'getSearchRequests')
-        .mockResolvedValueOnce(allReports as Reports[])
+        .mockResolvedValueOnce(allReports as Reports[]);
 
       const queries: object = {
         date: '2023-05-27~2023-05-28',
         symptoms: '체중감소',
-        symptom_level: 1
-      }
+        symptom_level: 1,
+      };
 
       expect(await requestsService.getSearchRequests(queries)).toBe(allReports);
       expect(requestsRepository.getSearchRequests).toBeCalledTimes(1);
-      expect(requestsRepository.getSearchRequests).toHaveBeenCalledWith(queries);
+      expect(requestsRepository.getSearchRequests).toHaveBeenCalledWith(
+        queries,
+      );
     });
   });
 
@@ -112,6 +104,9 @@ describe('RequestsService Unit Testing', () => {
         .spyOn(reportsRepository, 'findReport')
         .mockResolvedValueOnce(report as Reports);
       jest
+        .spyOn(reportsRepository, 'addTargetHospital')
+        .mockResolvedValueOnce(undefined);
+      jest
         .spyOn(hospitalsRepository, 'updateAvailableBeds')
         .mockResolvedValueOnce(undefined);
       jest
@@ -128,6 +123,10 @@ describe('RequestsService Unit Testing', () => {
         hospital_id,
       );
       expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
+      expect(hospitalsRepository.updateAvailableBeds).toHaveBeenCalledWith(
+        report_id,
+        hospital_id,
+      );
       expect(hospitalsRepository.updateAvailableBeds).toHaveBeenCalledWith(
         hospital_id,
       );
@@ -227,5 +226,4 @@ describe('RequestsService Unit Testing', () => {
       ).rejects.toThrowError(HttpException);
     });
   });
-
 });
