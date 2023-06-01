@@ -37,6 +37,6 @@ export class Hospitals extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Reports, (report) => report.hospital)
-  reports: Reports[];
+  @OneToMany(() => Reports, (report) => report.hospital_id)
+  report_id: Reports[];
 }

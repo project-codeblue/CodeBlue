@@ -41,7 +41,7 @@ export class Reports extends BaseEntity {
   @JoinColumn({ name: 'patient_id' })
   patient: Patients;
 
-  @ManyToOne(() => Hospitals, (hospital) => hospital.reports)
+  @ManyToOne(() => Hospitals, (hospital) => hospital.report_id)
   @JoinColumn({ name: 'hospital_id' })
   hospital: Hospitals;
 }

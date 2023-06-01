@@ -8,7 +8,6 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidator } from 'config/config.validator';
 import { ScheduleModule } from '@nestjs/schedule';
-import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { PatientsModule } from './patients/patients.module';
     ReportsModule,
     HospitalsModule,
     RequestsModule,
-    PatientsModule,
   ],
 })
 export class AppModule implements NestModule {

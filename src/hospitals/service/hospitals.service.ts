@@ -55,8 +55,8 @@ export class HospitalsService {
 
     console.log('report', report);
 
-    const startLat = parseFloat(queries['latitude']);
-    const startLng = parseFloat(queries['longitude']);
+    const startLat = queries['latitude'];
+    const startLng = queries['longitude'];
 
     let dataSource = [];
     let hospitals = [];
