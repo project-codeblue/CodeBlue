@@ -41,16 +41,6 @@ export class ReportsRepository extends Repository<Reports> {
     return await report.save();
   }
 
-  // hospital 조회시 사용하는 메서드
-  // async userLocation(report_id: number) {
-  //   //사용자 위치(단일)
-  //   const report = await this.findOne({
-  //     where: { report_id },
-  //   });
-
-  //   return [report.latitude, report.longitude];
-  // }
-
   async createDummyReport(
     hospital_id: number,
     patient_id: number,
@@ -67,5 +57,9 @@ export class ReportsRepository extends Repository<Reports> {
       latitude,
       longitude,
     });
+  }
+
+  async getAllRequests(): Promise<Reports[]> {
+    return await this.find({ where: { is_sent: true } });
   }
 }
