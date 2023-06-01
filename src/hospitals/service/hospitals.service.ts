@@ -11,7 +11,7 @@ import { number } from 'joi';
 export class HospitalsService {
   constructor(
     private hospitalsRepository: HospitalsRepository,
-    private reportRepository: ReportsRepository,
+    private reportsRepository: ReportsRepository,
     private crawling: Crawling,
     private kakaoMapService: KakaoMapService,
     private openAPI: MedicalOpenAPI,
@@ -46,7 +46,7 @@ export class HospitalsService {
     const start: any = new Date();
 
     //사용자 위치
-    const userLocation = await this.reportRepository.userLocation(report_id);
+    const userLocation = await this.reportsRepository.userLocation(report_id);
 
     // report_id가 없는 경우 예외처리
     // 고민중
@@ -59,6 +59,58 @@ export class HospitalsService {
       // null은 사용자가 없는 값이라고 명시적으로 표기하는 것이기 때문에 값이 실제로 없는 경우는 undefined 반환
       throw new NotFoundException('현재 위치가 정상적으로 반영되지않았습니다.');
     }
+
+
+    /* <-- MySQL Spatial Index 방식 (start) -->
+    
+    let dataSource = [];
+    dataSource = await this.hospitalsRepository.query(
+      `
+        SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+        point) as 'distance'
+        FROM geohospital
+        WHERE ST_Distance_Sphere(POINT(${startLng}, ${startLat}), point) < (30 * 1000)
+        order by distance;
+      `
+    );
+    let hospitals = Object.entries(dataSource);
+
+    hospitals = hospitals.slice(0, 20);
+
+    // 카카오map API적용 최단시간 거리 계산
+    console.time('kakaoMapAPI');
+    const promises = hospitals.map(async (hospital) => {
+      const endLat = hospital[1]['latitude'];
+      const endLng = hospital[1]['longitude'];
+
+      const result = await this.kakaoMapService.getDrivingResult(
+        startLat,
+        startLng,
+        endLat,
+        endLng,
+      );
+      const duration = result['duration'];
+      const distance = result['distance'];
+      if (!duration || !distance) {
+        throw new NotFoundException('해당 아이디의 위치를 찾을 수 없습니다.');
+      }
+      const minutes = Math.floor(duration / 60);
+      const seconds = Math.floor(duration % 60);
+      return {
+        duration,
+        minute: `${minutes}분`,
+        secondes: `${seconds}초`,
+        distance: `${distance / 1000}km`,
+        hospital_id: hospital[1]['hospital_id'],
+        name: hospital[1]['name'],
+        phone: hospital[1]['phone'],
+        available_beds: hospital[1]['available_beds'],
+        emogList: hospital[1]['emogList'],
+      };
+    });
+
+    <-- MySQL Spatial Index 방식 (end) --> */
+
 
     //데이터 필터링 구간 시작//
     let harversineHospitalsData = [];
@@ -147,7 +199,7 @@ export class HospitalsService {
       },
     );
 
-    results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
+    // results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
 
     const end: any = new Date();
     const t = end - start;
