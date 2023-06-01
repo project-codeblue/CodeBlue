@@ -90,7 +90,7 @@ export class HospitalsService {
     // console.log(harversineHospitalsData);
     //최종 추천 병원 배열 세팅
 
-    // 카카오map API적용 최단시간 거리 계산
+    // 카카오map API적용 최단시간 거리 계산 병렬 처리
     console.time('kakaoMapAPI');
     const promises = harversineHospitalsData.map(async (hospital) => {
       const endLat = hospital.latitude;
@@ -122,7 +122,6 @@ export class HospitalsService {
       };
     });
 
-    // 카카오 API 병렬 처리
     const recommendedHospitals = await Promise.all(promises);
     console.timeEnd('kakaoMapAPI');
 
