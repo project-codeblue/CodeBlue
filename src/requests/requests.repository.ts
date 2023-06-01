@@ -1,6 +1,7 @@
 import { Repository, DataSource, Like, Brackets } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Reports } from '../reports/reports.entity';
+import * as date from 'date-and-time';
 
 @Injectable()
 export class RequestsRepository extends Repository<Reports> {
@@ -21,7 +22,21 @@ export class RequestsRepository extends Repository<Reports> {
 
     if (queries['date']) {
       // URL 쿼리에 날짜가 존재하면 실행
-      const dates = queries['date'].split('~'); // '~' 를 기준으로 날짜 범위 구분
+      const dates: string[] = queries['date'].split('~'); // '~' 를 기준으로 날짜 범위 구분
+
+      const regex = /^\d{4}-\d{2}-\d{2}$/;
+      for (let date of dates) {
+        if(!regex.test(date)) {
+          throw new Error('날짜 형식이 맞지 않습니다');
+        }
+      }
+
+      if (dates.length === 1) {
+        const temp = new Date(dates[0]);
+        temp.setDate(temp.getDate() + 1);
+        dates.push(date.format(temp, 'YYYY-MM-DD'));
+      }
+      
       await query.andWhere(
         new Brackets((qb) => {
           qb.andWhere(

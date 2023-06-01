@@ -35,6 +35,7 @@
     "class-validator": "^0.14.0",
     "cron": "^2.3.1",
     "cross-env": "^7.0.3",
+    "date-and-time": "^3.0.0",
     "dotenv": "^16.0.3",
     "joi": "^17.9.2",
     "js-yaml": "^4.1.0",
