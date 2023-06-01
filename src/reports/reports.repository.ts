@@ -62,4 +62,16 @@ export class ReportsRepository extends Repository<Reports> {
   async getAllRequests(): Promise<Reports[]> {
     return await this.find({ where: { is_sent: true } });
   }
+
+  async addTargetHospital(
+    report_id: number,
+    hospital_id: number,
+  ): Promise<void> {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+
+    report.hospital_id = hospital_id;
+    await report.save();
+  }
 }

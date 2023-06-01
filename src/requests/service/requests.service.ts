@@ -111,6 +111,12 @@ export class RequestsService {
             );
           }
 
+          // 증상 보고서에 hospital_id 추가
+          await this.reportsRepository.addTargetHospital(
+            report_id,
+            hospital_id,
+          );
+
           // 해당 병원의 available_beds를 1 감소
           await this.hospitalsRepository.updateAvailableBeds(hospital_id);
 

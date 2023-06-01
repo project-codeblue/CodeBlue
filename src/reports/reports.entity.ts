@@ -43,7 +43,7 @@ export class Reports extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   hospital_id: number;
 
   @ManyToOne(() => Hospitals, (hospital) => hospital.reports)
