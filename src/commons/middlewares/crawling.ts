@@ -5,6 +5,7 @@ import axios from 'axios';
 
 @Injectable()
 export class Crawling {
+  // 메디서비스 크롤링
   async getLocalHospitaldata(site: string) {
     const start: any = new Date();
 
@@ -60,6 +61,7 @@ export class Crawling {
     return results;
   }
 
+  // 종합상황판 크롤링
   async getNearbyHospitals(emogList: string[]) {
     const start: any = new Date();
 
