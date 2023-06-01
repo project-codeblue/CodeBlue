@@ -9,17 +9,13 @@ import {
   respiratorySymptoms,
 } from '../constants/symtoms';
 import { Patients } from '../patients.entity';
-import { Repository } from 'typeorm';
 import { PatientInfoDTO } from '../dto/patientinfo.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+import { PatientsRepository } from '../patients.repository';
 
 @Injectable()
 export class PatientsService {
   //저장하기 위한 주입
-  constructor(
-    @InjectRepository(Patients)
-    private patientsRepository: Repository<Patients>,
-  ) {}
+  constructor(private patientsRepository: PatientsRepository) {}
 
   //test를 위한 정의
   private symptomCategories: Symptom[];

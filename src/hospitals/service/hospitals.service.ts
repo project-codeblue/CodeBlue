@@ -1,11 +1,10 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { KakaoMapService } from '../../commons/utils/kakao-map.service';
 import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
-import { number } from 'joi';
 
 @Injectable()
 export class HospitalsService {
@@ -140,7 +139,7 @@ export class HospitalsService {
     // console.log(harversineHospitalsData);
     //최종 추천 병원 배열 세팅
 
-    // 카카오map API적용 최단시간 거리 계산
+    // 카카오map API적용 최단시간 거리 계산 병렬 처리
     console.time('kakaoMapAPI');
     const promises = harversineHospitalsData.map(async (hospital) => {
       const endLat = hospital.latitude;
@@ -172,7 +171,6 @@ export class HospitalsService {
       };
     });
 
-    // 카카오 API 병렬 처리
     const recommendedHospitals = await Promise.all(promises);
     console.timeEnd('kakaoMapAPI');
 
