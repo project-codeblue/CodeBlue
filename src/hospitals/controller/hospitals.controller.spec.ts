@@ -8,15 +8,17 @@ describe('HospitalsController Unit Testing', () => {
 
   beforeEach(async () => {
     const mockHospitalsService = {
-        getHospitals: jest.fn().mockReturnValue({}),
-        getLocalHospitals: jest.fn().mockReturnValue({}),
-        getNationHospitals: jest.fn().mockReturnValue({}),
-        getRecommendedHospitals: jest.fn().mockReturnValue({}),
+      getHospitals: jest.fn().mockReturnValue({}),
+      getLocalHospitals: jest.fn().mockReturnValue({}),
+      getNationHospitals: jest.fn().mockReturnValue({}),
+      getRecommendedHospitals: jest.fn().mockReturnValue({}),
     };
 
     const moduleRef = await Test.createTestingModule({
       controllers: [HospitalsController],
-      providers: [{ provide: HospitalsService, useValue: mockHospitalsService }],
+      providers: [
+        { provide: HospitalsService, useValue: mockHospitalsService },
+      ],
     }).compile();
 
     hospitalsController = moduleRef.get(HospitalsController);
@@ -29,7 +31,7 @@ describe('HospitalsController Unit Testing', () => {
       jest
         .spyOn(hospitalsService, 'getHospitals')
         .mockImplementation(() => allHospitals);
-      
+
       expect(await hospitalsController.getHospitals()).toBe(allHospitals);
       expect(hospitalsService.getHospitals).toBeCalledTimes(1);
     });
@@ -41,8 +43,10 @@ describe('HospitalsController Unit Testing', () => {
       jest
         .spyOn(hospitalsService, 'getLocalHospitals')
         .mockImplementation(() => localHospitals);
-      
-      expect(await hospitalsController.getLocalHospitals()).toBe(localHospitals);
+
+      expect(await hospitalsController.getLocalHospitals()).toBe(
+        localHospitals,
+      );
       expect(hospitalsService.getLocalHospitals).toBeCalledTimes(1);
     });
   });
@@ -53,8 +57,10 @@ describe('HospitalsController Unit Testing', () => {
       jest
         .spyOn(hospitalsService, 'getNationHospitals')
         .mockImplementation(() => nationHospitals);
-      
-      expect(await hospitalsController.getNationHospitals()).toBe(nationHospitals);
+
+      expect(await hospitalsController.getNationHospitals()).toBe(
+        nationHospitals,
+      );
       expect(hospitalsService.getNationHospitals).toBeCalledTimes(1);
     });
   });
@@ -65,8 +71,10 @@ describe('HospitalsController Unit Testing', () => {
       jest
         .spyOn(hospitalsService, 'getRecommendedHospitals')
         .mockImplementation(() => recommendedHospitals);
-      
-      expect(await hospitalsController.getRecommendedHospitals()).toBe(recommendedHospitals);
+
+      expect(await hospitalsController.getRecommendedHospitals()).toBe(
+        recommendedHospitals,
+      );
       expect(hospitalsService.getRecommendedHospitals).toBeCalledTimes(1);
     });
   });
