@@ -52,7 +52,7 @@ export class ReportsRepository extends Repository<Reports> {
     symptom_level: number,
     symptom: string[],
     latitude: number,
-    longitude: number
+    longitude: number,
   ) {
     await this.save({
       hospital_id,
