@@ -48,15 +48,13 @@ export class HospitalsService {
     const start: any = new Date();
 
     //사용자 위치
-    const report = await this.reportsRepository.findReport(report_id);
-    if (!report) {
-      throw new NotFoundException(
-        `해당 아이디:${report_id}는 존재하지 않습니다.`,
-      );
-    }
-    //parseFloat = 문자열을 부동 소수점 숫자로 변환
-    const startLat = parseFloat(queries['latitude']);
-    const startLng = parseFloat(queries['longitude']);
+    const userLocation = await this.reportsRepository.userLocation(report_id);
+
+    // report_id가 없는 경우 예외처리
+    // 고민중
+
+    const startLat = userLocation[0];
+    const startLng = userLocation[1];
 
     let dataSource = [];
     let hospitals = [];
@@ -149,5 +147,23 @@ export class HospitalsService {
     const t = end - start;
     console.log(`응답 시간 : ${t}ms`);
     return results;
+  }
+
+  //하버사인(데이터 필터링용)
+  async harversine(
+    startLat: number,
+    startLng: number,
+    endLat: number,
+    endLng: number,
+  ) {
+    const R = 6371e3;
+    const φ1 = await this.hospitalsRepository.ConvertRadians(startLat);
+    const φ2 = await this.hospitalsRepository.ConvertRadians(endLat); //경도만 라디안으로 각각 전환
+    const Δφ = await this.hospitalsRepository.ConvertRadians(endLat - startLat); //경도,위도 모두 차이값을 라디안으로 전환
+    const Δλ = await this.hospitalsRepository.ConvertRadians(endLng - startLng);
+    const arcLenght = await this.hospitalsRepository.arcLength(φ1, φ2, Δφ, Δλ);
+    const centralAngle = await this.hospitalsRepository.centralAngle(arcLenght);
+    const distance = R * centralAngle;
+    return distance;
   }
 }

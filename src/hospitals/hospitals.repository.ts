@@ -63,4 +63,20 @@ export class HospitalsRepository extends Repository<Hospitals> {
       `,
     );
   }
+
+  //harversine
+  async ConvertRadians(degree: number) {
+    return degree * (Math.PI / 180);
+  }
+  async arcLength(φ1: number, φ2: number, Δφ: number, Δλ: number) {
+    const arcLength =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    return arcLength;
+  }
+  async centralAngle(arcLength: number) {
+    const centralAngle =
+      2 * Math.atan2(Math.sqrt(arcLength), Math.sqrt(1 - arcLength));
+    return centralAngle;
+  }
 }
