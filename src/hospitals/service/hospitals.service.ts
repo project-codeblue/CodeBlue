@@ -17,7 +17,7 @@ export class HospitalsService {
   ) {}
 
   async getHospitals(): Promise<Hospitals[]> {
-    return await this.hospitalsRepository.getHospitals();
+    return this.hospitalsRepository.getHospitals();
   }
 
   // 지역 병상 데이터 조회 (string[], 메디서비스 기반)
@@ -58,41 +58,31 @@ export class HospitalsService {
 
     let dataSource = [];
     let hospitals = [];
+    const max_count = queries['max_count']
+      ? parseInt(queries['max_count'])
+      : 20;
+
     if (queries['radius']) {
       const radius = parseInt(queries['radius']) * 1000; // radius in meters
-      dataSource = await this.hospitalsRepository.query(
-        `
-          SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
-          point) as 'distance'
-          FROM geohospital
-          WHERE ST_Distance_Sphere(POINT(${startLng}, ${startLat}), point) < (${radius})
-          order by distance;
-        `,
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        startLat,
+        startLng,
+        radius,
       );
-      hospitals = Object.entries(dataSource);
-      if (queries['max_count']) {
-        const max_count = parseInt(queries['max_count']);
-        // 반경 내에 있는 병원이 max_count보다 적은 경우
-        if (hospitals.length > max_count) {
-          hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
-        }
-      }
     } else {
-      dataSource = await this.hospitalsRepository.query(
-        `
-          SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
-          point) as 'distance'
-          FROM geohospital
-          order by distance;
-        `,
+      dataSource = await this.hospitalsRepository.getHospitalsWithoutRadius(
+        startLng,
+        startLat,
       );
-      hospitals = Object.entries(dataSource);
-      if (queries['max_count']) {
-        const max_count = parseInt(queries['max_count']);
-        hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
-      } else {
-        hospitals = hospitals.slice(0, 20); // 20개만 추천
-      }
+    }
+    if (dataSource.length === 0) {
+      throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
+    }
+
+    hospitals = Object.entries(dataSource);
+
+    if (max_count < hospitals.length) {
+      hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
     }
 
     // 카카오map API적용 최단시간 거리 계산
