@@ -23,12 +23,13 @@ export class ReportsRepository extends Repository<Reports> {
       where: { report_id },
     });
 
-    const { name, age, blood_type, gender } = updatedPatientInfo;
-    if (name) report.name = name;
-    if (age) report.age = age;
-    if (blood_type) report.blood_type = blood_type;
-    if (gender) report.gender = gender;
-    console.log('report: ', report);
+    // updatedPatientInfo의 필드를 하나씩 꺼내서 report에 넣어준다.
+    for (const field in updatedPatientInfo) {
+      if (updatedPatientInfo.hasOwnProperty(field)) {
+        report[field] = updatedPatientInfo[field];
+      }
+    }
+
     return await report.save();
   }
 
