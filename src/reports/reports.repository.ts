@@ -47,12 +47,12 @@ export class ReportsRepository extends Repository<Reports> {
   // }
 
   async createDummyReport(
-    hospital_id,
-    patient_id,
-    symptom_level,
-    symptom,
-    latitude,
-    longitude,
+    hospital_id: number,
+    patient_id: number,
+    symptom_level: number,
+    symptom: string[],
+    latitude: number,
+    longitude: number,
   ) {
     await this.save({
       hospital_id,

@@ -58,7 +58,7 @@ export class ReportsService {
   // 더미 데이터 생성 API (추후 제거 예정)
   async createDummyReport() {
     const start: any = new Date();
-    const symptom_list = [
+    const symptom_list: string[] = [
       '소실된 의식',
       '심부전',
       '뇌경색 증상',
@@ -111,13 +111,14 @@ export class ReportsService {
         for (let k = 1; k <= 5; k++) {
           // 증상도
           for (let l = 0; l < 100; l++) {
-            const hospital_id = i;
-            const patient_id = j;
-            const symptom_level = k;
-            const symptom = [];
-            const symptom_count = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+            const hospital_id: number = i;
+            const patient_id: number = j;
+            const symptom_level: number = k;
+            const symptom: string[] = [];
+            const symptom_count: number =
+              Math.floor(Math.random() * (5 - 1 + 1)) + 1;
             while (symptom.length < symptom_count) {
-              const num = Math.floor(Math.random() * (40 - 0 + 1)) + 0;
+              const num: number = Math.floor(Math.random() * (40 - 0 + 1)) + 0;
               if (symptom.every((e) => symptom_list[num] !== e)) {
                 symptom.push(symptom_list[num]);
               }
@@ -143,7 +144,7 @@ export class ReportsService {
       }
     }
     const end: any = new Date();
-    const t = end - start;
+    const t: number = end - start;
     console.log(`소요시간 : ${t / 1000}초`);
     console.log(`${count}개 생성`);
   }
