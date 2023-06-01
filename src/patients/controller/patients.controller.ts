@@ -7,11 +7,14 @@ export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
   @Post()
-  createReport(@Body() reportDto: PatientInfoDTO) {
-    const { symptoms } = reportDto;
-    const emergencyLevel =
-      this.patientsService.calculateEmergencyLevel(symptoms);
-
-    return { emergencyLevel };
+  async createReport(@Body() reportDto: PatientInfoDTO) {
+    try {
+      const patient = await this.patientsService.savePatientInfo(reportDto);
+      // 환자 정보 저장 성공
+      return { success: true, patient };
+    } catch (error) {
+      // 환자 정보 저장 실패
+      return { success: false, error: 'Failed to save patient information' };
+    }
   }
 }

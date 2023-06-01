@@ -8,9 +8,19 @@ import {
   otherSymptoms,
   respiratorySymptoms,
 } from '../constants/symtoms';
+import { Patients } from '../patients.entity';
+import { Repository } from 'typeorm';
+import { PatientInfoDTO } from '../dto/patientinfo.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PatientsService {
+  //저장하기 위한 주입
+  constructor(
+    @InjectRepository(Patients)
+    private patientsRepository: Repository<Patients>,
+  ) {}
+
   //test를 위한 정의
   private symptomCategories: Symptom[];
 
@@ -41,7 +51,7 @@ export class PatientsService {
 
       const score = this.getSymptomScore(
         symptom,
-        symptomCategories[categoryIndex],
+        this.symptomCategories[categoryIndex],
       );
       //같은 카테고리면 가중치 주기
       const count = symptoms.filter((s) => s === symptom).length;
@@ -82,5 +92,20 @@ export class PatientsService {
 
   private getSymptomScore(symptom: string, symptomCategory: Symptom): number {
     return symptomCategory[symptom] || 0;
+  }
+
+  async savePatientInfo(patientInfoDTO: PatientInfoDTO): Promise<Patients> {
+    const patient = new Patients();
+    patient.name = patientInfoDTO.name;
+    patient.gender = patientInfoDTO.gender;
+    patient.age = patientInfoDTO.age;
+    patient.blood_type = patientInfoDTO.blood_type;
+    patient.symptoms = patientInfoDTO.symptoms;
+    patient.location = patientInfoDTO.location;
+    patient.hospital_id = patientInfoDTO.hospital_id;
+    patient.symptom_level = this.calculateEmergencyLevel(
+      patientInfoDTO.symptoms,
+    );
+    return this.patientsRepository.save(patient);
   }
 }

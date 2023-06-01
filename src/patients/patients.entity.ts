@@ -27,7 +27,7 @@ export class Patients extends BaseEntity {
   @Column({ nullable: false })
   blood_type: BloodType;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: true, array: true })
   symptoms: string[];
 
   // 데이터를 끌어와야하나?
@@ -47,32 +47,17 @@ export class Patients extends BaseEntity {
   @OneToMany(() => Reports, (report) => report.patient, { eager: true })
   reports: Reports;
 
-  //환자 상태를 입력받기 (Entity와 DTO이용)
-  //Entity를 DTO로 변환 (환자 상태 저장)
-  toDTO(): PatientInfoDTO {
-    const dto = new PatientInfoDTO();
-    dto.name = this.name;
-    dto.gender = this.gender;
-    dto.age = this.age;
-    dto.blood_type = this.blood_type;
-    dto.symptoms = this.symptoms;
-    dto.location = this.location;
-    dto.hospital_id = this.hospital_id;
-    dto.symptom_level = this.symptom_level;
-    return dto;
-  }
-
-  //DTO를 Entity로 변환 (전달)
-  static fromDTO(dto: PatientInfoDTO): Patients {
-    const entity = new Patients();
-    entity.name = dto.name;
-    entity.gender = dto.gender;
-    entity.age = dto.age;
-    entity.blood_type = dto.blood_type;
-    entity.symptoms = dto.symptoms;
-    entity.location = dto.location;
-    entity.hospital_id = dto.hospital_id;
-    entity.symptom_level = dto.symptom_level;
-    return entity;
+  // 환자 상태 정보를 저장
+  static savePatientInfo(patientInfoDTO: PatientInfoDTO): Promise<Patients> {
+    const patient = new Patients();
+    patient.name = patientInfoDTO.name;
+    patient.gender = patientInfoDTO.gender;
+    patient.age = patientInfoDTO.age;
+    patient.blood_type = patientInfoDTO.blood_type;
+    patient.symptoms = patientInfoDTO.symptoms;
+    patient.location = patientInfoDTO.location;
+    patient.hospital_id = patientInfoDTO.hospital_id;
+    patient.symptom_level = patientInfoDTO.symptom_level;
+    return patient.save();
   }
 }

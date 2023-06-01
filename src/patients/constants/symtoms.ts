@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-interface Symptom {
+export interface Symptom {
   [key: string]: number;
 }
 
-const emergencySymptoms: Symptom = {
+export const emergencySymptoms: Symptom = {
   '소실된 의식': 12,
   심부전: 12,
   '뇌경색 증상': 11,
@@ -15,7 +15,7 @@ const emergencySymptoms: Symptom = {
   '가슴 통증': 6,
 };
 
-const neurologicalSymptoms: Symptom = {
+export const neurologicalSymptoms: Symptom = {
   '청각 손실': 12,
   '시야 손실': 9,
   '감각 소실': 9,
@@ -26,7 +26,7 @@ const neurologicalSymptoms: Symptom = {
   '오심, 구토': 3,
 };
 
-const respiratorySymptoms: Symptom = {
+export const respiratorySymptoms: Symptom = {
   호흡곤란: 8,
   호흡음: 8,
   '흉부 압박감': 6,
@@ -34,7 +34,7 @@ const respiratorySymptoms: Symptom = {
   기침: 3,
 };
 
-const circulatorySymptoms: Symptom = {
+export const circulatorySymptoms: Symptom = {
   저체온증: 8,
   '혈압 저하': 8,
   '사지 부종': 7,
@@ -44,7 +44,7 @@ const circulatorySymptoms: Symptom = {
   '목의 부종': 4,
 };
 
-const injurySymptoms: Symptom = {
+export const injurySymptoms: Symptom = {
   '혈액 흘림': 9,
   혈뇨: 6,
   '점막 출혈': 5,
@@ -54,7 +54,7 @@ const injurySymptoms: Symptom = {
   고열: 4,
 };
 
-const otherSymptoms: Symptom = {
+export const otherSymptoms: Symptom = {
   '음식 섭취 곤란': 6,
   '알레르기 반응': 4,
   '가려운 발진': 4,
