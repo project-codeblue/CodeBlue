@@ -6,7 +6,7 @@ import { ReportsRepository } from 'src/reports/reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hospitals } from './hospitals.entity';
 import { Crawling } from 'src/commons/middlewares/crawling';
-import { KakaoMapService } from 'src/commons/utils/kakao-map.service';
+import { KakaoMapService } from 'src/commons/providers/kakao-map.service';
 import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
 
 @Module({

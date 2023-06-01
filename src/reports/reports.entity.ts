@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Gender, BloodType } from './patients-info.enum';
+import { Gender, BloodType } from './reports.enum';
 import { Hospitals } from '../hospitals/hospitals.entity';
 
 @Entity()

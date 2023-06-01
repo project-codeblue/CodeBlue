@@ -1,6 +1,7 @@
 import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
+import { UpdateReportDto } from './dto/update-report.dto';
 
 @Injectable()
 export class ReportsRepository extends Repository<Reports> {
@@ -14,19 +15,22 @@ export class ReportsRepository extends Repository<Reports> {
     });
   }
 
-  // async updatePatientLocation(
-  //   report_id: number,
-  //   longitude: number,
-  //   latitude: number,
-  // ) {
-  //   const report = await this.findOne({
-  //     where: { report_id },
-  //   });
-  //   report.longitude = longitude;
-  //   report.latitude = latitude;
-  //   console.log('report: ', report);
-  //   return await report.save();
-  // }
+  async updateReportPatientInfo(
+    report_id: number,
+    updatedPatientInfo: UpdateReportDto,
+  ) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+
+    const { name, age, blood_type, gender } = updatedPatientInfo;
+    if (name) report.name = name;
+    if (age) report.age = age;
+    if (blood_type) report.blood_type = blood_type;
+    if (gender) report.gender = gender;
+    console.log('report: ', report);
+    return await report.save();
+  }
 
   async updateReportBeingSent(report_id: number) {
     const report = await this.findOne({

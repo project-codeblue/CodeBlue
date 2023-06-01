@@ -1,6 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
-import { KakaoMapService } from '../../commons/utils/kakao-map.service';
+import { KakaoMapService } from '../../commons/providers/kakao-map.service';
+import { UpdateReportDto } from '../dto/update-report.dto';
 
 @Injectable()
 export class ReportsService {
@@ -9,45 +15,31 @@ export class ReportsService {
     private readonly kakaoMapApi: KakaoMapService,
   ) {}
 
-  // async updatePatientLocation(
-  //   report_id: number,
-  //   updatedLocation: UpdateReportDto,
-  // ) {
-  //   try {
-  //     const { longitude, latitude } = updatedLocation;
+  async updateReportPatientInfo(
+    report_id: number,
+    updatedPatientInfo: UpdateReportDto,
+  ) {
+    try {
+      const report = await this.reportsRepository.findReport(report_id);
 
-  //     const report = await this.reportsRepository.findReport(report_id);
+      if (!report) {
+        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+      }
 
-  //     if (!report) {
-  //       throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-  //     }
-
-  //     const site = await this.kakaoMapApi.convertCoordinatesToRegion(
-  //       latitude,
-  //       longitude,
-  //     );
-
-  //     const updatedReportInfo =
-  //       await this.reportsRepository.updatePatientLocation(
-  //         report_id,
-  //         longitude,
-  //         latitude,
-  //       );
-
-  //     return {
-  //       ...updatedReportInfo,
-  //       site,
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw error;
-  //     }
-  //     throw new HttpException(
-  //       '사용자 현재 위치 변경에 실패하였습니다.',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+      return await this.reportsRepository.updateReportPatientInfo(
+        report_id,
+        updatedPatientInfo,
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        '증상 보고서 환자 데이터 변경에 실패하였습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   // 더미 데이터 생성 API (추후 제거 예정)
   async createDummyReport() {

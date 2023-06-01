@@ -1,21 +1,34 @@
-import { IsNotEmpty } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+  IsString,
+} from 'class-validator';
+import { Gender, BloodType } from '../reports.enum';
 
 export class CreateReportDto {
   @IsNotEmpty()
+  @IsNumber()
   symptom_level: number;
 
   @IsNotEmpty()
+  @IsString()
   symptoms: string;
 
-  @IsNotEmpty()
-  patient_id: number;
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-  @IsNotEmpty()
-  hospital_id: number;
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
 
-  @IsNotEmpty()
-  latitude: number;
+  @IsOptional()
+  @IsNumber()
+  age?: number;
 
-  @IsNotEmpty()
-  longitude: number;
+  @IsOptional()
+  @IsEnum(BloodType)
+  blood_type?: BloodType;
 }
