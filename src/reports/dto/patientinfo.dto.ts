@@ -6,7 +6,8 @@ export class PatientInfoDTO {
   age: number;
   blood_type: BloodType;
   symptoms: string[];
-  location: string;
+  latitude: number;
+  longitude: number;
   hospital_id: number;
   symptom_level: number;
 }

@@ -14,19 +14,19 @@ export class ReportsRepository extends Repository<Reports> {
     });
   }
 
-  async updatePatientLocation(
-    report_id: number,
-    longitude: number,
-    latitude: number,
-  ) {
-    const report = await this.findOne({
-      where: { report_id },
-    });
-    report.longitude = longitude;
-    report.latitude = latitude;
-    console.log('report: ', report);
-    return await report.save();
-  }
+  // async updatePatientLocation(
+  //   report_id: number,
+  //   longitude: number,
+  //   latitude: number,
+  // ) {
+  //   const report = await this.findOne({
+  //     where: { report_id },
+  //   });
+  //   report.longitude = longitude;
+  //   report.latitude = latitude;
+  //   console.log('report: ', report);
+  //   return await report.save();
+  // }
 
   async updateReportBeingSent(report_id: number) {
     const report = await this.findOne({
@@ -37,14 +37,14 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   // hospital 조회시 사용하는 메서드
-  async userLocation(report_id: number) {
-    //사용자 위치(단일)
-    const report = await this.findOne({
-      where: { report_id },
-    });
+  // async userLocation(report_id: number) {
+  //   //사용자 위치(단일)
+  //   const report = await this.findOne({
+  //     where: { report_id },
+  //   });
 
-    return [report.latitude, report.longitude];
-  }
+  //   return [report.latitude, report.longitude];
+  // }
 
   async createDummyReport(
     hospital_id: number,
