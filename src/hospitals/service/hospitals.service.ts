@@ -60,7 +60,6 @@ export class HospitalsService {
       throw new NotFoundException('현재 위치가 정상적으로 반영되지않았습니다.');
     }
 
-
     /* <-- MySQL Spatial Index 방식 (start) -->
     
     let dataSource = [];
@@ -110,7 +109,6 @@ export class HospitalsService {
     });
 
     <-- MySQL Spatial Index 방식 (end) --> */
-
 
     //데이터 필터링 구간 시작//
     let harversineHospitalsData = [];

@@ -100,12 +100,12 @@ export class PatientsService {
     patient.gender = patientInfoDTO.gender;
     patient.age = patientInfoDTO.age;
     patient.blood_type = patientInfoDTO.blood_type;
-    patient.symptoms = patientInfoDTO.symptoms;
-    patient.location = patientInfoDTO.location;
-    patient.hospital_id = patientInfoDTO.hospital_id;
-    patient.symptom_level = this.calculateEmergencyLevel(
-      patientInfoDTO.symptoms,
-    );
+    // patient.symptoms = patientInfoDTO.symptoms;
+    // patient.location = patientInfoDTO.location;
+    // patient.hospital_id = patientInfoDTO.hospital_id;
+    // patient.symptom_level = this.calculateEmergencyLevel(
+    //   patientInfoDTO.symptoms,
+    // );
     return this.patientsRepository.save(patient);
   }
 }
