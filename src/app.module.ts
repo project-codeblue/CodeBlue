@@ -8,22 +8,20 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidator } from 'config/config.validator';
 import { ScheduleModule } from '@nestjs/schedule';
-import { PatientsService } from './patients/service/patients.service';
-import { PatientsController } from './patients/controller/patients.controller';
+import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(ConfigValidator),
+    ConfigModule.forRoot(ConfigValidator), // config 설정을 위해 import
     TypeOrmModule.forRootAsync({
       useClass: MysqlConfigProvider,
-    }),
-    ScheduleModule.forRoot(),
+    }), // mySQL 연결을 위해 import
+    ScheduleModule.forRoot(), // task scheduling을 위해 import
     ReportsModule,
     HospitalsModule,
     RequestsModule,
+    PatientsModule,
   ],
-  providers: [PatientsService],
-  controllers: [PatientsController],
 })
 export class AppModule implements NestModule {
   private readonly isDev: boolean =

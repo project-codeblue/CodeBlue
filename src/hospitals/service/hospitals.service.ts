@@ -1,11 +1,10 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { KakaoMapService } from '../../commons/utils/kakao-map.service';
 import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
-import { number } from 'joi';
 
 @Injectable()
 export class HospitalsService {
@@ -60,7 +59,6 @@ export class HospitalsService {
       throw new NotFoundException('현재 위치가 정상적으로 반영되지않았습니다.');
     }
 
-
     /* <-- MySQL Spatial Index 방식 (start) -->
     
     let dataSource = [];
@@ -110,7 +108,6 @@ export class HospitalsService {
     });
 
     <-- MySQL Spatial Index 방식 (end) --> */
-
 
     //데이터 필터링 구간 시작//
     let harversineHospitalsData = [];
