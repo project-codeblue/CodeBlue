@@ -6,54 +6,129 @@ import {
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
 import { UpdateReportDto } from '../dto/update-report.dto';
-import { KakaoMapService } from '../../commons/utils/kakao-map.service';
+import { Reports } from '../reports.entity';
+import { CreateReportDto } from '../dto/create-report.dto';
+import {
+  Symptom,
+  circulatorySymptoms,
+  emergencySymptoms,
+  injurySymptoms,
+  neurologicalSymptoms,
+  otherSymptoms,
+  respiratorySymptoms,
+} from '../constants/symtoms';
 
 @Injectable()
 export class ReportsService {
-  constructor(
-    private readonly reportsRepository: ReportsRepository,
-    private readonly kakaoMapApi: KakaoMapService,
-  ) {}
+  constructor(private readonly reportsRepository: ReportsRepository) {}
 
-  // async updatePatientLocation(
-  //   report_id: number,
-  //   updatedLocation: UpdateReportDto,
-  // ) {
-  //   try {
-  //     const { longitude, latitude } = updatedLocation;
+  // 환자 증상 정보 입력
+  async createReport(createReportDto: CreateReportDto) {
+    createReportDto.symptoms = JSON.stringify(createReportDto.symptoms); //string "['실신','설사','복통']"
 
-  //     const report = await this.reportsRepository.findReport(report_id);
+    // 응급도 계산
+    const symptomsString = createReportDto.symptoms;
+    const parsedSymptoms = JSON.parse(symptomsString);
+    const selectedSymptoms = parsedSymptoms.split(',');
 
-  //     if (!report) {
-  //       throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-  //     }
+    const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+    createReportDto.symptom_level = emergencyLevel;
 
-  //     const site = await this.kakaoMapApi.convertCoordinatesToRegion(
-  //       latitude,
-  //       longitude,
-  //     );
+    return this.reportsRepository.createReport(createReportDto, emergencyLevel);
+  }
 
-  //     const updatedReportInfo =
-  //       await this.reportsRepository.updatePatientLocation(
-  //         report_id,
-  //         longitude,
-  //         latitude,
-  //       );
+  // 응급도 알고리즘
+  private calculateEmergencyLevel(selectedSymptoms): number {
+    const symptomCategories = [
+      emergencySymptoms,
+      neurologicalSymptoms,
+      respiratorySymptoms,
+      circulatorySymptoms,
+      injurySymptoms,
+      otherSymptoms,
+    ];
 
-  //     return {
-  //       ...updatedReportInfo,
-  //       site,
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw error;
-  //     }
-  //     throw new HttpException(
-  //       '사용자 현재 위치 변경에 실패하였습니다.',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+    const symptomScores: number[] = [];
+
+    selectedSymptoms.forEach((symptom) => {
+      const categoryIndex = this.getSymptomCategoryIndex(
+        symptom,
+        symptomCategories,
+      );
+      const score = this.getSymptomScore(
+        symptom,
+        symptomCategories[categoryIndex],
+      );
+      symptomScores.push(score);
+    });
+
+    const totalScore = symptomScores.reduce((total, score) => total + score, 0);
+    const emergencyLevel = this.emergencyLevelByScore(totalScore);
+
+    return emergencyLevel;
+  }
+
+  private getSymptomCategoryIndex(
+    symptom: string,
+    symptomCategories: Symptom[],
+  ): number {
+    for (let i = 0; i < symptomCategories.length; i++) {
+      if (symptomCategories[i].hasOwnProperty(symptom)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private getSymptomScore(symptom: string, symptomCategory: Symptom): number {
+    return symptomCategory[symptom] || 0;
+  }
+
+  private emergencyLevelByScore(score: number): number {
+    if (score > 80) {
+      return 5;
+    } else if (score > 60) {
+      return 4;
+    } else if (score > 40) {
+      return 3;
+    } else if (score > 20) {
+      return 2;
+    } else {
+      return 1;
+    }
+  }
+
+  //환자 정보 업데이트
+  async updateReportPatientInfo(
+    report_id: number,
+    updatedPatientInfo: UpdateReportDto,
+  ): Promise<Reports> {
+    try {
+      const report = await this.reportsRepository.findReport(report_id);
+
+      if (!report) {
+        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+      }
+
+      return await this.reportsRepository.updateReportPatientInfo(
+        report_id,
+        updatedPatientInfo,
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        '증상 보고서 환자 데이터 변경에 실패하였습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // 증상보고서 상세 조회
+  async getReportDetails(report_id: number) {
+    return this.reportsRepository.getReportDetails(report_id);
+  }
 
   // 더미 데이터 생성 API (추후 제거 예정)
   async createDummyReport() {

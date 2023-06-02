@@ -3,12 +3,11 @@ import { ReportsService } from './reports.service';
 import { ReportsRepository } from '../reports.repository';
 import { NotFoundException, HttpException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
-import { KakaoMapService } from '../../commons/utils/kakao-map.service';
+import { Gender } from '../reports.enum';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
-  let kakaoMapService: KakaoMapService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -18,14 +17,7 @@ describe('ReportsService Unit Testing', () => {
           provide: ReportsRepository,
           useValue: {
             findReport: jest.fn(),
-            updatePatientLocation: jest.fn(),
-          },
-        },
-        {
-          provide: KakaoMapService,
-          useValue: {
-            convertCoordinatesToAddress: jest.fn(),
-            convertCoordinatesToSite: jest.fn(),
+            updateReportPatientInfo: jest.fn(),
           },
         },
       ],
@@ -33,33 +25,32 @@ describe('ReportsService Unit Testing', () => {
 
     reportsService = moduleRef.get(ReportsService);
     reportsRepository = moduleRef.get(ReportsRepository);
-    kakaoMapService = moduleRef.get(KakaoMapService);
   });
 
-  describe('updatePatientLocation()', () => {
+  describe('updateReportPatientInfo()', () => {
     const report_id = 1;
-    const updatedLocation = {
-      longitude: 123.456,
-      latitude: 78.901,
+    const updatedPatientInfo = {
+      name: '홍길동',
+      age: 20,
+      gender: Gender.M,
     };
 
     it('should update the patient location', async () => {
       const report = {} as Reports;
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
       jest
-        .spyOn(reportsRepository, 'updatePatientLocation')
+        .spyOn(reportsRepository, 'updateReportPatientInfo')
         .mockResolvedValueOnce(report);
 
-      const result = await reportsService.updatePatientLocation(
+      const result = await reportsService.updateReportPatientInfo(
         report_id,
-        updatedLocation,
+        updatedPatientInfo,
       );
 
       expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
-      expect(reportsRepository.updatePatientLocation).toHaveBeenCalledWith(
+      expect(reportsRepository.updateReportPatientInfo).toHaveBeenCalledWith(
         report_id,
-        updatedLocation.longitude,
-        updatedLocation.latitude,
+        updatedPatientInfo,
       );
       expect(result).toEqual(report);
     });
@@ -68,7 +59,7 @@ describe('ReportsService Unit Testing', () => {
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
 
       await expect(
-        reportsService.updatePatientLocation(report_id, updatedLocation),
+        reportsService.updateReportPatientInfo(report_id, updatedPatientInfo),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -77,7 +68,7 @@ describe('ReportsService Unit Testing', () => {
       jest.spyOn(reportsRepository, 'findReport').mockRejectedValueOnce(error);
 
       await expect(
-        reportsService.updatePatientLocation(report_id, updatedLocation),
+        reportsService.updateReportPatientInfo(report_id, updatedPatientInfo),
       ).rejects.toThrow(HttpException);
     });
   });

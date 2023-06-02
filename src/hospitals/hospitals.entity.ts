@@ -38,5 +38,5 @@ export class Hospitals extends BaseEntity {
   createdAt: Date;
 
   @OneToMany(() => Reports, (report) => report.hospital_id)
-  report_id: Reports[];
+  reports: Reports[];
 }

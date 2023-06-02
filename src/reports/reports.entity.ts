@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Patients } from '../patients/patients.entity';
+import { Gender, BloodType } from './reports.enum';
 import { Hospitals } from '../hospitals/hospitals.entity';
 
 @Entity()
@@ -16,10 +16,22 @@ export class Reports extends BaseEntity {
   @PrimaryGeneratedColumn()
   report_id: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
+  name: string;
+
+  @Column({ nullable: true })
+  gender: Gender;
+
+  @Column({ type: 'int', nullable: true })
+  age: number;
+
+  @Column({ nullable: true })
+  blood_type: BloodType;
+
+  @Column({ type: 'int', nullable: true })
   symptom_level: number;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: true })
   symptoms: string;
 
   @Column({ nullable: false, default: false })
@@ -31,17 +43,10 @@ export class Reports extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'int', nullable: false })
-  patient_id: number;
-
   @Column({ type: 'int', nullable: true })
   hospital_id: number;
 
-  @ManyToOne(() => Patients, (patient) => patient.reports)
-  @JoinColumn({ name: 'patient_id' })
-  patient: Patients;
-
-  @ManyToOne(() => Hospitals, (hospital) => hospital.report_id)
+  @ManyToOne(() => Hospitals, (hospital) => hospital.reports)
   @JoinColumn({ name: 'hospital_id' })
   hospital: Hospitals;
 }
