@@ -4,7 +4,6 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Hospitals } from '../../hospitals/hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
 import dbConfig from '../../../config/db.config';
-import appConfig from '../../../config/app.config';
 
 @Injectable()
 export class MysqlConfigProvider implements TypeOrmOptionsFactory {
