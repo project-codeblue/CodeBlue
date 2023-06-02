@@ -3,7 +3,6 @@ import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { CreateReportDto } from './dto/create-report.dto';
-import { Symptom } from './constants/symtoms';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Injectable()

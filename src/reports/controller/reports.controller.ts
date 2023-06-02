@@ -12,7 +12,6 @@ import { Logger } from '@nestjs/common';
 import { UpdateReportDto } from '../dto/update-report.dto';
 import { Reports } from '../reports.entity';
 import { CreateReportDto } from '../dto/create-report.dto';
-import { Symptom } from '../constants/symtoms';
 
 @Controller('report')
 export class ReportsController {
