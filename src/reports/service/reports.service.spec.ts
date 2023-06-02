@@ -23,6 +23,7 @@ describe('ReportsService Unit Testing', () => {
             })),
             findReport: jest.fn(),
             updateReportPatientInfo: jest.fn(),
+            getReportDetails: jest.fn(),
           },
         },
       ],
@@ -80,11 +81,11 @@ describe('ReportsService Unit Testing', () => {
 
   describe('createReport', () => {
     const createReportDto: CreateReportDto = {
-      symptoms: '소실된 의식,뇌경색 증상,호흡곤란',
+      symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
     };
 
     it('should create a report with correct symptom level', async () => {
-      const expectedEmergencyLevel = 2;
+      const expectedEmergencyLevel = 3;
 
       const result = await reportsService.createReport(createReportDto);
 
@@ -93,6 +94,32 @@ describe('ReportsService Unit Testing', () => {
         expectedEmergencyLevel,
       );
       expect(result.symptom_level).toEqual(expectedEmergencyLevel);
+    });
+  });
+
+  describe('getReportDetails()', () => {
+    const reportId = 1;
+
+    it('should return the report details', async () => {
+      const reportDetails = {} as Reports;
+      jest
+        .spyOn(reportsRepository, 'getReportDetails')
+        .mockResolvedValueOnce(reportDetails);
+
+      const result = await reportsService.getReportDetails(reportId);
+
+      expect(reportsRepository.getReportDetails).toHaveBeenCalledWith(reportId);
+      expect(result).toEqual(reportDetails);
+    });
+
+    it('should throw NotFoundException if the report does not exist', async () => {
+      jest
+        .spyOn(reportsRepository, 'getReportDetails')
+        .mockRejectedValueOnce(new NotFoundException());
+
+      await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
