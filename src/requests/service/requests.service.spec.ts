@@ -29,6 +29,8 @@ describe('RequestsService Unit Testing', () => {
           useValue: {
             findReport: jest.fn(),
             updateReportBeingSent: jest.fn(),
+            getAllRequests: jest.fn(),
+            addTargetHospital: jest.fn(),
           },
         },
         {
@@ -123,7 +125,7 @@ describe('RequestsService Unit Testing', () => {
         hospital_id,
       );
       expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
-      expect(hospitalsRepository.updateAvailableBeds).toHaveBeenCalledWith(
+      expect(reportsRepository.addTargetHospital).toHaveBeenCalledWith(
         report_id,
         hospital_id,
       );

@@ -9,7 +9,7 @@ describe('ReportsController Unit Testing', () => {
 
   beforeEach(async () => {
     const mockReportsService = {
-      updatePatientLocation: jest.fn().mockReturnValue({}),
+      updateReportPatientInfo: jest.fn().mockReturnValue({}),
     };
 
     const moduleRef = await Test.createTestingModule({
