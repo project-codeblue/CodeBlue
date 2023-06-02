@@ -4,10 +4,7 @@ import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppModule } from './../src/app.module';
 import { HttpExceptionFilter } from '../src/commons/exceptions/http-exception.filter';
-import { Hospitals } from '../src/hospitals/hospitals.entity';
-import { Reports } from '../src/reports/reports.entity';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigValidator } from '../config/config.validator';
+import { MysqlConfigProvider } from '../src/commons/providers/typeorm-config.provider';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -16,17 +13,10 @@ describe('AppController (e2e)', () => {
     // test용 DB 연결
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        ConfigModule.forRoot(ConfigValidator), // config 설정을 위해 import
         AppModule,
-        TypeOrmModule.forRoot({
-          type: 'mysql',
-          host: process.env.RDS_HOSTNAME,
-          port: parseInt(process.env.RDS_PORT),
-          username: process.env.RDS_USERNAME,
-          password: process.env.RDS_PASSWORD,
-          database: process.env.RDS_TEST_DB_NAME,
-          entities: [Hospitals, Reports],
-        }),
+        TypeOrmModule.forRootAsync({
+          useClass: MysqlConfigProvider,
+        }), // test db 연결을 위해 import: .env에서 mode === test로 변경해줘야함
       ],
     }).compile();
 

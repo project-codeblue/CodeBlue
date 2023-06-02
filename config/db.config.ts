@@ -8,4 +8,5 @@ export default registerAs('db', () => ({
   password: process.env.RDS_PASSWORD,
   database: process.env.RDS_DB_NAME,
   test_database: process.env.RDS_TEST_DB_NAME,
+  mode: process.env.MODE || 'development',
 }));
