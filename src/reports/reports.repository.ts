@@ -2,11 +2,39 @@ import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { CreateReportDto } from './dto/create-report.dto';
+import { Symptom } from './constants/symtoms';
+import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Injectable()
 export class ReportsRepository extends Repository<Reports> {
   constructor(private dataSource: DataSource) {
     super(Reports, dataSource.createEntityManager());
+  }
+
+  async createReport(createReportDto: CreateReportDto, emergencyLevel: number) {
+    const report = this.create({
+      ...createReportDto,
+      symptom_level: emergencyLevel,
+    });
+    return this.save(report);
+  }
+
+  async getReportDetails(report_id): Promise<Reports> {
+    return await this.findOne({
+      where: { report_id },
+      relations: ['hospital'],
+    }).then((report) => {
+      const { hospital_id, name, address, phone } = report.hospital;
+      const transformedReport = Object.assign(new Reports(), report);
+      transformedReport.hospital = {
+        hospital_id,
+        name,
+        address,
+        phone,
+      } as Hospitals;
+      return transformedReport;
+    });
   }
 
   async findReport(report_id: number): Promise<Reports> {
