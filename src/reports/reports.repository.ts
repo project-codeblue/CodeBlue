@@ -1,43 +1,47 @@
 import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { CreateReportDto } from './dto/create-report.dto';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Injectable()
-export class ReportsRepository extends Repository<Reports> {
-  constructor(private dataSource: DataSource) {
-    super(Reports, dataSource.createEntityManager());
-  }
+export class ReportsRepository {
+  constructor(
+    @InjectRepository(Reports)
+    private readonly repository: Repository<Reports>,
+  ) {}
 
   async createReport(createReportDto: CreateReportDto, emergencyLevel: number) {
-    const report = this.create({
+    const report = this.repository.create({
       ...createReportDto,
       symptom_level: emergencyLevel,
     });
-    return this.save(report);
+    return this.repository.save(report);
   }
 
   async getReportDetails(report_id): Promise<Reports> {
-    return await this.findOne({
-      where: { report_id },
-      relations: ['hospital'],
-    }).then((report) => {
-      const { hospital_id, name, address, phone } = report.hospital;
-      const transformedReport = Object.assign(new Reports(), report);
-      transformedReport.hospital = {
-        hospital_id,
-        name,
-        address,
-        phone,
-      } as Hospitals;
-      return transformedReport;
-    });
+    return await this.repository
+      .findOne({
+        where: { report_id },
+        relations: ['hospital'],
+      })
+      .then((report) => {
+        const { hospital_id, name, address, phone } = report.hospital;
+        const transformedReport = Object.assign(new Reports(), report);
+        transformedReport.hospital = {
+          hospital_id,
+          name,
+          address,
+          phone,
+        } as Hospitals;
+        return transformedReport;
+      });
   }
 
   async findReport(report_id: number): Promise<Reports> {
-    return await this.findOne({
+    return await this.repository.findOne({
       where: { report_id },
     });
   }
@@ -46,7 +50,7 @@ export class ReportsRepository extends Repository<Reports> {
     report_id: number,
     updatedPatientInfo: UpdateReportDto,
   ) {
-    const report = await this.findOne({
+    const report = await this.repository.findOne({
       where: { report_id },
     });
 
@@ -61,7 +65,7 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async updateReportBeingSent(report_id: number) {
-    const report = await this.findOne({
+    const report = await this.repository.findOne({
       where: { report_id },
     });
     report.is_sent = true;
@@ -76,7 +80,7 @@ export class ReportsRepository extends Repository<Reports> {
     latitude: number,
     longitude: number,
   ) {
-    await this.save({
+    await this.repository.save({
       hospital_id,
       patient_id,
       symptom_level,
@@ -87,14 +91,14 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async getAllRequests(): Promise<Reports[]> {
-    return await this.find({ where: { is_sent: true } });
+    return await this.repository.find({ where: { is_sent: true } });
   }
 
   async addTargetHospital(
     report_id: number,
     hospital_id: number,
   ): Promise<void> {
-    const report = await this.findOne({
+    const report = await this.repository.findOne({
       where: { report_id },
     });
 

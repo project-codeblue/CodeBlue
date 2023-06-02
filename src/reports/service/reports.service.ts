@@ -24,7 +24,7 @@ export class ReportsService {
 
   // 환자 증상 정보 입력
   async createReport(createReportDto: CreateReportDto) {
-    createReportDto.symptoms = JSON.stringify(createReportDto.symptoms); //string "['실신','설사','복통']"
+    createReportDto.symptoms = JSON.stringify(createReportDto.symptoms);
 
     // 응급도 계산
     const symptomsString = createReportDto.symptoms;
