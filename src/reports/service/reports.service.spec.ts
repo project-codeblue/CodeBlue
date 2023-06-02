@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { ReportsService } from './reports.service';
 import { ReportsRepository } from '../reports.repository';
+import { CreateReportDto } from '../dto/create-report.dto';
 import { NotFoundException, HttpException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 import { Gender } from '../reports.enum';
@@ -70,6 +71,24 @@ describe('ReportsService Unit Testing', () => {
       await expect(
         reportsService.updateReportPatientInfo(report_id, updatedPatientInfo),
       ).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('createReport', () => {
+    const createReportDto: CreateReportDto = {
+      symptoms: '소실된 의식,뇌경색 증상,호흡곤란',
+    };
+
+    it('should create a report with correct symptom level', async () => {
+      const expectedEmergencyLevel = 3;
+
+      const result = await reportsService.createReport(createReportDto);
+
+      expect(reportsRepository.createReport).toHaveBeenCalledWith(
+        createReportDto,
+        expectedEmergencyLevel,
+      );
+      expect(result).toEqual(expectedEmergencyLevel);
     });
   });
 });
