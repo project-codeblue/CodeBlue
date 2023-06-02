@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
-import { Reports } from '../reports.entity';
 import { UpdateReportDto } from '../dto/update-report.dto';
+import { Reports } from '../reports.entity';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { Symptom } from '../constants/symtoms';
 
@@ -28,7 +28,7 @@ export class ReportsController {
   updateReportPatientInfo(
     @Param('report_id') report_id: number,
     @Body() updatedPatientInfo: UpdateReportDto,
-  ) {
+  ): Promise<Reports> {
     this.logger.verbose('증상 보고서 환자 정보 수정 PATCH API');
     return this.reportsService.updateReportPatientInfo(
       report_id,

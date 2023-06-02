@@ -28,7 +28,7 @@ describe('RequestsController Unit Testing', () => {
       jest
         .spyOn(requestsService, 'getAllRequests')
         .mockImplementation(() => allReports);
-      
+
       expect(await requestsController.getAllRequests()).toBe(allReports);
       expect(requestsService.getAllRequests).toBeCalledTimes(1);
     });
@@ -44,14 +44,16 @@ describe('RequestsController Unit Testing', () => {
       const queries: object = {
         date: '2023-05-27~2023-05-28',
         symptoms: '체중감소',
-        symptom_level: 1
-      }
+        symptom_level: 1,
+      };
 
-      expect(await requestsController.getSearchRequests(queries)).toBe(allReports);
+      expect(await requestsController.getSearchRequests(queries)).toBe(
+        allReports,
+      );
       expect(requestsService.getSearchRequests).toBeCalledTimes(1);
       expect(requestsService.getSearchRequests).toHaveBeenCalledWith(queries);
-    })
-  })
+    });
+  });
 
   describe('createRequest()', () => {
     it('should return object', async () => {
@@ -72,5 +74,4 @@ describe('RequestsController Unit Testing', () => {
       );
     });
   });
-
 });

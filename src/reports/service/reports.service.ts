@@ -5,8 +5,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
-import { KakaoMapService } from '../../commons/providers/kakao-map.service';
 import { UpdateReportDto } from '../dto/update-report.dto';
+import { Reports } from '../reports.entity';
 import { CreateReportDto } from '../dto/create-report.dto';
 import {
   Symptom,
@@ -20,10 +20,7 @@ import {
 
 @Injectable()
 export class ReportsService {
-  constructor(
-    private readonly reportsRepository: ReportsRepository,
-    private readonly kakaoMapApi: KakaoMapService,
-  ) {}
+  constructor(private readonly reportsRepository: ReportsRepository) {}
 
   // 환자 증상 정보 입력
   async createReport(createReportDto: CreateReportDto) {
@@ -105,7 +102,7 @@ export class ReportsService {
   async updateReportPatientInfo(
     report_id: number,
     updatedPatientInfo: UpdateReportDto,
-  ) {
+  ): Promise<Reports> {
     try {
       const report = await this.reportsRepository.findReport(report_id);
 
