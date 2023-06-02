@@ -66,7 +66,7 @@ describe('RequestsService Unit Testing', () => {
       const allReports = [];
       jest
         .spyOn(requestsRepository, 'getSearchRequests')
-        .mockResolvedValueOnce(allReports as Reports[])
+        .mockResolvedValueOnce(allReports)
 
       expect(await requestsService.getAllRequests()).toBe(allReports);
       expect(requestsRepository.getAllRequests).toBeCalledTimes(1);

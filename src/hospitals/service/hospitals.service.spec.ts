@@ -6,6 +6,8 @@ import { ReportsRepository } from '../..//reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
+import { Reports } from '../../reports/reports.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ReportsService Unit Testing', () => {
   let hospitalsService: HospitalsService;
@@ -26,10 +28,8 @@ describe('ReportsService Unit Testing', () => {
             findHospital: jest.fn(),
             updateAvailableBeds: jest.fn(),
             setDefaultAvailableBeds: jest.fn(),
-            AllHospitals: jest.fn(),
-            ConvertRadians: jest.fn(),
-            arcLength: jest.fn(),
-            centralAngle: jest.fn(),
+            getHospitalsWithinRadius: jest.fn(),
+            getHospitalsWithoutRadius: jest.fn(),
           },
         },
         {
@@ -107,44 +107,54 @@ describe('ReportsService Unit Testing', () => {
 
     it('getRecommendedHospitals request must be performed successfully', async () => {
       const report_id: number = 1;
+      const queries: object = {};
       const startLat: number = 37;
       const startLng: number = 126;
       const endLat: number = 38;
       const endLng: number = 127;
-      const userLocation: number[] = [37.0001, 126.0001];
+      const report: Reports = new Reports;
       const allHospitals: Hospitals[] = [];
       const time: Object = {};
       const hospitals: string[] | Object = [];
       const result: object = {};
-      const harver = jest.spyOn(hospitalsService, 'harversine');
+      const recommended = jest.spyOn(hospitalsService, 'getRecommendedHospitals');
       const driving = jest.spyOn(kakaoMapService, 'getDrivingResult');
+      const dataSource = ['sample'];
       
+      // jest.mock('./hospitals.service');
+      // const hospitalService = require('./hospitals.service');
+
       jest
-        .spyOn(reportsRepository, 'userLocation')
-        .mockResolvedValueOnce(userLocation);
+        .spyOn(reportsRepository, 'findReport')
+        .mockResolvedValueOnce(report);
       jest
-        .spyOn(hospitalsRepository, 'AllHospitals')
-        .mockResolvedValueOnce(allHospitals);
+        .spyOn(hospitalsRepository, 'getHospitalsWithinRadius')
+        .mockResolvedValueOnce(dataSource);
+      jest
+        .spyOn(hospitalsRepository, 'getHospitalsWithoutRadius')
+        .mockResolvedValueOnce(dataSource);
       jest
         .spyOn(kakaoMapService, 'getDrivingResult')
         .mockResolvedValueOnce(time);
+        
 
-      expect(await hospitalsService.getRecommendedHospitals(report_id)).toStrictEqual(hospitals);
-      expect(reportsRepository.userLocation).toHaveBeenCalledTimes(1)
-      expect(hospitalsRepository.AllHospitals).toHaveBeenCalledTimes(1)
-
-      expect(await hospitalsService.harversine(startLat, startLng, endLat, endLng)).toBe(NaN)
-      expect(harver).toBeCalledTimes(1);
-      expect(harver).toBeCalledWith(startLat, startLng, endLat, endLng);
+      expect(await hospitalsService.getRecommendedHospitals(report_id, queries)).toStrictEqual(hospitals);
+      // await expect(async () => {
+      //   const dataSource = jest.fn();
+      //   dataSource.mockReturnValue(['sample']);
+      //   await hospitalsService.getRecommendedHospitals(report_id, queries)
+      // }).rejects.toThrowError(new NotFoundException('해당 반경 내에 병원이 없습니다.'));
+      expect(recommended).toBeCalledTimes(1);
+      expect(recommended).toBeCalledWith(report_id, queries);
+      expect(reportsRepository.findReport).toHaveBeenCalledTimes(1);
+      // expect(hospitalsRepository.getHospitalsWithoutRadius).toHaveBeenCalledTimes(1);
+      expect(hospitalsRepository.getHospitalsWithinRadius).toHaveBeenCalledTimes(1);
 
       expect(await kakaoMapService.getDrivingResult(startLat, startLng, endLat, endLng)).toStrictEqual(result);
       expect(driving).toBeCalledTimes(1);
       expect(driving).toBeCalledWith(startLat, startLng, endLat, endLng);
 
       expect(crawling.getNearbyHospitals).toHaveBeenCalledTimes(1);
-      expect(hospitalsRepository.ConvertRadians).toHaveBeenCalledTimes(4);
-      expect(hospitalsRepository.arcLength).toHaveBeenCalledTimes(1);
-      expect(hospitalsRepository.centralAngle).toHaveBeenCalledTimes(1);
     });
   });
 });
