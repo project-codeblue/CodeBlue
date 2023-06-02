@@ -8,9 +8,9 @@ import {
 import { Gender, BloodType } from '../reports.enum';
 
 export class CreateReportDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  symptom_level: number;
+  symptom_level?: number;
 
   @IsNotEmpty()
   @IsString()
