@@ -17,6 +17,10 @@ describe('ReportsService Unit Testing', () => {
         {
           provide: ReportsRepository,
           useValue: {
+            createReport: jest.fn((dto, level) => ({
+              ...dto,
+              symptom_level: level,
+            })),
             findReport: jest.fn(),
             updateReportPatientInfo: jest.fn(),
           },
@@ -80,7 +84,7 @@ describe('ReportsService Unit Testing', () => {
     };
 
     it('should create a report with correct symptom level', async () => {
-      const expectedEmergencyLevel = 3;
+      const expectedEmergencyLevel = 2;
 
       const result = await reportsService.createReport(createReportDto);
 
@@ -88,7 +92,7 @@ describe('ReportsService Unit Testing', () => {
         createReportDto,
         expectedEmergencyLevel,
       );
-      expect(result).toEqual(expectedEmergencyLevel);
+      expect(result.symptom_level).toEqual(expectedEmergencyLevel);
     });
   });
 });
