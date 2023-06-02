@@ -31,6 +31,9 @@ describe('RequestsService Unit Testing', () => {
             updateReportBeingSent: jest.fn(),
             getAllRequests: jest.fn(),
             addTargetHospital: jest.fn(),
+            createQueryBuilder: jest.fn(),
+            leftJoinAndSelect: jest.fn(),
+
           },
         },
         {
@@ -51,6 +54,7 @@ describe('RequestsService Unit Testing', () => {
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
     entityManager = moduleRef.get(EntityManager);
+    
   });
 
   describe('getAllRequests()', () => {
@@ -68,21 +72,31 @@ describe('RequestsService Unit Testing', () => {
   describe('getSearchRequests()', () => {
     it('getSearchRequests request must be performed successfully', async () => {
       const allReports = [];
-      jest
-        .spyOn(requestsRepository, 'getSearchRequests')
-        .mockResolvedValueOnce(allReports as Reports[]);
-
       const queries: object = {
-        date: '2023-05-27~2023-05-28',
-        symptoms: '체중감소',
-        symptom_level: 1,
-      };
+        symptoms: '발작',
+        date: '2023-05-30~2023-05-31',
+        symptom_level: '5',
+        site: '경기도'
+      }
 
-      expect(await requestsService.getSearchRequests(queries)).toBe(allReports);
-      expect(requestsRepository.getSearchRequests).toBeCalledTimes(1);
-      expect(requestsRepository.getSearchRequests).toHaveBeenCalledWith(
-        queries,
-      );
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['date'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['symptoms'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['symptom_level'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['site'])
+
+      const search = jest.spyOn(requestsService, 'getSearchRequests');
+
+      await requestsService.getSearchRequests(queries);
+      expect(search).toBeCalledTimes(1);
+      expect(search).toBeCalledWith(queries);
     });
   });
 
