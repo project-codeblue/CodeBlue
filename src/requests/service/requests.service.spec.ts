@@ -33,6 +33,7 @@ describe('RequestsService Unit Testing', () => {
             addTargetHospital: jest.fn(),
             createQueryBuilder: jest.fn(),
             leftJoinAndSelect: jest.fn(),
+
           },
         },
         {
@@ -61,7 +62,7 @@ describe('RequestsService Unit Testing', () => {
       const allReports = [];
       jest
         .spyOn(reportsRepository, 'getAllRequests')
-        .mockResolvedValueOnce(allReports)
+        .mockResolvedValueOnce(allReports as Reports[]);
 
       expect(await requestsService.getAllRequests()).toBe(allReports);
       expect(reportsRepository.getAllRequests).toBeCalledTimes(1);
@@ -108,6 +109,9 @@ describe('RequestsService Unit Testing', () => {
         .spyOn(reportsRepository, 'findReport')
         .mockResolvedValueOnce(report as Reports);
       jest
+        .spyOn(reportsRepository, 'addTargetHospital')
+        .mockResolvedValueOnce(undefined);
+      jest
         .spyOn(hospitalsRepository, 'updateAvailableBeds')
         .mockResolvedValueOnce(undefined);
       jest
@@ -124,6 +128,10 @@ describe('RequestsService Unit Testing', () => {
         hospital_id,
       );
       expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
+      expect(reportsRepository.addTargetHospital).toHaveBeenCalledWith(
+        report_id,
+        hospital_id,
+      );
       expect(hospitalsRepository.updateAvailableBeds).toHaveBeenCalledWith(
         hospital_id,
       );
@@ -223,5 +231,4 @@ describe('RequestsService Unit Testing', () => {
       ).rejects.toThrowError(HttpException);
     });
   });
-
 });
