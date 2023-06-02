@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
 import { AppModule } from './../src/app.module';
 import { HttpExceptionFilter } from '../src/commons/exceptions/http-exception.filter';
 import { Hospitals } from '../src/hospitals/hospitals.entity';
 import { Reports } from '../src/reports/reports.entity';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigValidator } from '../config/config.validator';
 
-dotenv.config();
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
@@ -16,6 +16,7 @@ describe('AppController (e2e)', () => {
     // test용 DB 연결
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        ConfigModule.forRoot(ConfigValidator), // config 설정을 위해 import
         AppModule,
         TypeOrmModule.forRoot({
           type: 'mysql',
@@ -25,7 +26,6 @@ describe('AppController (e2e)', () => {
           password: process.env.RDS_PASSWORD,
           database: process.env.RDS_TEST_DB_NAME,
           entities: [Hospitals, Reports],
-          synchronize: true,
         }),
       ],
     }).compile();
@@ -46,7 +46,7 @@ describe('AppController (e2e)', () => {
 
   // 유저 플로우
   // 1. 증상 보고서 입력 /report
-  // 2. 병원 조회 /hospital
+  // 2. 병원 조회 /hospital/:report_id
   // 3. 환자 이송 신청 /request/:report_id/:hospital_id
   // 4. 증상 보고서 검색 및 리스트 조회 /request/search
   // 5. 증상 보고서 상세 조회 /report/:report_id
@@ -76,9 +76,9 @@ describe('AppController (e2e)', () => {
   });
 
   // 2. 병원 조회
-  describe('/hospital', () => {
+  describe('/hospital/:report_id', () => {
     it('200 병원 조회 성공 (GET)', () => {
-      return request(app.getHttpServer()).get('/hospital').expect(200);
+      return request(app.getHttpServer()).get('/hospital/1').expect(200);
     });
   });
 
