@@ -106,22 +106,28 @@ describe('ReportsService Unit Testing', () => {
     it('getRecommendedHospitals request must be performed successfully', async () => {
       const report_id: number = 1;
       const queries: object = {};
+      const hospitals: string[] | Object = {};
+      const recommended = jest.spyOn(hospitalsService, 'getRecommendedHospitals');
+
+      const report: Reports = new Reports;
+      const findreport = jest.spyOn(reportsRepository, 'findReport');
+
       const startLat: number = 37;
       const startLng: number = 126;
       const endLat: number = 38;
       const endLng: number = 127;
-      const report: Reports = new Reports;
-      const allHospitals: Hospitals[] = [];
-      const time: Object = {};
-      const hospitals: string[] | Object = [];
       const result: object = {};
-      const recommended = jest.spyOn(hospitalsService, 'getRecommendedHospitals');
       const driving = jest.spyOn(kakaoMapService, 'getDrivingResult');
-      const dataSource = ['sample'];
-      
-      // jest.mock('./hospitals.service');
-      // const hospitalService = require('./hospitals.service');
 
+      const emogList: string[] = [];
+      const datas: string[] = [];
+      const crawl = jest.spyOn(crawling, 'getNearbyHospitals');
+
+      const dataSource = ['sample'];
+      const time: Object = {};
+      const duration = {};
+      const distance = {};
+      
       jest
         .spyOn(reportsRepository, 'findReport')
         .mockResolvedValueOnce(report);
@@ -133,33 +139,34 @@ describe('ReportsService Unit Testing', () => {
         .mockResolvedValueOnce(dataSource);
       jest
         .spyOn(kakaoMapService, 'getDrivingResult')
-        .mockResolvedValueOnce(time);
-        
-
-      expect(await hospitalsService.getRecommendedHospitals(report_id, queries)).toStrictEqual(hospitals);
+        .mockResolvedValueOnce(time);      
+      jest
+        .spyOn(hospitalsService, 'getRecommendedHospitals')
+        .mockResolvedValueOnce(duration);   
+      jest
+        .spyOn(hospitalsService, 'getRecommendedHospitals')
+        .mockResolvedValueOnce(distance);   
+      
       // await expect(async () => {
       //   const dataSource = jest.fn();
       //   dataSource.mockReturnValue(['sample']);
       //   await hospitalsService.getRecommendedHospitals(report_id, queries)
       // }).rejects.toThrowError(new NotFoundException('해당 반경 내에 병원이 없습니다.'));
+      expect(await hospitalsService.getRecommendedHospitals(report_id, queries)).toStrictEqual(hospitals);
       expect(recommended).toBeCalledTimes(1);
       expect(recommended).toBeCalledWith(report_id, queries);
-      expect(reportsRepository.findReport).toHaveBeenCalledTimes(1);
-      // expect(hospitalsRepository.getHospitalsWithoutRadius).toHaveBeenCalledTimes(1);
-      expect(hospitalsRepository.getHospitalsWithinRadius).toHaveBeenCalledTimes(1);
 
-      expect(
-        await kakaoMapService.getDrivingResult(
-          startLat,
-          startLng,
-          endLat,
-          endLng,
-        ),
-      ).toStrictEqual(result);
+      expect(await reportsRepository.findReport(report_id)).toStrictEqual(report);
+      expect(findreport).toBeCalledTimes(1);
+      expect(findreport).toBeCalledWith(report_id);
+
+      expect(await kakaoMapService.getDrivingResult(startLat, startLng, endLat, endLng)).toStrictEqual(result);
       expect(driving).toBeCalledTimes(1);
       expect(driving).toBeCalledWith(startLat, startLng, endLat, endLng);
 
-      expect(crawling.getNearbyHospitals).toHaveBeenCalledTimes(1);
+      await crawling.getNearbyHospitals(emogList);
+      expect(crawl).toBeCalledTimes(1);
+      expect(crawl).toBeCalledWith(emogList);
     });
   });
 });

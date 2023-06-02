@@ -69,25 +69,36 @@ describe('RequestsService Unit Testing', () => {
     });
   });
 
-  // describe('getSearchRequests()', () => {
-  //   it('getSearchRequests request must be performed successfully', async () => {
-  //     const allReports = [];
-  //     const queries: object = {
-  //       symptoms: '발작',
-  //       date: '2023-05-30~2023-05-31',
-  //       symptom_level: '5',
-  //       site: '경기도'
-  //     }
+  describe('getSearchRequests()', () => {
+    it('getSearchRequests request must be performed successfully', async () => {
+      const allReports = [];
+      const queries: object = {
+        symptoms: '발작',
+        date: '2023-05-30~2023-05-31',
+        symptom_level: '5',
+        site: '경기도'
+      }
 
-  //     jest
-  //       .spyOn(requestsService, 'getSearchRequests')
-  //       .mockResolvedValue(queries)
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['date'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['symptoms'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['symptom_level'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['site'])
 
-  //     expect(requestsService.getSearchRequests).toBeCalledWith(queries);
+      const search = jest.spyOn(requestsService, 'getSearchRequests');
 
-
-  //   });
-  // });
+      await requestsService.getSearchRequests(queries);
+      expect(search).toBeCalledTimes(1);
+      expect(search).toBeCalledWith(queries);
+    });
+  });
 
   describe('createRequest()', () => {
     it('should create a request successfully', async () => {
