@@ -1,0 +1,17 @@
+version: '3.1'
+services:
+  codeBLUE-redis:
+    image: redis
+    container_name: codeBLUE-redis
+    hostname: redis
+    ports:
+      - '6379:6379'
+  api-server:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    container_name: api-server
+    ports:
+      - '3000:3000'
+    depends_on:
+      - codeBLUE-redis

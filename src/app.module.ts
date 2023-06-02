@@ -8,6 +8,7 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidator } from 'config/config.validator';
 import { ScheduleModule } from '@nestjs/schedule';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -15,6 +16,12 @@ import { ScheduleModule } from '@nestjs/schedule';
     TypeOrmModule.forRootAsync({
       useClass: MysqlConfigProvider,
     }), // mySQL 연결을 위해 import
+    BullModule.forRoot({
+      redis: {
+        host: 'redis',
+        port: 6379,
+      },
+    }), // task queue (BullQueue)를 위해 import
     ScheduleModule.forRoot(), // task scheduling을 위해 import
     ReportsModule,
     HospitalsModule,
