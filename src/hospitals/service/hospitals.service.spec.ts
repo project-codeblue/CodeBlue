@@ -8,6 +8,7 @@ import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
 import { NotFoundException } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 
 describe('ReportsService Unit Testing', () => {
   let hospitalsService: HospitalsService;
@@ -16,6 +17,7 @@ describe('ReportsService Unit Testing', () => {
   let kakaoMapService: KakaoMapService;
   let crawling: Crawling;
   let openAPI: MedicalOpenAPI;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -30,6 +32,17 @@ describe('ReportsService Unit Testing', () => {
             setDefaultAvailableBeds: jest.fn(),
             getHospitalsWithinRadius: jest.fn(),
             getHospitalsWithoutRadius: jest.fn(),
+          },
+        },
+        {
+          provide: EntityManager,
+          useValue: {
+            transaction: jest
+              .fn()
+              .mockImplementation((isolationLevel, callback) => {
+                // transaction 메소드에 대한 Mock 구현을 제공합니다.
+                return callback(); // 테스트 시에는 콜백 함수를 실행합니다.
+              }),
           },
         },
         {
@@ -71,6 +84,7 @@ describe('ReportsService Unit Testing', () => {
     kakaoMapService = moduleRef.get(KakaoMapService);
     crawling = moduleRef.get(Crawling);
     openAPI = moduleRef.get(MedicalOpenAPI);
+    entityManager = moduleRef.get(EntityManager);
   });
 
   describe('getHospitals()', () => {
@@ -107,9 +121,12 @@ describe('ReportsService Unit Testing', () => {
       const report_id: number = 1;
       const queries: object = {};
       const hospitals: string[] | Object = {};
-      const recommended = jest.spyOn(hospitalsService, 'getRecommendedHospitals');
+      const recommended = jest.spyOn(
+        hospitalsService,
+        'getRecommendedHospitals',
+      );
 
-      const report: Reports = new Reports;
+      const report: Reports = new Reports();
       const findreport = jest.spyOn(reportsRepository, 'findReport');
 
       const startLat: number = 37;
@@ -127,10 +144,8 @@ describe('ReportsService Unit Testing', () => {
       const time: Object = {};
       const duration = {};
       const distance = {};
-      
-      jest
-        .spyOn(reportsRepository, 'findReport')
-        .mockResolvedValueOnce(report);
+
+      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
       jest
         .spyOn(hospitalsRepository, 'getHospitalsWithinRadius')
         .mockResolvedValueOnce(dataSource);
@@ -139,28 +154,39 @@ describe('ReportsService Unit Testing', () => {
         .mockResolvedValueOnce(dataSource);
       jest
         .spyOn(kakaoMapService, 'getDrivingResult')
-        .mockResolvedValueOnce(time);      
+        .mockResolvedValueOnce(time);
       jest
         .spyOn(hospitalsService, 'getRecommendedHospitals')
-        .mockResolvedValueOnce(duration);   
+        .mockResolvedValueOnce(duration);
       jest
         .spyOn(hospitalsService, 'getRecommendedHospitals')
-        .mockResolvedValueOnce(distance);   
-      
+        .mockResolvedValueOnce(distance);
+
       // await expect(async () => {
       //   const dataSource = jest.fn();
       //   dataSource.mockReturnValue(['sample']);
       //   await hospitalsService.getRecommendedHospitals(report_id, queries)
       // }).rejects.toThrowError(new NotFoundException('해당 반경 내에 병원이 없습니다.'));
-      expect(await hospitalsService.getRecommendedHospitals(report_id, queries)).toStrictEqual(hospitals);
+      expect(
+        await hospitalsService.getRecommendedHospitals(report_id, queries),
+      ).toStrictEqual(hospitals);
       expect(recommended).toBeCalledTimes(1);
       expect(recommended).toBeCalledWith(report_id, queries);
 
-      expect(await reportsRepository.findReport(report_id)).toStrictEqual(report);
+      expect(await reportsRepository.findReport(report_id)).toStrictEqual(
+        report,
+      );
       expect(findreport).toBeCalledTimes(1);
       expect(findreport).toBeCalledWith(report_id);
 
-      expect(await kakaoMapService.getDrivingResult(startLat, startLng, endLat, endLng)).toStrictEqual(result);
+      expect(
+        await kakaoMapService.getDrivingResult(
+          startLat,
+          startLng,
+          endLat,
+          endLng,
+        ),
+      ).toStrictEqual(result);
       expect(driving).toBeCalledTimes(1);
       expect(driving).toBeCalledWith(startLat, startLng, endLat, endLng);
 
