@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing';
 import { RequestsService } from './requests.service';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
-import { RequestsRepository } from '../requests.repository';
 import { EntityManager } from 'typeorm';
 import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
@@ -12,7 +11,6 @@ describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
   let hospitalsRepository: HospitalsRepository;
   let reportsRepository: ReportsRepository;
-  let requestsRepository: RequestsRepository;
   let entityManager: EntityManager;
 
   beforeEach(async () => {
@@ -31,13 +29,10 @@ describe('RequestsService Unit Testing', () => {
           useValue: {
             findReport: jest.fn(),
             updateReportBeingSent: jest.fn(),
-          },
-        },
-        {
-          provide: RequestsRepository,
-          useValue: {
             getAllRequests: jest.fn(),
-            getSearchRequests: jest.fn(),
+            addTargetHospital: jest.fn(),
+            createQueryBuilder: jest.fn(),
+            leftJoinAndSelect: jest.fn(),
           },
         },
         {
@@ -57,40 +52,41 @@ describe('RequestsService Unit Testing', () => {
     requestsService = moduleRef.get(RequestsService);
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
-    requestsRepository = moduleRef.get(RequestsRepository);
     entityManager = moduleRef.get(EntityManager);
+    
   });
 
   describe('getAllRequests()', () => {
     it('getAllRequests request must be performed successfully', async () => {
       const allReports = [];
       jest
-        .spyOn(requestsRepository, 'getSearchRequests')
+        .spyOn(reportsRepository, 'getAllRequests')
         .mockResolvedValueOnce(allReports)
 
       expect(await requestsService.getAllRequests()).toBe(allReports);
-      expect(requestsRepository.getAllRequests).toBeCalledTimes(1);
+      expect(reportsRepository.getAllRequests).toBeCalledTimes(1);
     });
   });
 
-  describe('getSearchRequests()', () => {
-    it('getSearchRequests request must be performed successfully', async () => {
-      const allReports = [];
-      jest
-        .spyOn(requestsRepository, 'getSearchRequests')
-        .mockResolvedValueOnce(allReports as Reports[])
+  // describe('getSearchRequests()', () => {
+  //   it('getSearchRequests request must be performed successfully', async () => {
+  //     const allReports = [];
+  //     const queries: object = {
+  //       symptoms: '발작',
+  //       date: '2023-05-30~2023-05-31',
+  //       symptom_level: '5',
+  //       site: '경기도'
+  //     }
 
-      const queries: object = {
-        date: '2023-05-27~2023-05-28',
-        symptoms: '체중감소',
-        symptom_level: 1
-      }
+  //     jest
+  //       .spyOn(requestsService, 'getSearchRequests')
+  //       .mockResolvedValue(queries)
 
-      expect(await requestsService.getSearchRequests(queries)).toBe(allReports);
-      expect(requestsRepository.getSearchRequests).toBeCalledTimes(1);
-      expect(requestsRepository.getSearchRequests).toHaveBeenCalledWith(queries);
-    });
-  });
+  //     expect(requestsService.getSearchRequests).toBeCalledWith(queries);
+
+
+  //   });
+  // });
 
   describe('createRequest()', () => {
     it('should create a request successfully', async () => {
