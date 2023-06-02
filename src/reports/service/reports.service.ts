@@ -31,6 +31,12 @@ export class ReportsService {
     const parsedSymptoms = JSON.parse(symptomsString);
     const selectedSymptoms = parsedSymptoms.split(',');
 
+    const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
+    if (invalidSymptoms.length > 0) {
+      const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+
     const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
     createReportDto.symptom_level = emergencyLevel;
 
@@ -96,6 +102,21 @@ export class ReportsService {
     } else {
       return 1;
     }
+  }
+
+  private getInvalidSymptoms(selectedSymptoms: string[]): string[] {
+    const validSymptoms = [
+      ...Object.keys(emergencySymptoms),
+      ...Object.keys(neurologicalSymptoms),
+      ...Object.keys(respiratorySymptoms),
+      ...Object.keys(circulatorySymptoms),
+      ...Object.keys(injurySymptoms),
+      ...Object.keys(otherSymptoms),
+    ];
+
+    return selectedSymptoms.filter(
+      (symptom) => !validSymptoms.includes(symptom),
+    );
   }
 
   //환자 정보 업데이트
