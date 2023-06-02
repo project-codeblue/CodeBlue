@@ -1,13 +1,13 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { ReportsModule } from './reports/reports.module';
 import { HospitalsModule } from './hospitals/hospitals.module';
 import { RequestsModule } from './requests/requests.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigValidator } from 'config/config.validator';
-import { ScheduleModule } from '@nestjs/schedule';
+import { ConfigValidator } from '../config/config.validator';
 
 @Module({
   imports: [
