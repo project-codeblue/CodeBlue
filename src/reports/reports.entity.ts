@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Gender, BloodType } from './patients-info.enum';
+import { Gender, BloodType } from './reports.enum';
 import { Hospitals } from '../hospitals/hospitals.entity';
 
 @Entity()
@@ -43,7 +43,7 @@ export class Reports extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   hospital_id: number;
 
   @ManyToOne(() => Hospitals, (hospital) => hospital.reports)

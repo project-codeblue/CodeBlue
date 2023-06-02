@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { HospitalsService } from './hospitals.service';
 import { HospitalsRepository } from '../hospitals.repository';
-import { KakaoMapService } from '../../commons/utils/kakao-map.service';
+import { KakaoMapService } from '../../commons/providers/kakao-map.service';
 import { ReportsRepository } from '../..//reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
@@ -86,7 +86,7 @@ describe('ReportsService Unit Testing', () => {
 
     it('getLocalHospitals request must be performed successfully', async () => {
       const hospitals: string[] = [];
-      const site: string = 'sample'
+      const site: string = 'sample';
       jest
         .spyOn(crawling, 'getLocalHospitaldata')
         .mockResolvedValueOnce(hospitals);
@@ -97,9 +97,7 @@ describe('ReportsService Unit Testing', () => {
 
     it('getNationHospitals request must be performed successfully', async () => {
       const hospitals: Hospitals[] = [];
-      jest
-        .spyOn(openAPI, 'getMedicalData')
-        .mockResolvedValueOnce(hospitals);
+      jest.spyOn(openAPI, 'getMedicalData').mockResolvedValueOnce(hospitals);
 
       expect(await hospitalsService.getNationHospitals()).toBe(hospitals);
       expect(openAPI.getMedicalData).toHaveBeenCalledTimes(1);
@@ -150,7 +148,14 @@ describe('ReportsService Unit Testing', () => {
       // expect(hospitalsRepository.getHospitalsWithoutRadius).toHaveBeenCalledTimes(1);
       expect(hospitalsRepository.getHospitalsWithinRadius).toHaveBeenCalledTimes(1);
 
-      expect(await kakaoMapService.getDrivingResult(startLat, startLng, endLat, endLng)).toStrictEqual(result);
+      expect(
+        await kakaoMapService.getDrivingResult(
+          startLat,
+          startLng,
+          endLat,
+          endLng,
+        ),
+      ).toStrictEqual(result);
       expect(driving).toBeCalledTimes(1);
       expect(driving).toBeCalledWith(startLat, startLng, endLat, endLng);
 
