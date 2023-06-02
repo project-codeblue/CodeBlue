@@ -12,7 +12,7 @@ export class HospitalsController {
     return this.hospitalsService.getLocalHospitals(site);
   }
 
-  @Get('/:report_id')
+  @Get('/:report_id') // hospital/1?latitude=37.1&longitude=127.1
   getRecommendedHospitals(
     @Param('report_id') report_id: number,
     @Query() queries: object,
