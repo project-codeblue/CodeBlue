@@ -73,6 +73,14 @@ export class ReportsRepository extends Repository<Reports> {
     return await report.save();
   }
 
+  async updateReportBeingNotSent(report_id: number) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+    report.is_sent = false;
+    return await report.save();
+  }
+
   async createDummyReport(
     hospital_id: number,
     patient_id: number,
@@ -105,5 +113,22 @@ export class ReportsRepository extends Repository<Reports> {
 
     report.hospital_id = hospital_id;
     await report.save();
+  }
+
+  async deleteTargetHospital(report_id: number): Promise<void> {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+
+    report.hospital_id = null;
+    await report.save();
+  }
+
+  async getReportWithPatientInfo(report_id: number): Promise<Reports> {
+    const report = await this.findOne({
+      where: { report_id },
+      relations: ['patient'],
+    });
+    return report;
   }
 }
