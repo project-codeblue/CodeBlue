@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { ReportsRepository } from 'src/reports/reports.repository';
+import { ReportsRepository } from '../../reports/reports.repository';
 import { PatientsRepository } from '../patients.repository';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { Patients } from '../patients.entity';

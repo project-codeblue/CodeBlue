@@ -16,7 +16,7 @@ import {
   otherSymptoms,
   respiratorySymptoms,
 } from '../constants/symptoms';
-import { PatientsRepository } from 'src/patients/patients.repository';
+import { PatientsRepository } from '../../patients/patients.repository';
 
 @Injectable()
 export class ReportsService {

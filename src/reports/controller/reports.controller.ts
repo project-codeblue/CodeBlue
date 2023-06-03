@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Param,
-  Body,
-  Post,
-  NotFoundException,
-} from '@nestjs/common';
+import { Controller, Get, Patch, Param, Body, Post } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -27,6 +19,7 @@ export class ReportsController {
   async getReportDetails(
     @Param('report_id') reportId: number,
   ): Promise<Reports> {
+    this.logger.verbose('증상 보고서 상세 조회 GET API');
     const reportDetails = await this.reportsService.getReportDetails(reportId);
     return reportDetails;
   }
@@ -36,6 +29,7 @@ export class ReportsController {
     @Param('report_id') report_id: number,
     @Body() updatedReport: UpdateReportDto,
   ): Promise<Reports> {
+    this.logger.verbose('증상 보고서 수정 PATCH API');
     return await this.reportsService.updateReport(report_id, updatedReport);
   }
 
