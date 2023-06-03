@@ -34,6 +34,9 @@ export class Hospitals extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   emogList: string;
 
+  @Column({ type: 'point', nullable: true})
+  point: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
