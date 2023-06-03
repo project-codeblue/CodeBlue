@@ -15,7 +15,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     return await this.query(
       `
         SELECT * FROM hospitals;
-      `
+      `,
     );
   }
 
@@ -23,15 +23,15 @@ export class HospitalsRepository extends Repository<Hospitals> {
     return await this.query(
       `
         SELECT * FROM hospitals WHERE hospital_id = ${hospital_id}
-      `
+      `,
     );
   }
 
   async updateAvailableBeds(hospital_id: number): Promise<void> {
     await this.query(
       `
-        UPDATE hospitals SET available_beds = avalable - 1 WHERE hospital_id = ${hospital_id};
-      `
+        UPDATE hospitals SET available_beds = available_beds - 1 WHERE hospital_id = ${hospital_id};
+      `,
     );
   }
 
@@ -42,7 +42,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     await this.query(
       `
         UPDATE hospitals SET available_beds = ${beds};
-      `
+      `,
     );
   }
 

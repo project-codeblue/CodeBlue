@@ -4,7 +4,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { EntityManager, Brackets } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { ReportsRepository } from 'src/reports/reports.repository';
 import { PatientsRepository } from '../patients.repository';

@@ -20,7 +20,7 @@ export class PatientsController {
   createPatientInfo(
     @Param('report_id') report_id: number,
     @Body(new GenderFromRrnPipe()) createPatientInfo: CreatePatientDto, // 주민등록번호를 받으면 자동으로 gender 판정되어 넘겨짐
-  ) {
+  ): Promise<Patients> {
     this.logger.verbose('환자 정보 입력 POST API');
     return this.patientsService.createPatientInfo(report_id, createPatientInfo);
   }
