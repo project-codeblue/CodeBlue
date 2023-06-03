@@ -148,7 +148,13 @@ export class ReportsService {
 
   // 증상보고서 상세 조회
   async getReportDetails(report_id: number) {
-    return this.reportsRepository.getReportDetails(report_id);
+    const reportDetails = await this.reportsRepository.getReportDetails(
+      report_id,
+    );
+    if (!reportDetails) {
+      throw new NotFoundException('일치하는 증상보고서가 없습니다');
+    }
+    return reportDetails;
   }
 
   // 더미 데이터 생성 API (추후 제거 예정)
