@@ -48,7 +48,7 @@ export class HospitalsService {
     return results;
   }
 
-  // 병원 추천
+  // 병원 추천 및 병상 조회 (종합상황판 기반)
   async getRecommendedHospitals(
     report_id: number,
     queries: object,
