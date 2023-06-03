@@ -147,7 +147,7 @@ export class ReportsService {
   }
 
   // 증상보고서 상세 조회
-  async getReportDetails(report_id: number): Promise<Reports> {
+  async getReportDetails(report_id: number) {
     const reportDetails = await this.reportsRepository.getReportDetails(
       report_id,
     );
