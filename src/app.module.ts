@@ -8,6 +8,7 @@ import { RequestsModule } from './requests/requests.module';
 import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
 import { ConfigValidator } from '../config/config.validator';
+import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConfigValidator } from '../config/config.validator';
     ReportsModule,
     HospitalsModule,
     RequestsModule,
+    PatientsModule,
   ],
 })
 export class AppModule implements NestModule {

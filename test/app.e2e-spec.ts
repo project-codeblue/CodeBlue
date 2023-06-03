@@ -51,12 +51,15 @@ describe('CodeBLUE E2E Test', () => {
     // 병원 미리 추가해주기
     hospitalsRepository = moduleFixture.get('HospitalsRepository');
     await hospitalsRepository.query(`
-      INSERT INTO hospitals (name, address, phone, available_beds, latitude, longitude)
-      VALUES ('가톨릭대학교여의도성모병원', '서울특별시 영등포구 63로 10, 여의도성모병원 (여의도동)', '02-3779-1188', 10, 37.51827233800711, 126.93673129599131);
+      CREATE SPATIAL INDEX spatial_index ON hospitals(point);
+    `); // point column에 nullable = false로 설정해주어야함
+    await hospitalsRepository.query(`
+      INSERT INTO hospitals (name, address, phone, available_beds, latitude, longitude, emogList, point)
+      VALUES ('가톨릭대학교여의도성모병원', '서울특별시 영등포구 63로 10, 여의도성모병원 (여의도동)', '02-3779-1188', 10, 37.51827233800711, 126.93673129599131, 'A1100011', POINT(37.51827233800711, 126.93673129599131));
     `); // 가용 병상이 있는 병원
     await hospitalsRepository.query(`
-      INSERT INTO hospitals (name, address, phone, available_beds, latitude, longitude)
-      VALUES ('가톨릭대학교여의도성모병원', '서울특별시 영등포구 63로 10, 여의도성모병원 (여의도동)', '02-3779-1188', 0, 37.51827233800711, 126.93673129599131);
+      INSERT INTO hospitals (name, address, phone, available_beds, latitude, longitude, emogList, point)
+      VALUES ('강원도강릉의료원', '강원도 강릉시 경강로 2007 (남문동)', '033-610-1200', 0, 37.7493104200, 128.8887963000, 'A2200011', POINT(37.7493104200, 128.8887963000));
     `); // 가용 병상이 없는 병원
   });
 

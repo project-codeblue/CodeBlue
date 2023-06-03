@@ -16,7 +16,7 @@ import {
   neurologicalSymptoms,
   otherSymptoms,
   respiratorySymptoms,
-} from '../constants/symtoms';
+} from '../constants/symptoms';
 
 @Injectable()
 export class ReportsService {
