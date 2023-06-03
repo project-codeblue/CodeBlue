@@ -31,9 +31,14 @@ export class RequestsService {
         .leftJoin('reports.patient', 'patient')
         .leftJoin('reports.hospital', 'hospital')
         .select([
-          'reports.report_id', 'reports.symptom_level', 'reports.symptoms', 'reports.createdAt',
+          'reports.report_id',
+          'reports.symptom_level',
+          'reports.symptoms',
+          'reports.createdAt',
           'patient.name',
-          'hospital.name', 'hospital.phone', 'hospital.emogList'
+          'hospital.name',
+          'hospital.phone',
+          'hospital.emogList'
         ])
         .where('1 = 1')
         .where('is_sent = 1');
@@ -86,7 +91,7 @@ export class RequestsService {
       // const allReports = query.getMany();
 
       if (allReports.length === 0) {
-        throw new NotFoundException;
+        throw new NotFoundException();
       }
 
       return allReports;
