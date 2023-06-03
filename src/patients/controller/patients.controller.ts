@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Param,
-  Body,
-  Logger,
-  UsePipes,
-} from '@nestjs/common';
+import { Controller, Post, Param, Body, Logger } from '@nestjs/common';
 import { PatientsService } from '../service/patients.service';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { GenderFromRrnPipe } from '../pipe/gender-from-rrn.pipe';
