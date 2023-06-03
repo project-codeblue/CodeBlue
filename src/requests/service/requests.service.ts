@@ -28,11 +28,11 @@ export class RequestsService {
     try {
       const query = this.reportsRepository
         .createQueryBuilder('reports')
-        // .leftJoinAndSelect('reports.hospital', 'hospital')
+        .leftJoin('reports.patient', 'patient')
         .leftJoin('reports.hospital', 'hospital')
-        // .leftJoin('reports.patient', 'patient')
         .select([
-          'reports.report_id', 'reports.name', 'reports.symptom_level', 'reports.symptoms', 'reports.createdAt',
+          'reports.report_id', 'reports.symptom_level', 'reports.symptoms', 'reports.createdAt',
+          'patient.name',
           'hospital.name', 'hospital.phone', 'hospital.emogList'
         ])
         .where('1 = 1')
