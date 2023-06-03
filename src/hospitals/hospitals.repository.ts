@@ -27,10 +27,18 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
-  async updateAvailableBeds(hospital_id: number): Promise<void> {
+  async decreaseAvailableBeds(hospital_id: number): Promise<void> {
     await this.query(
       `
         UPDATE hospitals SET available_beds = available_beds - 1 WHERE hospital_id = ${hospital_id};
+      `,
+    );
+  }
+
+  async increaseAvailableBeds(hospital_id: number): Promise<void> {
+    await this.query(
+      `
+        UPDATE hospitals SET available_beds = available_beds + 1 WHERE hospital_id = ${hospital_id};
       `,
     );
   }

@@ -2,6 +2,7 @@ import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
+import { UpdateReportDto } from './dto/update-report.dto';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Injectable()
@@ -49,29 +50,34 @@ export class ReportsRepository extends Repository<Reports> {
     });
   }
 
-  // async updateReportPatientInfo(
-  //   report_id: number,
-  //   updatedPatientInfo: UpdateReportDto,
-  // ) {
-  //   const report = await this.findOne({
-  //     where: { report_id },
-  //   });
+  async updateReport(report_id: number, updatedReport: UpdateReportDto) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
 
-  //   // updatedPatientInfo의 필드를 하나씩 꺼내서 report에 넣어준다.
-  //   for (const field in updatedPatientInfo) {
-  //     if (updatedPatientInfo.hasOwnProperty(field)) {
-  //       report[field] = updatedPatientInfo[field];
-  //     }
-  //   }
+    // updatedReport의 필드를 하나씩 꺼내서 report에 넣어준다.
+    for (const field in updatedReport) {
+      if (updatedReport.hasOwnProperty(field)) {
+        report[field] = updatedReport[field];
+      }
+    }
 
-  //   return await report.save();
-  // }
+    return await report.save();
+  }
 
   async updateReportBeingSent(report_id: number) {
     const report = await this.findOne({
       where: { report_id },
     });
     report.is_sent = true;
+    return await report.save();
+  }
+
+  async updateReportBeingNotSent(report_id: number) {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+    report.is_sent = false;
     return await report.save();
   }
 
@@ -107,5 +113,22 @@ export class ReportsRepository extends Repository<Reports> {
 
     report.hospital_id = hospital_id;
     await report.save();
+  }
+
+  async deleteTargetHospital(report_id: number): Promise<void> {
+    const report = await this.findOne({
+      where: { report_id },
+    });
+
+    report.hospital_id = null;
+    await report.save();
+  }
+
+  async getReportWithPatientInfo(report_id: number): Promise<Reports> {
+    const report = await this.findOne({
+      where: { report_id },
+      relations: ['patient'],
+    });
+    return report;
   }
 }
