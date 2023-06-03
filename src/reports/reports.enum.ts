@@ -5,7 +5,11 @@ export enum BloodType {
   O = 'O',
 }
 
-export enum Gender {
-  M = 'M',
-  F = 'F',
+export enum AgeRange {
+  '임산부' = '임산부',
+  '영유아' = '영유아',
+  '청소년' = '청소년',
+  '청년' = '청년',
+  '중년' = '중년',
+  '노년' = '노년',
 }

@@ -5,7 +5,7 @@ import {
   IsEnum,
   IsString,
 } from 'class-validator';
-import { Gender, BloodType } from '../reports.enum';
+import { AgeRange, BloodType } from '../reports.enum';
 
 export class CreateReportDto {
   @IsOptional()
@@ -17,16 +17,12 @@ export class CreateReportDto {
   symptoms: string;
 
   @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsEnum(Gender)
-  gender?: Gender;
-
-  @IsOptional()
   @IsNumber()
-  age?: number;
+  blood_pressure?: number;
+
+  @IsOptional()
+  @IsEnum(AgeRange)
+  age_range?: AgeRange;
 
   @IsOptional()
   @IsEnum(BloodType)
