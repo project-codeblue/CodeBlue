@@ -5,8 +5,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
-import { UpdateReportDto } from '../dto/update-report.dto';
-import { Reports } from '../reports.entity';
 import { CreateReportDto } from '../dto/create-report.dto';
 import {
   Symptom,
@@ -121,33 +119,6 @@ export class ReportsService {
     return selectedSymptoms.filter(
       (symptom) => !validSymptoms.includes(symptom),
     );
-  }
-
-  //환자 정보 업데이트
-  async updateReportPatientInfo(
-    report_id: number,
-    updatedPatientInfo: UpdateReportDto,
-  ): Promise<Reports> {
-    try {
-      const report = await this.reportsRepository.findReport(report_id);
-
-      if (!report) {
-        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-      }
-
-      return await this.reportsRepository.updateReportPatientInfo(
-        report_id,
-        updatedPatientInfo,
-      );
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new HttpException(
-        '증상 보고서 환자 데이터 변경에 실패하였습니다.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
   }
 
   // 증상보고서 상세 조회

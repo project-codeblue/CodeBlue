@@ -1,7 +1,6 @@
 import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
-import { UpdateReportDto } from './dto/update-report.dto';
 import { CreateReportDto } from './dto/create-report.dto';
 import { Hospitals } from 'src/hospitals/hospitals.entity';
 
@@ -50,23 +49,23 @@ export class ReportsRepository extends Repository<Reports> {
     });
   }
 
-  async updateReportPatientInfo(
-    report_id: number,
-    updatedPatientInfo: UpdateReportDto,
-  ) {
-    const report = await this.findOne({
-      where: { report_id },
-    });
+  // async updateReportPatientInfo(
+  //   report_id: number,
+  //   updatedPatientInfo: UpdateReportDto,
+  // ) {
+  //   const report = await this.findOne({
+  //     where: { report_id },
+  //   });
 
-    // updatedPatientInfo의 필드를 하나씩 꺼내서 report에 넣어준다.
-    for (const field in updatedPatientInfo) {
-      if (updatedPatientInfo.hasOwnProperty(field)) {
-        report[field] = updatedPatientInfo[field];
-      }
-    }
+  //   // updatedPatientInfo의 필드를 하나씩 꺼내서 report에 넣어준다.
+  //   for (const field in updatedPatientInfo) {
+  //     if (updatedPatientInfo.hasOwnProperty(field)) {
+  //       report[field] = updatedPatientInfo[field];
+  //     }
+  //   }
 
-    return await report.save();
-  }
+  //   return await report.save();
+  // }
 
   async updateReportBeingSent(report_id: number) {
     const report = await this.findOne({
