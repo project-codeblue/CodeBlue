@@ -23,9 +23,6 @@ export class Patients extends BaseEntity {
   @Column({ nullable: true })
   gender: Gender;
 
-  @Column({ type: 'int', nullable: true })
-  age: number;
-
   @CreateDateColumn()
   createdAt: Date;
 
