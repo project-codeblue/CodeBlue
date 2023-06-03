@@ -23,7 +23,7 @@ export class ReportsController {
     return this.reportsService.createReport(createReportDto);
   }
 
-  @Patch(':report_id')
+  @Patch('/:report_id')
   updateReportPatientInfo(
     @Param('report_id') report_id: number,
     @Body() updatedPatientInfo: UpdateReportDto,
@@ -35,7 +35,7 @@ export class ReportsController {
     );
   }
 
-  @Get(':report_id')
+  @Get('/:report_id')
   async getReportDetails(
     @Param('report_id') reportId: number,
   ): Promise<Reports> {

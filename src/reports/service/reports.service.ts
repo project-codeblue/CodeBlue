@@ -16,11 +16,15 @@ import {
   neurologicalSymptoms,
   otherSymptoms,
   respiratorySymptoms,
-} from '../constants/symtoms';
+} from '../constants/symptoms';
+import { PatientsRepository } from 'src/patients/patients.repository';
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly reportsRepository: ReportsRepository) {}
+  constructor(
+    private readonly reportsRepository: ReportsRepository,
+    private readonly patientsRepository: PatientsRepository,
+  ) {}
 
   // 환자 증상 정보 입력
   async createReport(createReportDto: CreateReportDto) {

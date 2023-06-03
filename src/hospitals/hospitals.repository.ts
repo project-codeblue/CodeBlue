@@ -35,6 +35,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
+  // 1시간마다 모든 병원의 가용 병상을 초기화
   @Cron(CronExpression.EVERY_HOUR)
   async setDefaultAvailableBeds(): Promise<void> {
     const beds = DEFAULT_AVAILABLE_BEDS;

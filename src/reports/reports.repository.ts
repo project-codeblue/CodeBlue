@@ -19,7 +19,7 @@ export class ReportsRepository extends Repository<Reports> {
     return this.save(report);
   }
 
-  async getReportDetails(report_id): Promise<Reports> {
+  async getReportDetails(report_id: number): Promise<Reports> {
     const results = await this.findOne({
       where: { report_id },
       relations: ['hospital'],
