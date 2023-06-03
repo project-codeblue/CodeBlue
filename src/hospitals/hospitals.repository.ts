@@ -28,6 +28,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
+  // 1시간마다 모든 병원의 가용 병상을 초기화
   @Cron(CronExpression.EVERY_HOUR)
   async setDefaultAvailableBeds(): Promise<void> {
     const hospitals = await this.find();
@@ -44,9 +45,9 @@ export class HospitalsRepository extends Repository<Hospitals> {
   ) {
     return await this.query(
       `
-        SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+        SELECT hospital_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
         point) as 'distance'
-        FROM geohospital
+        FROM hospitals
         WHERE ST_Distance_Sphere(POINT(${startLng}, ${startLat}), point) < (${radius})
         order by distance;
       `,
@@ -56,9 +57,9 @@ export class HospitalsRepository extends Repository<Hospitals> {
   async getHospitalsWithoutRadius(startLng: number, startLat: number) {
     return await this.query(
       `
-          SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+          SELECT hospital_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
           point) as 'distance'
-          FROM geohospital
+          FROM hospitals
           order by distance;
       `,
     );

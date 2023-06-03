@@ -8,7 +8,19 @@ import { HttpExceptionFilter } from '../src/commons/exceptions/http-exception.fi
 import { MysqlConfigProvider } from '../src/commons/providers/typeorm-config.provider';
 import { Hospitals } from '../src/hospitals/hospitals.entity';
 
-describe('AppController (e2e)', () => {
+/** 
+ 어플리케이션 동작 과정
+ 0. 병원 데이터 추가 /hospital
+ 유저 플로우
+ 1. 증상 보고서 입력 /report
+ 2. 병원 조회 /hospital/:report_id
+ 3. 환자 이송 신청 /request/:report_id/:hospital_id
+ 4. 증상 보고서 검색 및 리스트 조회 /request/search
+ 5. 증상 보고서 상세 조회 /report/:report_id
+ 6. 증상 보고서 환자 정보 업데이트 /report/:report_id
+*/
+
+describe('CodeBLUE E2E Test', () => {
   let app: INestApplication;
   let hospitalsRepository: Repository<Hospitals>; // Hospitals 데이터를 추가해주는 POST API는 존재하지 않고, DB에 미리 저장해놓기 때문에 직접 db에 접근하기 위해 추가
 
@@ -48,16 +60,6 @@ describe('AppController (e2e)', () => {
     `); // 가용 병상이 없는 병원
   });
 
-  // 어플리케이션 동작 과정
-  // 0. 병원 데이터 추가 /hospital
-  // 유저 플로우
-  // 1. 증상 보고서 입력 /report
-  // 2. 병원 조회 /hospital/:report_id
-  // 3. 환자 이송 신청 /request/:report_id/:hospital_id
-  // 4. 증상 보고서 검색 및 리스트 조회 /request/search
-  // 5. 증상 보고서 상세 조회 /report/:report_id
-  // 6. 증상 보고서 환자 정보 업데이트 /report/:report_id
-
   // 1. 증상 보고서 입력
   describe('/report', () => {
     it('201 증상 보고서 입력 성공 - 환자 정보 없이, 증상만 입력 (POST)', () => {
@@ -77,58 +79,83 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    // it('412 Validation Error: body data 형식이 맞지 않을 때 (POST)', () => {
-    //   return request(app.getHttpServer())
-    //     .post('/report')
-    //     .send({
-    //       symptoms: 0,
-    //       symptom_level: '레벨',
-    //     })
-    //     .expect(412);
-    // });
+    it('400 Validation Error: body data 형식이 맞지 않을 때 (POST)', () => {
+      return request(app.getHttpServer())
+        .post('/report')
+        .send({
+          symptoms: 0,
+          symptom_level: '레벨',
+        })
+        .expect(400);
+    });
+
+    it('400 BAD_REQUEST: 존재하지 않는 symptoms를 입력하였을때 (POST)', () => {
+      return request(app.getHttpServer())
+        .post('/report')
+        .send({
+          symptoms: '두통',
+        })
+        .expect(400);
+    });
   });
 
   // 2. 병원 조회
-  describe('/hospital/:report_id', () => {
+  describe('/hospital/:report_id?latitude=latitude?longitude=longitude', () => {
     it('200 병원 조회 성공 (GET)', () => {
-      return request(app.getHttpServer()).get('/hospital/1').expect(200);
-    }); // geohospital table 만드는 거 필요
+      return request(app.getHttpServer())
+        .get('/hospital/1&latitude=37.199188&longitude=127.0722199')
+        .expect(200);
+    });
+
+    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/hospital/100000&latitude=37.199188&longitude=127.0722199')
+        .expect(404);
+    });
+
+    it('404 NotFoundException: 사용자가 선택한 반경내에 병원이 없을경우 (GET)', () => {
+      return request(app.getHttpServer())
+        .get(
+          '/hospital/100000&latitude=37.199188&longitude=127.0722199&radius=0',
+        )
+        .expect(404);
+    });
   });
 
   // 3. 환자 이송 신청
   describe('/request/:report_id/:hospital_id (POST)', () => {
-    it('201 이송 신청 성공 (GET)', () => {
+    it('201 이송 신청 성공 (POST)', () => {
       return request(app.getHttpServer()).post('/request/1/1').expect(201);
     });
 
-    it('404 NotFoundException: 해당 병원이 없을 때 (GET)', () => {
+    it('404 NotFoundException: 해당 병원이 없을 때 (POST)', () => {
       return request(app.getHttpServer()).post('/request/1/100000').expect(404);
     });
 
-    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (GET)', () => {
+    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (POST)', () => {
       return request(app.getHttpServer()).post('/request/100000/1').expect(404);
     });
 
-    it('400 BAD_REQUEST: 이미 증상 보고서를 전송하였을 때 (GET)', () => {
+    it('400 BAD_REQUEST: 이미 증상 보고서를 전송하였을 때 (POST)', () => {
       return request(app.getHttpServer()).post('/request/1/1').expect(400);
     });
 
-    it('503 SERVICE_UNAVAILABLE: 해당 병원의 병상이 다 찼을 때 (GET)', () => {
+    it('503 SERVICE_UNAVAILABLE: 해당 병원의 병상이 다 찼을 때 (POST)', () => {
       return request(app.getHttpServer()).post('/request/2/2').expect(503);
     });
   });
 
   // 4. 증상 보고서 검색 및 리스트 조회
-  describe('/report/search', () => {
+  describe('/request/search', () => {
     it('200 검색 성공 (GET)', () => {
       return request(app.getHttpServer())
-        .get('/report/search?symptom_level=2')
+        .get('/request/search?symptom_level=2')
         .expect(200);
     });
 
     it('404 NotFoundException: 검색 결과가 없을 때 (GET)', () => {
       return request(app.getHttpServer())
-        .get('/report/search?symptom_level=0')
+        .get('/request/search?symptom_level=0')
         .expect(404);
     });
   });
@@ -142,7 +169,7 @@ describe('AppController (e2e)', () => {
 
     it('404 NotFoundException: 해당 증상 보고서가 없을 때 (GET)', () => {
       return request(app.getHttpServer()).get('/report/100000').expect(404);
-    }); // 예외처리 필요
+    });
 
     it('200 환자 정보 업데이트 성공 (PATCH)', () => {
       return request(app.getHttpServer())
@@ -155,7 +182,16 @@ describe('AppController (e2e)', () => {
     });
 
     it('404 NotFoundException: 해당 증상 보고서가 없을 때 (PATCH)', () => {
-      return request(app.getHttpServer()).patch('/request/100000').expect(404);
+      return request(app.getHttpServer()).patch('/report/100000').expect(404);
+    });
+
+    it('400 Validation Error: body data 형식이 맞지 않을 때 (PATCH)', () => {
+      return request(app.getHttpServer())
+        .patch('/report/1')
+        .send({
+          blood_type: 'X',
+        })
+        .expect(400);
     });
   });
 
