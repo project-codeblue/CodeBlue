@@ -12,37 +12,29 @@ export class HospitalsRepository extends Repository<Hospitals> {
   }
 
   async getHospitals(): Promise<Hospitals[]> {
-    return await this.query(
-      `
-        SELECT * FROM hospitals;
-      `
-    );
+    return await this.find();
   }
 
   async findHospital(hospital_id: number): Promise<Hospitals> {
-    return await this.query(
-      `
-        SELECT * FROM hospitals WHERE hospital_id = ${hospital_id}
-      `
-    );
+    return await this.findOne({ where: { hospital_id } });
   }
 
   async updateAvailableBeds(hospital_id: number): Promise<void> {
-    await this.query(
-      `
-        UPDATE hospitals SET available_beds = avalable - 1 WHERE hospital_id = ${hospital_id};
-      `
+    await this.update(
+      { hospital_id },
+      {
+        available_beds: () => 'available_beds - 1',
+      },
     );
   }
 
   @Cron(CronExpression.EVERY_HOUR)
   async setDefaultAvailableBeds(): Promise<void> {
-    const beds = DEFAULT_AVAILABLE_BEDS;
-    await this.query(
-      `
-        UPDATE hospitals SET available_beds = ${beds};
-      `
-    );
+    const hospitals = await this.find();
+    hospitals.forEach(async (hospital) => {
+      hospital.available_beds = DEFAULT_AVAILABLE_BEDS;
+      await this.save(hospital);
+    });
   }
 
   async getHospitalsWithinRadius(

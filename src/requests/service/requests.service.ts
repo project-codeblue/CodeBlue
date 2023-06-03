@@ -30,7 +30,6 @@ export class RequestsService {
         .createQueryBuilder('reports')
         // .leftJoinAndSelect('reports.hospital', 'hospital')
         .leftJoin('reports.hospital', 'hospital')
-        // .leftJoin('reports.patient', 'patient')
         .select([
           'reports.report_id', 'reports.name', 'reports.symptom_level', 'reports.symptoms', 'reports.createdAt',
           'hospital.name', 'hospital.phone', 'hospital.emogList'
