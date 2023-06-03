@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Param, Query } from '@nestjs/common';
 import { RequestsService } from '../service/requests.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from 'src/reports/reports.entity';
@@ -28,5 +28,11 @@ export class RequestsController {
   ) {
     this.logger.verbose('환자 이송 신청 POST API');
     return this.requestsService.createRequest(report_id, hospital_id);
+  }
+
+  @Delete('/:report_id')
+  withdrawRequest(@Param('report_id') report_id: number) {
+    this.logger.verbose('환자 이송 신청 철회 PATCH API');
+    return this.requestsService.withdrawRequest(report_id);
   }
 }

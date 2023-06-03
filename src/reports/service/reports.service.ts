@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
+import { UpdateReportDto } from '../dto/update-report.dto';
 import {
   Symptom,
   circulatorySymptoms,
@@ -130,6 +131,25 @@ export class ReportsService {
       throw new NotFoundException('일치하는 증상보고서가 없습니다');
     }
     return reportDetails;
+  }
+
+  // 증상 보고서 수정
+  async updateReport(report_id: number, updateReportDto: UpdateReportDto) {
+    try {
+      const report = await this.reportsRepository.findReport(report_id);
+      if (!report) {
+        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+      }
+      return this.reportsRepository.updateReport(report_id, updateReportDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        '증상 보고서 수정에 실패하였습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   // 더미 데이터 생성 API (추후 제거 예정)
