@@ -11,9 +11,14 @@ export class PatientsRepository extends Repository<Patients> {
 
   async createPatientInfo(
     createPatientInfo: CreatePatientDto,
-  ) {
-    console.log('createPatientInfo', createPatientInfo);
-    // const patient = this.create(...createPatientInfo);
-    // return this.save(patient);
+  ): Promise<Patients> {
+    const { patient_rrn, name, gender } = createPatientInfo;
+    const patient = this.create({
+      patient_rrn: patient_rrn.toString(),
+      name,
+      gender,
+    });
+
+    return this.save(patient);
   }
 }

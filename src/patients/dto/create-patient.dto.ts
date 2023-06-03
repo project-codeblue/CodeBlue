@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  IsEnum,
+} from 'class-validator';
+import { Gender } from '../patients.enum';
 
 export class CreatePatientDto {
   @IsString()
@@ -9,4 +16,8 @@ export class CreatePatientDto {
   @IsOptional()
   @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
 }
