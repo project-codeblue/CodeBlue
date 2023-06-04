@@ -1,14 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager, Brackets } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { Reports } from 'src/reports/reports.entity';
+import { Reports } from '../../reports/reports.entity';
 import * as date from 'date-and-time';
 
 @Injectable()
@@ -24,6 +19,7 @@ export class RequestsService {
     return await this.reportsRepository.getAllRequests();
   }
 
+  // 검색 키워드: 날짜, 증상, 증상도, 이름, 지역
   async getSearchRequests(queries: object): Promise<Reports[]> {
     try {
       const query = this.reportsRepository
@@ -85,6 +81,11 @@ export class RequestsService {
       if (queries['site']) {
         // URL 쿼리에 지역이 존재하면 실행
         query.andWhere(`hospital.address LIKE '%${queries['site']}%'`);
+      }
+
+      if (queries['name']) {
+        // URL 쿼리에 이름이 존재하면 실행
+        query.andWhere(`patient.name = ${queries['name']}`);
       }
 
       const allReports = await query.getRawMany();
