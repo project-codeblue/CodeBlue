@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { PatientsRepository } from '../patients.repository';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { Patients } from '../patients.entity';
+import { UpdatePatientDto } from '../dto/update-patient.dto';
 
 @Injectable()
 export class PatientsService {
@@ -53,5 +59,26 @@ export class PatientsService {
       },
     );
     return createdPatientInfo;
+  }
+
+  // 환자 정보 수정
+  async updatePatientInfo(
+    patient_id: number,
+    updatedPatient: UpdatePatientDto,
+  ): Promise<Patients> {
+    try {
+      return this.patientsRepository.updatePatientInfo(
+        patient_id,
+        updatedPatient,
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        '환자 정보 수정에 실패하였습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
