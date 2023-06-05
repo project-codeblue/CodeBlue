@@ -32,7 +32,7 @@ export class RequestsController {
 
   @Delete('/:report_id')
   withdrawRequest(@Param('report_id') report_id: number) {
-    this.logger.verbose('환자 이송 신청 철회 PATCH API');
+    this.logger.verbose('환자 이송 신청 철회 DELETE API');
     return this.requestsService.withdrawRequest(report_id);
   }
 }

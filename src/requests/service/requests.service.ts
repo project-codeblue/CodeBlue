@@ -129,7 +129,6 @@ export class RequestsService {
           }
 
           const availableBeds = hospital.available_beds;
-          console.log('availableBeds: ', availableBeds);
           if (availableBeds === 0) {
             throw new HttpException(
               '병원 이송 신청이 마감되었습니다. 다른 병원에 신청하시길 바랍니다.',

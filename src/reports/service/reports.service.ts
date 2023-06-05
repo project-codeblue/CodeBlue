@@ -5,6 +5,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
+import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
 import {
@@ -16,7 +17,6 @@ import {
   otherSymptoms,
   respiratorySymptoms,
 } from '../constants/symptoms';
-import { PatientsRepository } from 'src/patients/patients.repository';
 
 @Injectable()
 export class ReportsService {
