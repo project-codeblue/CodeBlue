@@ -33,7 +33,7 @@ export class RequestsService {
         // .leftJoin('reports.patient', 'patient')
         .select([
           'reports.report_id',
-          'reports.name',
+          // 'reports.name',
           'reports.symptom_level',
           'reports.symptoms',
           'reports.createdAt',
@@ -92,16 +92,18 @@ export class RequestsService {
       // const allReports = query.getMany();
 
       if (allReports.length === 0) {
-        throw new NotFoundException();
+        throw new NotFoundException('검색 결과가 없습니다');
       }
 
       return allReports;
     } catch (error) {
-      if (error.response.statusCode === 404) {
-        throw new NotFoundException('검색 결과가 없습니다');
-      } else {
-        throw new Error('검색 조회에 실패하였습니다.');
+      if (error instanceof NotFoundException) {
+        throw error;
       }
+      throw new HttpException(
+        error.response || '검색 조회에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -113,7 +115,7 @@ export class RequestsService {
           const hospital = await this.hospitalsRepository.findHospital(
             hospital_id,
           );
-          if (!hospital) {
+          if (!hospital[0]) {
             throw new NotFoundException('병원이 존재하지 않습니다.');
           }
 
@@ -128,8 +130,8 @@ export class RequestsService {
             );
           }
 
-          const availableBeds = hospital.available_beds;
-          if (availableBeds === 0) {
+          const available_beds = hospital[0].available_beds;
+          if (available_beds === 0) {
             throw new HttpException(
               '병원 이송 신청이 마감되었습니다. 다른 병원에 신청하시길 바랍니다.',
               HttpStatus.SERVICE_UNAVAILABLE,
