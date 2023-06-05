@@ -27,4 +27,12 @@ export class CreateReportDto {
   @IsOptional()
   @IsEnum(BloodType)
   blood_type?: BloodType;
+
+  @IsOptional()
+  @IsNumber()
+  patient_rrn?: string;
+
+  @IsOptional()
+  @IsNumber()
+  patient_id?: number;
 }

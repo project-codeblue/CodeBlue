@@ -1,4 +1,12 @@
-import { Controller, Get, Patch, Param, Body, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Body,
+  Post,
+  BadRequestException,
+  Patch,
+} from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -12,7 +20,19 @@ export class ReportsController {
 
   @Post()
   createReport(@Body() createReportDto: CreateReportDto) {
-    return this.reportsService.createReport(createReportDto);
+    console.log('createReportDto:', createReportDto);
+    if (createReportDto.symptoms && createReportDto.patient_rrn) {
+      // 환자 주민등록번호와 증상이 함께 전달된 경우
+      return this.reportsService.createReportWithPatient({
+        ...createReportDto, // 복사본 사용
+        patient_rrn: createReportDto.patient_rrn,
+      });
+    } else if (createReportDto.symptoms) {
+      // 증상만 전달된 경우
+      return this.reportsService.createReport(createReportDto);
+    } else {
+      throw new BadRequestException('올바른 요청 형식이 아닙니다.');
+    }
   }
 
   @Get('/:report_id')

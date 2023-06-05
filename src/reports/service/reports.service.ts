@@ -46,6 +46,34 @@ export class ReportsService {
     return this.reportsRepository.createReport(createReportDto, emergencyLevel);
   }
 
+  async createReportWithPatient(createReportDto: CreateReportDto) {
+    console.log('createReportWithPatient:', createReportDto);
+    const { symptoms, patient_rrn } = createReportDto;
+
+    // 환자 정보 확인
+    const patient = await this.patientsRepository.findByRRN(patient_rrn);
+
+    // 환자가 존재하지 않는 경우, 새로운 환자 생성
+    let patientId: number;
+    if (!patient) {
+      const newPatient = await this.patientsRepository.createPatientInfo({
+        patient_rrn: patient_rrn,
+      });
+      patientId = newPatient.patient_id;
+    } else {
+      patientId = patient.patient_id;
+    }
+
+    // 보고서 생성
+    const reportDtoCopy: CreateReportDto = { ...createReportDto }; // 복사본 생성
+    reportDtoCopy.symptoms = JSON.stringify(symptoms);
+    const emergencyLevel = this.calculateEmergencyLevel(symptoms);
+    reportDtoCopy.symptom_level = emergencyLevel;
+    reportDtoCopy.patient_id = patientId;
+
+    return this.reportsRepository.createReport(createReportDto, emergencyLevel);
+  }
+
   // 응급도 알고리즘
   private calculateEmergencyLevel(selectedSymptoms): number {
     const symptomCategories = [

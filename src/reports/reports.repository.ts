@@ -3,7 +3,6 @@ import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
-import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Injectable()
 export class ReportsRepository extends Repository<Reports> {
@@ -19,19 +18,32 @@ export class ReportsRepository extends Repository<Reports> {
     return this.save(report);
   }
 
-  async getReportDetails(report_id: number): Promise<Reports> {
-    // const results = await this.findOne({
-    //   where: { report_id },
-    //   relations: ['hospital'],
-    // }).then((report) => {
+  async getReportDetails(report_id: number): Promise<any> {
     const results = await this.query(
       `
-          SELECT * FROM reports r LEFT JOIN hospitals h
-          ON r.hospital_id = h.hospital_id
-          WHERE r.report_id = ${report_id};
-        `,
+        SELECT
+          r.report_id,
+          p.name,
+          p.patient_rrn,
+          p.gender,          
+          r.symptom_level,
+          r.symptoms,
+          r.blood_pressure,
+          r.age_range,
+          r.is_sent,
+          r.createdAt,
+          r.updatedAt,
+          r.hospital_id,
+          h.address,
+          h.phone,
+
+        FROM reports r
+        LEFT JOIN hospitals h ON r.hospital_id = h.hospital_id
+        LEFT JOIN patients p ON r.patient_id = p.patient_id
+        WHERE r.report_id = ${report_id};
+      `,
     );
-    return results;
+    return results[0];
   }
 
   async findReport(report_id: number): Promise<Reports> {

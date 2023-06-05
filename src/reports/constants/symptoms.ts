@@ -20,10 +20,12 @@ export const neurologicalSymptoms: Symptom = {
   '시야 손실': 9,
   '감각 소실': 9,
   경련: 7,
-  '저림 혹은 저속한 손발': 6,
+  저림: 6,
+  '손발 차가움': 6,
   '심한 두통': 5,
   '기운 없음': 3,
-  '오심, 구토': 3,
+  오심: 3,
+  구토: 3,
 };
 
 export const respiratorySymptoms: Symptom = {
