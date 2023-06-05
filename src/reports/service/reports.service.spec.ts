@@ -45,7 +45,7 @@ describe('ReportsService Unit Testing', () => {
     patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
   });
 
-  describe('createReport', () => {
+  describe('createReport()', () => {
     const createReportDto: CreateReportDto = {
       symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
     };
@@ -69,6 +69,7 @@ describe('ReportsService Unit Testing', () => {
     it('should return the report details', async () => {
       const reportDetails = {
         report_id: reportId,
+        blood_pressure: 130,
       } as Reports;
       jest
         .spyOn(reportsRepository, 'getReportDetails')

@@ -20,11 +20,12 @@ export class HospitalsRepository extends Repository<Hospitals> {
   }
 
   async findHospital(hospital_id: number): Promise<Hospitals> {
-    return await this.query(
+    const hospital = await this.query(
       `
         SELECT * FROM hospitals WHERE hospital_id = ${hospital_id}
       `,
     );
+    return hospital[0];
   }
 
   async decreaseAvailableBeds(hospital_id: number): Promise<void> {
