@@ -45,7 +45,7 @@ describe('ReportsService Unit Testing', () => {
     patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
   });
 
-  describe('createReport', () => {
+  describe('createReport()', () => {
     const createReportDto: CreateReportDto = {
       symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
     };
@@ -64,17 +64,22 @@ describe('ReportsService Unit Testing', () => {
   });
 
   describe('getReportDetails()', () => {
-    const reportId = 1;
+    const report_id = 1;
 
     it('should return the report details', async () => {
-      const reportDetails = {} as Reports;
+      const reportDetails = {
+        report_id,
+        blood_pressure: 130,
+      } as Reports;
       jest
         .spyOn(reportsRepository, 'getReportDetails')
         .mockResolvedValueOnce(reportDetails);
 
-      const result = await reportsService.getReportDetails(reportId);
+      const result = await reportsService.getReportDetails(report_id);
 
-      expect(reportsRepository.getReportDetails).toHaveBeenCalledWith(reportId);
+      expect(reportsRepository.getReportDetails).toHaveBeenCalledWith(
+        report_id,
+      );
       expect(result).toEqual(reportDetails);
     });
 
@@ -83,7 +88,7 @@ describe('ReportsService Unit Testing', () => {
         .spyOn(reportsRepository, 'getReportDetails')
         .mockRejectedValueOnce(new NotFoundException());
 
-      await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
+      await expect(reportsService.getReportDetails(report_id)).rejects.toThrow(
         NotFoundException,
       );
     });

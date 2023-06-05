@@ -8,7 +8,7 @@ import { HospitalsModule } from './hospitals/hospitals.module';
 import { RequestsModule } from './requests/requests.module';
 import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
-import { ConfigValidator } from 'config/config.validator';
+import { ConfigValidator } from '../config/config.validator';
 import { BullModule } from '@nestjs/bull';
 
 @Module({
