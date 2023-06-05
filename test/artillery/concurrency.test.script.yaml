@@ -1,0 +1,27 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - arrivalRate: 60
+      duration: 30
+  payload:
+    path: "./data.csv"
+    order: sequence
+    field: 
+      - "symptoms"
+      - "blood_pressure"
+      - "longitude"
+      - "latitude"
+scenarios:
+  - flow: 
+    - log: "증상 보고서 입력 POST 요청 시도"
+    - post: 
+        url: "/report"
+        json: 
+          symptoms: "{{symptoms}}"
+          blood_pressure: "{{blood_pressure}}"
+        capture:
+          json: "$.report_id"
+          as: "report_id"
+    - log: "병원 추천 GET 요청 시도"
+    - get:
+        url: "/hospital/{{report_id}}?latitude=37.199188&longitude=127.0722199"

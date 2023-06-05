@@ -1,5 +1,5 @@
 {
-  "name": "CodeBlue",
+  "name": "codeblue",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -20,7 +20,6 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@elastidc/elasticsearch": "^8.8.0",
     "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
@@ -96,7 +95,7 @@
       [
         "jest-html-reporters",
         {
-          "publicPath": "./src/commons/utils/html-jest-report",
+          "publicPath": "./test/html-jest-report",
           "filename": "report.html",
           "includeFailureMsg": true
         }
