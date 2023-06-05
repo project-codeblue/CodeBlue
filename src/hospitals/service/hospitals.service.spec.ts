@@ -9,6 +9,7 @@ import { Hospitals } from '../hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
 import { NotFoundException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
+import { string } from 'joi';
 
 describe('ReportsService Unit Testing', () => {
   let hospitalsService: HospitalsService;
@@ -32,6 +33,7 @@ describe('ReportsService Unit Testing', () => {
             setDefaultAvailableBeds: jest.fn(),
             getHospitalsWithinRadius: jest.fn(),
             getHospitalsWithoutRadius: jest.fn(),
+            calculateRating: jest.fn(),
           },
         },
         {
@@ -145,6 +147,13 @@ describe('ReportsService Unit Testing', () => {
       const duration = {};
       const distance = {};
 
+      const rating = 99;
+      const hospital = [];
+      const weights = { duration: 200, available_beds: 5 };
+      const maxDuration = 1000;
+      const maxAvailable_beds = 5;
+      const calculate = jest.spyOn(hospitalsService, `calculateRating`);
+
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
       jest
         .spyOn(hospitalsRepository, 'getHospitalsWithinRadius')
@@ -161,6 +170,9 @@ describe('ReportsService Unit Testing', () => {
       jest
         .spyOn(hospitalsService, 'getRecommendedHospitals')
         .mockResolvedValueOnce(distance);
+      jest
+        .spyOn(hospitalsService, 'calculateRating')
+        .mockResolvedValueOnce(rating);
 
       // await expect(async () => {
       //   const dataSource = jest.fn();
@@ -193,6 +205,22 @@ describe('ReportsService Unit Testing', () => {
       await crawling.getNearbyHospitals(emogList);
       expect(crawl).toBeCalledTimes(1);
       expect(crawl).toBeCalledWith(emogList);
+      //가중치 영역 테스트코드 추가
+      expect(
+        await hospitalsService.calculateRating(
+          hospital,
+          weights,
+          maxDuration,
+          maxAvailable_beds,
+        ),
+      ).toStrictEqual(rating);
+      expect(calculate).toBeCalledTimes(1);
+      expect(calculate).toBeCalledWith(
+        hospital,
+        weights,
+        maxDuration,
+        maxAvailable_beds,
+      );
     });
   });
 });

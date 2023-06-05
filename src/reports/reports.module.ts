@@ -5,7 +5,7 @@ import { ReportsRepository } from './reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reports } from './reports.entity';
 import { KakaoMapService } from '../commons/providers/kakao-map.service';
-import { PatientsRepository } from 'src/patients/patients.repository';
+import { PatientsRepository } from '../patients/patients.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Reports])],

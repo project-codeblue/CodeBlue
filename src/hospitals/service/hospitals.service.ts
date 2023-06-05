@@ -62,7 +62,7 @@ export class HospitalsService {
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException(
-              `해당 아이디:${report_id}는 존재하지 않습니다.`,
+              `해당 아이디: ${report_id}는 존재하지 않습니다.`,
             );
           }
           //parseFloat = 문자열을 부동 소수점 숫자로 변환
@@ -136,10 +136,38 @@ export class HospitalsService {
 
           const recommendedHospitals = await Promise.all(promises);
           // console.timeEnd('kakaoMapAPI');
+          // 가중치 적용
+          const weightsRecommendedHospitals = [];
+          const weights = {
+            duration: 0.98,
+            available_beds: 0.02,
+          };
+
+          for (const hospital of recommendedHospitals) {
+            const maxDuration = Math.max(
+              ...recommendedHospitals.map((hospital) => hospital.duration),
+            );
+            const maxAvailable_beds = Math.max(
+              ...recommendedHospitals.map(
+                (hospital) => hospital.available_beds,
+              ),
+            );
+            const rating = await this.calculateRating(
+              hospital,
+              weights,
+              maxDuration,
+              maxAvailable_beds,
+            );
+            hospital['rating'] = rating;
+            weightsRecommendedHospitals.push(hospital);
+          }
 
           // 최단거리 병원 duration 낮은 순(단위:sec)
-          recommendedHospitals.sort((a, b) => a.duration - b.duration);
-          const top10RecommendedHospitals = recommendedHospitals.slice(0, 10);
+          weightsRecommendedHospitals.sort((a, b) => b.rating - a.rating);
+          const top10RecommendedHospitals = weightsRecommendedHospitals.slice(
+            0,
+            10,
+          );
 
           const emogList = [];
           for (const hospital of top10RecommendedHospitals) {
@@ -176,5 +204,26 @@ export class HospitalsService {
       },
     );
     return getHospitals;
+  }
+  async calculateRating(
+    hospital,
+    weights: {
+      duration: number;
+      available_beds: number;
+    },
+    maxDuration: number,
+    maxAvailable_beds: number,
+  ) {
+    const durationWeight = weights.duration; //98%
+    const available_bedsWeight = weights.available_beds; //2%
+
+    //duration = 값이 낮을 수록 높은 점수
+    const durationScore = 1 - hospital.duration / maxDuration;
+    //available_beds = 값이 높을 수록 높은 점수
+    const available_bedsScore = hospital.available_beds / maxAvailable_beds;
+    const rating =
+      durationWeight * durationScore +
+      available_bedsWeight * available_bedsScore;
+    return rating;
   }
 }
