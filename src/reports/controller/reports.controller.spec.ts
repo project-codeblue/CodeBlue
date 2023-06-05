@@ -1,5 +1,5 @@
 import { UpdateReportDto } from './../dto/update-report.dto';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { ReportsController } from './reports.controller';
 import { ReportsService } from '../service/reports.service';
 import { Reports } from '../reports.entity';
@@ -13,13 +13,13 @@ describe('ReportsController Unit Testing', () => {
       updateReport: jest.fn().mockReturnValue({}),
     };
 
-    const moduleRef = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [ReportsController],
       providers: [{ provide: ReportsService, useValue: mockReportsService }],
     }).compile();
 
-    reportsService = moduleRef.get<ReportsService>(ReportsService);
     reportsController = moduleRef.get<ReportsController>(ReportsController);
+    reportsService = moduleRef.get<ReportsService>(ReportsService);
   });
 
   describe('updateReport()', () => {

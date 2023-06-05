@@ -37,9 +37,13 @@ export class PatientsService {
           const createdPatient =
             await this.patientsRepository.createPatientInfo(createPatientInfo);
 
+          const patient_id = createdPatient.patient_id;
+
           // 증상 보고서 row에 patient_id 추가
-          report.patient_id = createdPatient.patient_id;
-          await this.reportsRepository.save(report);
+          await this.reportsRepository.addPatientIdInReport(
+            report_id,
+            patient_id,
+          );
 
           return createdPatient;
         } catch (error) {

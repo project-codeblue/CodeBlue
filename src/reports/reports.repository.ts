@@ -131,4 +131,10 @@ export class ReportsRepository extends Repository<Reports> {
     });
     return report;
   }
+
+  async addPatientIdInReport(report_id: number, patient_id: number) {
+    const report = await this.findOne({ where: { report_id } });
+    report.patient_id = patient_id;
+    await this.save(report);
+  }
 }

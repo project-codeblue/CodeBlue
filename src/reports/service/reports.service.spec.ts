@@ -1,4 +1,4 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { ReportsService } from './reports.service';
 import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
@@ -14,24 +14,28 @@ describe('ReportsService Unit Testing', () => {
   let patientsRepository: PatientsRepository;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const mockReportsRepository = {
+      createReport: jest.fn((dto, level) => ({
+        ...dto,
+        symptom_level: level,
+      })),
+      findReport: jest.fn(),
+      updateReport: jest.fn(),
+      getReportDetails: jest.fn(),
+    };
+
+    const mockPatientsRepository = {};
+
+    const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
         ReportsService,
         {
           provide: ReportsRepository,
-          useValue: {
-            createReport: jest.fn((dto, level) => ({
-              ...dto,
-              symptom_level: level,
-            })),
-            findReport: jest.fn(),
-            updateReport: jest.fn(),
-            getReportDetails: jest.fn(),
-          },
+          useValue: mockReportsRepository,
         },
         {
           provide: PatientsRepository,
-          useValue: {},
+          useValue: mockPatientsRepository,
         },
       ],
     }).compile();
