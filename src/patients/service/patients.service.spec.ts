@@ -19,6 +19,7 @@ describe('PatientsService Unit Testing', () => {
     const mockPatientsRepository = {
       createPatientInfo: jest.fn(),
       updatePatientInfo: jest.fn(),
+      findPatient: jest.fn(),
     };
     const mockReportsRepository = {
       findReport: jest.fn(),
@@ -100,6 +101,9 @@ describe('PatientsService Unit Testing', () => {
 
     it('should update the patient info', async () => {
       const patient = {} as Patients;
+      jest
+        .spyOn(patientsRepository, 'findPatient')
+        .mockResolvedValueOnce(patient);
       jest
         .spyOn(patientsRepository, 'updatePatientInfo')
         .mockResolvedValueOnce(patient);
