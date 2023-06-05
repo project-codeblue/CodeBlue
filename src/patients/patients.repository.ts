@@ -10,6 +10,12 @@ export class PatientsRepository extends Repository<Patients> {
     super(Patients, dataSource.createEntityManager());
   }
 
+  async findPatient(patient_id: number): Promise<Patients | undefined> {
+    return await this.findOne({
+      where: { patient_id },
+    });
+  }
+
   async createPatientInfo(
     createPatientInfo: CreatePatientDto,
   ): Promise<Patients> {
@@ -30,6 +36,8 @@ export class PatientsRepository extends Repository<Patients> {
     const patient = await this.findOne({
       where: { patient_id },
     });
+    console.log('patient: ', patient);
+    console.log('updatedPatient: ', updatedPatient);
 
     for (const field in updatedPatient) {
       if (updatedPatient.hasOwnProperty(field)) {
