@@ -36,9 +36,9 @@ describe('ReportsService Unit Testing', () => {
       ],
     }).compile();
 
-    reportsService = moduleRef.get(ReportsService);
-    reportsRepository = moduleRef.get(ReportsRepository);
-    patientsRepository = moduleRef.get(PatientsRepository);
+    reportsService = moduleRef.get<ReportsService>(ReportsService);
+    reportsRepository = moduleRef.get<ReportsRepository>(ReportsRepository);
+    patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
   });
 
   describe('createReport', () => {
