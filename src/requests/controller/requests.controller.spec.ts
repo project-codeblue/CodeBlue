@@ -45,6 +45,8 @@ describe('RequestsController Unit Testing', () => {
         date: '2023-05-27~2023-05-28',
         symptoms: '체중감소',
         symptom_level: 1,
+        site: '강원도',
+        name: '홍길동'
       };
 
       expect(await requestsController.getSearchRequests(queries)).toBe(

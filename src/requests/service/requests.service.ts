@@ -85,7 +85,7 @@ export class RequestsService {
 
       if (queries['name']) {
         // URL 쿼리에 이름이 존재하면 실행
-        query.andWhere(`patient.name = ${queries['name']}`);
+        query.andWhere(`patient.name = '${queries['name']}'`);
       }
 
       const allReports = await query.getRawMany();

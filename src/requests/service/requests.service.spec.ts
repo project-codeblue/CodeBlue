@@ -4,8 +4,8 @@ import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
 import { NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
-import { Hospitals } from 'src/hospitals/hospitals.entity';
-import { Reports } from 'src/reports/reports.entity';
+import { Hospitals } from '../../hospitals/hospitals.entity';
+import { Reports } from '../../reports/reports.entity';
 
 describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
@@ -33,7 +33,6 @@ describe('RequestsService Unit Testing', () => {
             addTargetHospital: jest.fn(),
             createQueryBuilder: jest.fn(),
             leftJoinAndSelect: jest.fn(),
-
           },
         },
         {
@@ -76,7 +75,8 @@ describe('RequestsService Unit Testing', () => {
         symptoms: '발작',
         date: '2023-05-30~2023-05-31',
         symptom_level: '5',
-        site: '경기도'
+        site: '경기도',
+        name: '홍길동',
       }
 
       jest
@@ -91,6 +91,9 @@ describe('RequestsService Unit Testing', () => {
       jest
         .spyOn(requestsService, 'getSearchRequests')
         .mockResolvedValue(queries['site'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['name'])
 
       const search = jest.spyOn(requestsService, 'getSearchRequests');
 
