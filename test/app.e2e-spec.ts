@@ -8,6 +8,8 @@ import { HttpExceptionFilter } from '../src/commons/exceptions/http-exception.fi
 import { MysqlConfigProvider } from '../src/commons/providers/typeorm-config.provider';
 import { Hospitals } from '../src/hospitals/hospitals.entity';
 
+// !!!!!!!! e2e test 전 반드시 .env 파일의 mode를 test로 변경해주어야합니다 !!!!!!!!
+
 /** 
  어플리케이션 동작 과정
  0. 병원 데이터 추가 /hospital
@@ -33,7 +35,7 @@ describe('CodeBLUE E2E Test', () => {
         AppModule,
         TypeOrmModule.forRootAsync({
           useClass: MysqlConfigProvider,
-        }), // test db 연결을 위해 import: .env에서 mode === test로 변경해줘야함
+        }),
       ],
     }).compile();
 
@@ -108,7 +110,7 @@ describe('CodeBLUE E2E Test', () => {
         .expect(201);
     });
 
-    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (GET)', () => {
+    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (POST)', () => {
       return request(app.getHttpServer()).post('/patient/1000000').expect(404);
     });
   });
@@ -199,7 +201,7 @@ describe('CodeBLUE E2E Test', () => {
   });
 
   // 8. 환자 이송 신청 철회 /report/:report_id
-  describe('/request/:report_id (DELETE)', () => {
+  describe('/request/:report_id', () => {
     it('200 이송 신청 철회 성공 (DELETE)', () => {
       return request(app.getHttpServer()).delete('/request/1').expect(200);
     });

@@ -20,17 +20,17 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async getReportDetails(report_id: number): Promise<Reports> {
-    const results = await this.findOne({
-      where: { report_id },
-      relations: ['hospital'],
-    }).then((report) => {
-      // const results = await this.query(
-      //   `
-      //     SELECT * FROM reports r LEFT JOIN hospitals h
-      //     ON r.hospital_id = h.hospital_id
-      //     WHERE r.report_id = ${report_id};
-      //   `
-      // ).then((report) => {
+    // const results = await this.findOne({
+    //   where: { report_id },
+    //   relations: ['hospital'],
+    // }).then((report) => {
+    const results = await this.query(
+      `
+        SELECT * FROM reports r LEFT JOIN hospitals h
+        ON r.hospital_id = h.hospital_id
+        WHERE r.report_id = ${report_id};
+      `,
+    ).then((report) => {
       const { hospital_id, name, address, phone } = report.hospital;
       const transformedReport = Object.assign(new Reports(), report);
       transformedReport.hospital = {

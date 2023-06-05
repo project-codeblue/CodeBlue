@@ -29,7 +29,6 @@ export class PatientsService {
       async () => {
         try {
           const report = await this.reportsRepository.findReport(report_id);
-
           if (!report) {
             throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
           }
