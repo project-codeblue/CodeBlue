@@ -33,7 +33,6 @@ describe('RequestsService Unit Testing', () => {
             addTargetHospital: jest.fn(),
             createQueryBuilder: jest.fn(),
             leftJoinAndSelect: jest.fn(),
-
           },
         },
         {
@@ -54,7 +53,6 @@ describe('RequestsService Unit Testing', () => {
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
     entityManager = moduleRef.get(EntityManager);
-    
   });
 
   describe('getAllRequests()', () => {
@@ -76,21 +74,21 @@ describe('RequestsService Unit Testing', () => {
         symptoms: '발작',
         date: '2023-05-30~2023-05-31',
         symptom_level: '5',
-        site: '경기도'
-      }
+        site: '경기도',
+      };
 
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['date'])
+        .mockResolvedValue(queries['date']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['symptoms'])
+        .mockResolvedValue(queries['symptoms']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['symptom_level'])
+        .mockResolvedValue(queries['symptom_level']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['site'])
+        .mockResolvedValue(queries['site']);
 
       const search = jest.spyOn(requestsService, 'getSearchRequests');
 
