@@ -23,10 +23,7 @@ export class ReportsController {
     console.log('createReportDto:', createReportDto);
     if (createReportDto.symptoms && createReportDto.patient_rrn) {
       // 환자 주민등록번호와 증상이 함께 전달된 경우
-      return this.reportsService.createReportWithPatient({
-        ...createReportDto, // 복사본 사용
-        patient_rrn: createReportDto.patient_rrn,
-      });
+      return this.reportsService.createReportWithPatient(createReportDto);
     } else if (createReportDto.symptoms) {
       // 증상만 전달된 경우
       return this.reportsService.createReport(createReportDto);

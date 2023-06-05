@@ -27,12 +27,10 @@ export class ReportsService {
 
   // 환자 증상 정보 입력
   async createReport(createReportDto: CreateReportDto) {
-    createReportDto.symptoms = JSON.stringify(createReportDto.symptoms);
-
     // 응급도 계산
     const symptomsString = createReportDto.symptoms;
-    const parsedSymptoms = JSON.parse(symptomsString);
-    const selectedSymptoms = parsedSymptoms.split(',');
+    const selectedSymptoms = symptomsString.split(',');
+    console.log(symptomsString);
 
     const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
     if (invalidSymptoms.length > 0) {
@@ -46,6 +44,7 @@ export class ReportsService {
     return this.reportsRepository.createReport(createReportDto, emergencyLevel);
   }
 
+  // 주민등록번호가 같이 입력되는 경우
   async createReportWithPatient(createReportDto: CreateReportDto) {
     console.log('createReportWithPatient:', createReportDto);
     const { symptoms, patient_rrn } = createReportDto;
@@ -65,11 +64,17 @@ export class ReportsService {
     }
 
     // 보고서 생성
-    const reportDtoCopy: CreateReportDto = { ...createReportDto }; // 복사본 생성
-    reportDtoCopy.symptoms = JSON.stringify(symptoms);
-    const emergencyLevel = this.calculateEmergencyLevel(symptoms);
-    reportDtoCopy.symptom_level = emergencyLevel;
-    reportDtoCopy.patient_id = patientId;
+    const selectedSymptoms = symptoms.split(',');
+
+    const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
+    if (invalidSymptoms.length > 0) {
+      const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+
+    const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+    createReportDto.symptom_level = emergencyLevel;
+    createReportDto.patient_id = patientId;
 
     return this.reportsRepository.createReport(createReportDto, emergencyLevel);
   }
