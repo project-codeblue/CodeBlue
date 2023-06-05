@@ -67,7 +67,9 @@ describe('ReportsService Unit Testing', () => {
     const reportId = 1;
 
     it('should return the report details', async () => {
-      const reportDetails = {} as Reports;
+      const reportDetails = {
+        report_id: reportId,
+      } as Reports;
       jest
         .spyOn(reportsRepository, 'getReportDetails')
         .mockResolvedValueOnce(reportDetails);
