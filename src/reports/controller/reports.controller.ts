@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Body, Post } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Patch } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -12,6 +12,7 @@ export class ReportsController {
 
   @Post()
   createReport(@Body() createReportDto: CreateReportDto) {
+    console.log('createReportDto:', createReportDto);
     return this.reportsService.createReport(createReportDto);
   }
 

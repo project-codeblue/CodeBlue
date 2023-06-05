@@ -3,6 +3,7 @@ import { PatientsService } from '../service/patients.service';
 import { PatientsController } from '../controller/patients.controller';
 import { Patients } from '../patients.entity';
 import { CreatePatientDto } from '../dto/create-patient.dto';
+import { UpdatePatientDto } from './../dto/update-patient.dto';
 
 describe('PatientsController Unit Testing', () => {
   let patientsController: PatientsController;
@@ -11,6 +12,7 @@ describe('PatientsController Unit Testing', () => {
   beforeEach(async () => {
     const mockPatientsService = {
       createPatientInfo: jest.fn().mockReturnValue({}),
+      updatePatientInfo: jest.fn().mockReturnValue({}),
     };
 
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -41,6 +43,29 @@ describe('PatientsController Unit Testing', () => {
       expect(patientsService.createPatientInfo).toHaveBeenCalledWith(
         report_id,
         createdPatientInfo,
+      );
+    });
+  });
+
+  describe('updatePatientInfo()', () => {
+    it('should return object', async () => {
+      const patientInfo = {} as Patients;
+      jest
+        .spyOn(patientsService, 'updatePatientInfo')
+        .mockImplementation(() => Promise.resolve(patientInfo));
+
+      const patient_id = 1;
+      const updatedPatientInfo = new UpdatePatientDto();
+
+      expect(
+        await patientsController.updatePatientInfo(
+          patient_id,
+          updatedPatientInfo,
+        ),
+      ).toBe(patientInfo);
+      expect(patientsService.updatePatientInfo).toHaveBeenCalledWith(
+        patient_id,
+        updatedPatientInfo,
       );
     });
   });

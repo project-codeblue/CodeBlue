@@ -6,6 +6,8 @@ import { ReportsRepository } from '../../reports/reports.repository';
 import { PatientsRepository } from '../patients.repository';
 import { EntityManager } from 'typeorm';
 import { Reports } from '../../reports/reports.entity';
+import { UpdatePatientDto } from '../dto/update-patient.dto';
+import { Gender } from '../patients.enum';
 
 describe('PatientsService Unit Testing', () => {
   let patientsService: PatientsService;
@@ -16,6 +18,8 @@ describe('PatientsService Unit Testing', () => {
   beforeEach(async () => {
     const mockPatientsRepository = {
       createPatientInfo: jest.fn(),
+      updatePatientInfo: jest.fn(),
+      findPatient: jest.fn(),
     };
     const mockReportsRepository = {
       findReport: jest.fn(),
@@ -85,6 +89,35 @@ describe('PatientsService Unit Testing', () => {
         report_id,
         patient_id,
       );
+    });
+  });
+
+  describe('updatePatientInfo()', () => {
+    const patient_id = 1;
+    const updatePatientDto: UpdatePatientDto = {
+      name: '김영희',
+      gender: Gender.F,
+    };
+
+    it('should update the patient info', async () => {
+      const patient = {} as Patients;
+      jest
+        .spyOn(patientsRepository, 'findPatient')
+        .mockResolvedValueOnce(patient);
+      jest
+        .spyOn(patientsRepository, 'updatePatientInfo')
+        .mockResolvedValueOnce(patient);
+
+      const result = await patientsService.updatePatientInfo(
+        patient_id,
+        updatePatientDto,
+      );
+
+      expect(patientsRepository.updatePatientInfo).toHaveBeenCalledWith(
+        patient_id,
+        updatePatientDto,
+      );
+      expect(result).toEqual(patient);
     });
   });
 });

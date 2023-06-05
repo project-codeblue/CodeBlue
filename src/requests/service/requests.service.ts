@@ -120,7 +120,6 @@ export class RequestsService {
           const hospital = await this.hospitalsRepository.findHospital(
             hospital_id,
           );
-          console.log('hospital_id: ', hospital_id);
           if (!hospital) {
             throw new NotFoundException('병원이 존재하지 않습니다.');
           }

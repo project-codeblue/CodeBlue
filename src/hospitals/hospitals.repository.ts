@@ -25,7 +25,6 @@ export class HospitalsRepository extends Repository<Hospitals> {
         SELECT * FROM hospitals WHERE hospital_id = ${hospital_id}
       `,
     );
-    console.log('repo hospital: ', hospital);
     return hospital[0];
   }
 
