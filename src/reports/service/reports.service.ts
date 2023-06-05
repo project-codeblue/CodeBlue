@@ -3,6 +3,7 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
@@ -25,12 +26,28 @@ export class ReportsService {
     private readonly patientsRepository: PatientsRepository,
   ) {}
 
-  // 환자 증상 정보 입력
   async createReport(createReportDto: CreateReportDto) {
-    // 응급도 계산
-    const symptomsString = createReportDto.symptoms;
-    const selectedSymptoms = symptomsString.split(',');
-    console.log(symptomsString);
+    console.log('createReportDto:', createReportDto);
+    const { symptoms, patient_rrn } = createReportDto;
+
+    if (symptoms) {
+      if (patient_rrn) {
+        // 환자 주민등록번호와 증상이 함께 전달된 경우
+        return this.createReportWithPatient(createReportDto);
+      } else {
+        // 증상만 전달된 경우
+        return this.createReportWithoutPatient(createReportDto);
+      }
+    } else {
+      throw new BadRequestException('올바른 요청 형식이 아닙니다.');
+    }
+  }
+
+  // 주민등록번호가 없는 경우
+  private async createReportWithoutPatient(createReportDto: CreateReportDto) {
+    const { symptoms } = createReportDto;
+
+    const selectedSymptoms = symptoms.split(',');
 
     const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
     if (invalidSymptoms.length > 0) {
@@ -44,9 +61,8 @@ export class ReportsService {
     return this.reportsRepository.createReport(createReportDto, emergencyLevel);
   }
 
-  // 주민등록번호가 같이 입력되는 경우
-  async createReportWithPatient(createReportDto: CreateReportDto) {
-    console.log('createReportWithPatient:', createReportDto);
+  // 주민등록번호가 있는 경우
+  private async createReportWithPatient(createReportDto: CreateReportDto) {
     const { symptoms, patient_rrn } = createReportDto;
 
     // 환자 정보 확인
