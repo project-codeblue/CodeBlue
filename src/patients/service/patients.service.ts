@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { ReportsRepository } from 'src/reports/reports.repository';
+import { ReportsRepository } from '../../reports/reports.repository';
 import { PatientsRepository } from '../patients.repository';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { Patients } from '../patients.entity';
@@ -29,7 +29,7 @@ export class PatientsService {
       async () => {
         try {
           const report = await this.reportsRepository.findReport(report_id);
-
+          global.console.log('report: ', report);
           if (!report) {
             throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
           }
@@ -37,9 +37,13 @@ export class PatientsService {
           const createdPatient =
             await this.patientsRepository.createPatientInfo(createPatientInfo);
 
+          const patient_id = createdPatient.patient_id;
+
           // 증상 보고서 row에 patient_id 추가
-          report.patient_id = createdPatient.patient_id;
-          await this.reportsRepository.save(report);
+          await this.reportsRepository.addPatientIdInReport(
+            report_id,
+            patient_id,
+          );
 
           return createdPatient;
         } catch (error) {

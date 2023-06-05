@@ -5,6 +5,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
+import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
 import {
@@ -16,7 +17,6 @@ import {
   otherSymptoms,
   respiratorySymptoms,
 } from '../constants/symptoms';
-import { PatientsRepository } from 'src/patients/patients.repository';
 
 @Injectable()
 export class ReportsService {
@@ -127,8 +127,9 @@ export class ReportsService {
     const reportDetails = await this.reportsRepository.getReportDetails(
       report_id,
     );
-    if (!reportDetails) {
-      throw new NotFoundException('일치하는 증상보고서가 없습니다');
+    console.log('reportDetails: ', reportDetails);
+    if (Object.keys(reportDetails).length === 0) {
+      throw new NotFoundException('일치하는 증상 보고서가 없습니다');
     }
     return reportDetails;
   }

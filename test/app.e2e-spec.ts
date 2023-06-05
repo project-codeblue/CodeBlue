@@ -8,16 +8,20 @@ import { HttpExceptionFilter } from '../src/commons/exceptions/http-exception.fi
 import { MysqlConfigProvider } from '../src/commons/providers/typeorm-config.provider';
 import { Hospitals } from '../src/hospitals/hospitals.entity';
 
+// !!!!!!!! e2e test 전 반드시 .env 파일의 mode를 test로 변경해주어야합니다 !!!!!!!!
+
 /** 
  어플리케이션 동작 과정
  0. 병원 데이터 추가 /hospital
  유저 플로우
  1. 증상 보고서 입력 /report
- 2. 병원 조회 /hospital/:report_id
- 3. 환자 이송 신청 /request/:report_id/:hospital_id
- 4. 증상 보고서 검색 및 리스트 조회 /request/search
- 5. 증상 보고서 상세 조회 /report/:report_id
- 6. 증상 보고서 환자 정보 업데이트 /report/:report_id
+ 2. 환자 정보 입력 /patient/:report_id
+ 3. 병원 조회 /hospital/:report_id
+ 4. 환자 이송 신청 /request/:report_id/:hospital_id
+ 5. 증상 보고서 검색 및 리스트 조회 /request/search
+ 6. 증상 보고서 상세 조회 /report/:report_id
+ 7. 증상 보고서 수정 /report/:report_id
+ 8. 환자 이송 신청 철회 /report/:report_id
 */
 
 describe('CodeBLUE E2E Test', () => {
@@ -31,7 +35,7 @@ describe('CodeBLUE E2E Test', () => {
         AppModule,
         TypeOrmModule.forRootAsync({
           useClass: MysqlConfigProvider,
-        }), // test db 연결을 위해 import: .env에서 mode === test로 변경해줘야함
+        }),
       ],
     }).compile();
 
@@ -55,17 +59,17 @@ describe('CodeBLUE E2E Test', () => {
     `); // point column에 nullable = false로 설정해주어야함
     await hospitalsRepository.query(`
       INSERT INTO hospitals (name, address, phone, available_beds, latitude, longitude, emogList, point)
-      VALUES ('가톨릭대학교여의도성모병원', '서울특별시 영등포구 63로 10, 여의도성모병원 (여의도동)', '02-3779-1188', 10, 37.51827233800711, 126.93673129599131, 'A1100011', POINT(37.51827233800711, 126.93673129599131));
+      VALUES ('가톨릭대학교여의도성모병원', '서울특별시 영등포구 63로 10, 여의도성모병원 (여의도동)', '02-3779-1188', 10, 37.51827233800711, 126.93673129599131, 'A1100011', POINT(126.93673129599131, 37.51827233800711));
     `); // 가용 병상이 있는 병원
     await hospitalsRepository.query(`
       INSERT INTO hospitals (name, address, phone, available_beds, latitude, longitude, emogList, point)
-      VALUES ('강원도강릉의료원', '강원도 강릉시 경강로 2007 (남문동)', '033-610-1200', 0, 37.7493104200, 128.8887963000, 'A2200011', POINT(37.7493104200, 128.8887963000));
+      VALUES ('강원도강릉의료원', '강원도 강릉시 경강로 2007 (남문동)', '033-610-1200', 0, 37.7493104200, 128.8887963000, 'A2200011', POINT(128.8887963000, 37.7493104200));
     `); // 가용 병상이 없는 병원
   });
 
   // 1. 증상 보고서 입력
   describe('/report', () => {
-    it('201 증상 보고서 입력 성공 - 환자 정보 없이, 증상만 입력 (POST)', () => {
+    it('201 증상 보고서 입력 성공 - 주민번호 없이 (POST)', () => {
       return request(app.getHttpServer())
         .post('/report')
         .send({
@@ -74,22 +78,14 @@ describe('CodeBLUE E2E Test', () => {
         .expect(201);
     });
 
-    it('201 증상 보고서 입력 성공 - 환자 정보 포함 (POST)', () => {
-      return request(app.getHttpServer()).post('/report').send({
-        symptoms: '소실된 의식,심부전,사지 마비',
-        name: '홍길동',
-        age: 20,
-      });
-    });
-
-    it('400 Validation Error: body data 형식이 맞지 않을 때 (POST)', () => {
+    it('201 증상 보고서 입력 성공 - 주민번호 포함 (POST)', () => {
       return request(app.getHttpServer())
         .post('/report')
         .send({
-          symptoms: 0,
-          symptom_level: '레벨',
+          symptoms: '소실된 의식,심부전,사지 마비',
+          // patient_rrn: '000000-3111111',
         })
-        .expect(400);
+        .expect(201);
     });
 
     it('400 BAD_REQUEST: 존재하지 않는 symptoms를 입력하였을때 (POST)', () => {
@@ -102,30 +98,51 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 2. 병원 조회
+  // 2. 환자 정보 입력
+  describe('/patient/:report_id', () => {
+    it('201 환자 정보 입력 성공 (POST)', () => {
+      return request(app.getHttpServer())
+        .post('/patient/1')
+        .send({
+          name: '홍길동',
+          patient_rrn: '000000-3111111',
+        })
+        .expect(201);
+    });
+
+    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (POST)', () => {
+      return request(app.getHttpServer())
+        .post('/patient/1000000')
+        .send({
+          name: '홍길동',
+          patient_rrn: '000000-3111111',
+        })
+        .expect(404);
+    });
+  });
+
+  // 3. 병원 조회
   describe('/hospital/:report_id?latitude=latitude?longitude=longitude', () => {
     it('200 병원 조회 성공 (GET)', () => {
       return request(app.getHttpServer())
-        .get('/hospital/1&latitude=37.199188&longitude=127.0722199')
+        .get('/hospital/1?latitude=37.199188&longitude=127.0722199')
         .expect(200);
     });
 
     it('404 NotFoundException: 해당 증상 보고서가 없을 때 (GET)', () => {
       return request(app.getHttpServer())
-        .get('/hospital/100000&latitude=37.199188&longitude=127.0722199')
+        .get('/hospital/100000?latitude=37.199188&longitude=127.0722199')
         .expect(404);
     });
 
     it('404 NotFoundException: 사용자가 선택한 반경내에 병원이 없을경우 (GET)', () => {
       return request(app.getHttpServer())
-        .get(
-          '/hospital/100000&latitude=37.199188&longitude=127.0722199&radius=0',
-        )
+        .get('/hospital/1?latitude=37.199188&longitude=127.0722199&radius=0')
         .expect(404);
     });
   });
 
-  // 3. 환자 이송 신청
+  // 4. 환자 이송 신청
   describe('/request/:report_id/:hospital_id (POST)', () => {
     it('201 이송 신청 성공 (POST)', () => {
       return request(app.getHttpServer()).post('/request/1/1').expect(201);
@@ -148,7 +165,7 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 4. 증상 보고서 검색 및 리스트 조회
+  // 5. 증상 보고서 검색 및 리스트 조회
   describe('/request/search', () => {
     it('200 검색 성공 (GET)', () => {
       return request(app.getHttpServer())
@@ -163,8 +180,8 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 5. 증상보고서 상세 조회
-  // 6. 증상 보고서 환자 정보 업데이트
+  // 6. 증상 보고서 상세 조회
+  // 7. 증상 보고서 수정
   describe('/report/:report_id', () => {
     it('200 상세 조회 성공 (GET)', () => {
       return request(app.getHttpServer()).get('/report/1').expect(200);
@@ -179,7 +196,7 @@ describe('CodeBLUE E2E Test', () => {
         .patch('/report/1')
         .send({
           blood_type: 'A',
-          name: '김영희',
+          blood_pressure: 130,
         })
         .expect(200);
     });
@@ -187,14 +204,20 @@ describe('CodeBLUE E2E Test', () => {
     it('404 NotFoundException: 해당 증상 보고서가 없을 때 (PATCH)', () => {
       return request(app.getHttpServer()).patch('/report/100000').expect(404);
     });
+  });
 
-    it('400 Validation Error: body data 형식이 맞지 않을 때 (PATCH)', () => {
-      return request(app.getHttpServer())
-        .patch('/report/1')
-        .send({
-          blood_type: 'X',
-        })
-        .expect(400);
+  // 8. 환자 이송 신청 철회 /report/:report_id
+  describe('/request/:report_id', () => {
+    it('200 이송 신청 철회 성공 (DELETE)', () => {
+      return request(app.getHttpServer()).delete('/request/1').expect(200);
+    });
+
+    it('404 NotFoundException: 해당 증상 보고서가 없을 때 (DELETE)', () => {
+      return request(app.getHttpServer()).delete('/request/100000').expect(404);
+    });
+
+    it('400 BAD_REQUEST: 이송 신청하지 않은 증상 보고서일 때 (DELETE)', () => {
+      return request(app.getHttpServer()).delete('/request/2').expect(400);
     });
   });
 
