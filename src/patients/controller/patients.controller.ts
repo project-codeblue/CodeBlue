@@ -22,7 +22,7 @@ export class PatientsController {
   @Patch('/:patient_id')
   async updatePatientInfo(
     @Param('patient_id') patient_id: number,
-    @Body() updatedPatient: UpdatePatientDto,
+    @Body(new GenderFromRrnPipe()) updatedPatient: UpdatePatientDto,
   ): Promise<Patients> {
     this.logger.verbose('환자 정보 수정 PATCH API');
     return await this.patientsService.updatePatientInfo(
