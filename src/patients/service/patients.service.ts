@@ -30,7 +30,6 @@ export class PatientsService {
       async () => {
         try {
           const report = await this.reportsRepository.findReport(report_id);
-          global.console.log('report: ', report);
           if (!report) {
             throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
           }
@@ -67,6 +66,10 @@ export class PatientsService {
     updatedPatient: UpdatePatientDto,
   ): Promise<Patients> {
     try {
+      const report = await this.patientsRepository.findPatient(patient_id);
+      if (!report) {
+        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+      }
       return this.patientsRepository.updatePatientInfo(
         patient_id,
         updatedPatient,

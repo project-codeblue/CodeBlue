@@ -176,11 +176,11 @@ export class ReportsService {
     const reportDetails = await this.reportsRepository.getReportDetails(
       report_id,
     );
-    console.log('reportDetails: ', reportDetails);
     if (!reportDetails) {
-      // reportDetails가 null 또는 undefined인 경우 예외 처리
       throw new NotFoundException('일치하는 증상 보고서가 없습니다');
     }
+    console.log('reportDetails:', reportDetails);
+    // 증상 보고서가 없는 경우 비어있는 객체가 전달되어 !reportDetails로 if 처리하면 안됌
     return reportDetails;
   }
 

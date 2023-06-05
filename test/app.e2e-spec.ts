@@ -16,12 +16,13 @@ import { Hospitals } from '../src/hospitals/hospitals.entity';
  유저 플로우
  1. 증상 보고서 입력 /report
  2. 환자 정보 입력 /patient/:report_id
- 3. 병원 조회 /hospital/:report_id
- 4. 환자 이송 신청 /request/:report_id/:hospital_id
- 5. 증상 보고서 검색 및 리스트 조회 /request/search
- 6. 증상 보고서 상세 조회 /report/:report_id
- 7. 증상 보고서 수정 /report/:report_id
- 8. 환자 이송 신청 철회 /report/:report_id
+ 3. 환자 정보 수정 /patient/:patient_id
+ 4. 병원 조회 /hospital/:report_id
+ 5. 환자 이송 신청 /request/:report_id/:hospital_id
+ 6. 증상 보고서 검색 및 리스트 조회 /request/search
+ 7. 증상 보고서 상세 조회 /report/:report_id
+ 8. 증상 보고서 수정 /report/:report_id
+ 9. 환자 이송 신청 철회 /report/:report_id
 */
 
 describe('CodeBLUE E2E Test', () => {
@@ -83,7 +84,7 @@ describe('CodeBLUE E2E Test', () => {
         .post('/report')
         .send({
           symptoms: '소실된 의식,심부전,사지 마비',
-          // patient_rrn: '000000-3111111',
+          patient_rrn: '000000-3111111',
         })
         .expect(201);
     });
@@ -105,7 +106,7 @@ describe('CodeBLUE E2E Test', () => {
         .post('/patient/1')
         .send({
           name: '홍길동',
-          patient_rrn: '000000-3111111',
+          patient_rrn: '000101-1111111',
         })
         .expect(201);
     });
@@ -121,7 +122,28 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 3. 병원 조회
+  // 3. 환자 정보 수정
+  describe('/patient/:patient_id', () => {
+    it('200 환자 정보 수정 성공 (PATCH)', () => {
+      return request(app.getHttpServer())
+        .patch('/patient/1')
+        .send({
+          name: '김영희',
+        })
+        .expect(200);
+    });
+
+    it('404 NotFoundException: 해당 환자가 없을 때 (PATCH)', () => {
+      return request(app.getHttpServer())
+        .patch('/patient/1000000')
+        .send({
+          name: '김영희',
+        })
+        .expect(404);
+    });
+  });
+
+  // 4. 병원 조회
   describe('/hospital/:report_id?latitude=latitude?longitude=longitude', () => {
     it('200 병원 조회 성공 (GET)', () => {
       return request(app.getHttpServer())
@@ -142,7 +164,7 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 4. 환자 이송 신청
+  // 5. 환자 이송 신청
   describe('/request/:report_id/:hospital_id (POST)', () => {
     it('201 이송 신청 성공 (POST)', () => {
       return request(app.getHttpServer()).post('/request/1/1').expect(201);
@@ -165,7 +187,7 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 5. 증상 보고서 검색 및 리스트 조회
+  // 6. 증상 보고서 검색 및 리스트 조회
   describe('/request/search', () => {
     it('200 검색 성공 (GET)', () => {
       return request(app.getHttpServer())
@@ -180,8 +202,8 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 6. 증상 보고서 상세 조회
-  // 7. 증상 보고서 수정
+  // 7. 증상 보고서 상세 조회
+  // 8. 증상 보고서 수정
   describe('/report/:report_id', () => {
     it('200 상세 조회 성공 (GET)', () => {
       return request(app.getHttpServer()).get('/report/1').expect(200);
@@ -206,7 +228,7 @@ describe('CodeBLUE E2E Test', () => {
     });
   });
 
-  // 8. 환자 이송 신청 철회 /report/:report_id
+  // 9. 환자 이송 신청 철회 /report/:report_id
   describe('/request/:report_id', () => {
     it('200 이송 신청 철회 성공 (DELETE)', () => {
       return request(app.getHttpServer()).delete('/request/1').expect(200);
