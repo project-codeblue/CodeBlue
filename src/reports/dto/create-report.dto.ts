@@ -30,7 +30,7 @@ export class CreateReportDto {
 
   @IsOptional()
   @IsNumber()
-  patient_rrn?: number;
+  patient_rrn?: string;
 
   @IsOptional()
   @IsNumber()

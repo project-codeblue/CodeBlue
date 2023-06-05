@@ -2,7 +2,6 @@ import { Repository, DataSource } from 'typeorm';
 import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
-import { Hospitals } from 'src/hospitals/hospitals.entity';
 
 @Injectable()
 export class ReportsRepository extends Repository<Reports> {
@@ -18,29 +17,32 @@ export class ReportsRepository extends Repository<Reports> {
     return this.save(report);
   }
 
-  async getReportDetails(report_id: number): Promise<Reports> {
-    const results = await this.findOne({
-      where: { report_id },
-      relations: ['hospital'],
-    }).then((report) => {
-      // const results = await this.query(
-      //   `
-      //     SELECT * FROM reports r LEFT JOIN hospitals h
-      //     ON r.hospital_id = h.hospital_id
-      //     WHERE r.report_id = ${report_id};
-      //   `
-      // ).then((report) => {
-      const { hospital_id, name, address, phone } = report.hospital;
-      const transformedReport = Object.assign(new Reports(), report);
-      transformedReport.hospital = {
-        hospital_id,
-        name,
-        address,
-        phone,
-      } as Hospitals;
-      return transformedReport;
-    });
-    return results;
+  async getReportDetails(report_id: number): Promise<any> {
+    const results = await this.query(
+      `
+        SELECT
+          r.report_id,
+          p.name,
+          p.patient_rrn,
+          p.gender,          
+          r.symptom_level,
+          r.symptoms,
+          r.blood_pressure,
+          r.age_range,
+          r.is_sent,
+          r.createdAt,
+          r.updatedAt,
+          r.hospital_id,
+          h.address,
+          h.phone,
+
+        FROM reports r
+        LEFT JOIN hospitals h ON r.hospital_id = h.hospital_id
+        LEFT JOIN patients p ON r.patient_id = p.patient_id
+        WHERE r.report_id = ${report_id};
+      `,
+    );
+    return results[0];
   }
 
   async findReport(report_id: number): Promise<Reports> {

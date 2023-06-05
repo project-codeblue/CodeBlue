@@ -46,6 +46,7 @@ export class ReportsService {
   }
 
   async createReportWithPatient(createReportDto: CreateReportDto) {
+    console.log('createReportWithPatient:', createReportDto);
     const { symptoms, patient_rrn } = createReportDto;
 
     // 환자 정보 확인
@@ -63,10 +64,11 @@ export class ReportsService {
     }
 
     // 보고서 생성
-    createReportDto.symptoms = JSON.stringify(symptoms);
+    const reportDtoCopy: CreateReportDto = { ...createReportDto }; // 복사본 생성
+    reportDtoCopy.symptoms = JSON.stringify(symptoms);
     const emergencyLevel = this.calculateEmergencyLevel(symptoms);
-    createReportDto.symptom_level = emergencyLevel;
-    createReportDto.patient_id = patientId;
+    reportDtoCopy.symptom_level = emergencyLevel;
+    reportDtoCopy.patient_id = patientId;
 
     return this.reportsRepository.createReport(createReportDto, emergencyLevel);
   }
