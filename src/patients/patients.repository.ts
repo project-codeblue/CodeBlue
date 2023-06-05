@@ -14,11 +14,17 @@ export class PatientsRepository extends Repository<Patients> {
   ): Promise<Patients> {
     const { patient_rrn, name, gender } = createPatientInfo;
     const patient = this.create({
-      patient_rrn: patient_rrn.toString(),
+      patient_rrn: patient_rrn,
       name,
       gender,
     });
 
     return this.save(patient);
+  }
+
+  async findByRRN(patient_rrn: string): Promise<Patients | undefined> {
+    return await this.findOne({
+      where: { patient_rrn },
+    });
   }
 }
