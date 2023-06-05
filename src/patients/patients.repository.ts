@@ -21,4 +21,10 @@ export class PatientsRepository extends Repository<Patients> {
 
     return this.save(patient);
   }
+
+  async findByRRN(patient_rrn: number): Promise<Patients | undefined> {
+    return await this.findOne({
+      where: { patient_rrn: String(patient_rrn) },
+    });
+  }
 }

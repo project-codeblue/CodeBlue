@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Patch,
   Param,
   Body,
   Post,
