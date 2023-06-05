@@ -33,7 +33,7 @@ export class RequestsService {
         // .leftJoin('reports.patient', 'patient')
         .select([
           'reports.report_id',
-          'reports.name',
+          // 'reports.name',
           'reports.symptom_level',
           'reports.symptoms',
           'reports.createdAt',

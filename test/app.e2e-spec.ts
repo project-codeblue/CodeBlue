@@ -111,7 +111,13 @@ describe('CodeBLUE E2E Test', () => {
     });
 
     it('404 NotFoundException: 해당 증상 보고서가 없을 때 (POST)', () => {
-      return request(app.getHttpServer()).post('/patient/1000000').expect(404);
+      return request(app.getHttpServer())
+        .post('/patient/1000000')
+        .send({
+          name: '홍길동',
+          patient_rrn: '000000-3111111',
+        })
+        .expect(404);
     });
   });
 
