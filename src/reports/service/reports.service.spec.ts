@@ -97,7 +97,7 @@ describe('ReportsService Unit Testing', () => {
       blood_type: BloodType.A,
     };
 
-    it('should update the patient info', async () => {
+    it('should update report', async () => {
       const report = {} as Reports;
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
       jest
