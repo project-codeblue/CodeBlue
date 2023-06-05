@@ -94,11 +94,10 @@ describe('RequestsService Unit Testing', () => {
         .mockResolvedValue(queries['symptom_level']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['site'])
+        .mockResolvedValue(queries['site']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['name'])
-
+        .mockResolvedValue(queries['name']);
 
       const search = jest.spyOn(requestsService, 'getSearchRequests');
 

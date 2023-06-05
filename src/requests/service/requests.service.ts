@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager, Brackets } from 'typeorm';
@@ -34,7 +39,7 @@ export class RequestsService {
           'patient.name',
           'hospital.name',
           'hospital.phone',
-          'hospital.emogList'
+          'hospital.emogList',
         ])
         .where('1 = 1')
         .where('is_sent = 1');
