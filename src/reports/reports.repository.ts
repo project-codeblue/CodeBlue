@@ -26,21 +26,11 @@ export class ReportsRepository extends Repository<Reports> {
     // }).then((report) => {
     const results = await this.query(
       `
-        SELECT * FROM reports r LEFT JOIN hospitals h
-        ON r.hospital_id = h.hospital_id
-        WHERE r.report_id = ${report_id};
-      `,
-    ).then((report) => {
-      const { hospital_id, name, address, phone } = report.hospital;
-      const transformedReport = Object.assign(new Reports(), report);
-      transformedReport.hospital = {
-        hospital_id,
-        name,
-        address,
-        phone,
-      } as Hospitals;
-      return transformedReport;
-    });
+          SELECT * FROM reports r LEFT JOIN hospitals h
+          ON r.hospital_id = h.hospital_id
+          WHERE r.report_id = ${report_id};
+        `,
+    );
     return results;
   }
 

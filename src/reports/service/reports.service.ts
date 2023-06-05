@@ -127,8 +127,9 @@ export class ReportsService {
     const reportDetails = await this.reportsRepository.getReportDetails(
       report_id,
     );
-    if (!reportDetails) {
-      throw new NotFoundException('일치하는 증상보고서가 없습니다');
+    console.log('reportDetails: ', reportDetails);
+    if (Object.keys(reportDetails).length === 0) {
+      throw new NotFoundException('일치하는 증상 보고서가 없습니다');
     }
     return reportDetails;
   }
