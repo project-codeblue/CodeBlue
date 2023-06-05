@@ -104,7 +104,7 @@ export class ReportsRepository extends Repository<Reports> {
     return result[0] || result;
   }
 
-  async findReport(report_id: number): Promise<Reports> {
+  async findReport(report_id: number): Promise<Reports | undefined> {
     return await this.findOne({
       where: { report_id },
     });
