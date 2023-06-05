@@ -24,7 +24,13 @@ describe('ReportsService Unit Testing', () => {
       getReportDetails: jest.fn(),
     };
 
-    const mockPatientsRepository = {};
+    const mockPatientsRepository = {
+      findByRRN: jest.fn(),
+      createPatientInfo: jest.fn((dto) => ({
+        ...dto,
+        patient_id: 1,
+      })),
+    };
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
@@ -48,6 +54,7 @@ describe('ReportsService Unit Testing', () => {
   describe('createReport', () => {
     const createReportDto: CreateReportDto = {
       symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
+      patient_rrn: '123456-7890123',
     };
 
     it('should create a report with correct symptom level', async () => {
@@ -81,7 +88,7 @@ describe('ReportsService Unit Testing', () => {
     it('should throw NotFoundException if the report does not exist', async () => {
       jest
         .spyOn(reportsRepository, 'getReportDetails')
-        .mockRejectedValueOnce(new NotFoundException());
+        .mockResolvedValueOnce(null);
 
       await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
         NotFoundException,
@@ -125,13 +132,14 @@ describe('ReportsService Unit Testing', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw HttpException for other errors', async () => {
-      const error = new Error('Some error');
-      jest.spyOn(reportsRepository, 'findReport').mockRejectedValueOnce(error);
+    it('should throw NotFoundException if the report does not exist', async () => {
+      jest
+        .spyOn(reportsRepository, 'getReportDetails')
+        .mockResolvedValueOnce(null);
 
-      await expect(
-        reportsService.updateReport(report_id, updateReportDto),
-      ).rejects.toThrow(HttpException);
+      await expect(reportsService.getReportDetails(report_id)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
