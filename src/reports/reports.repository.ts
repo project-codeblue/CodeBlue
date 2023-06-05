@@ -20,6 +20,11 @@ export class ReportsRepository extends Repository<Reports> {
 
   async getReportDetails(report_id: number): Promise<any> {
     const report = await this.findOne({ where: { report_id } });
+    // 해당 보고서가 존재하지 않을 때
+    if (!report) {
+      return null;
+    }
+
     let result;
     // 환자와 병원 정보가 없을 떄
     if (!report.hospital_id && !report.patient_id) {
