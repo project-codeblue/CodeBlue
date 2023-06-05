@@ -41,9 +41,8 @@ export class Crawling {
 
     const results: string[] = [];
     const $ = cheerio.load(content);
-    const time = $(
-      '#wrapper > div > section:nth-child(2) > div.container.pb-0 > div > div > div > div > h3',
-    );
+    
+    const time = $('#wrapper > div > section:nth-child(2) > div.container.pb-0 > div > div > div > div > h3',);
     results.push(time.text().replace(/\s+/g, ' '));
     $('#frm > div:nth-child(6) > div > div.table-responsive > table').each(
       (idx, element) => {
@@ -82,71 +81,23 @@ export class Crawling {
       // 크롤링
       const $ = cheerio.load(response.data);
 
-      const time = $(
-        '#area_top_info > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)',
-      );
+      const time = $('#area_top_info > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)',);
       results.push(time.text().replace(/\s+/g, ' '));
 
       $('#area_dashboards').each((idx, element) => {
         const $data = cheerio.load(element);
-        const emogList = $data(
-          '#area_dashboards > div > div.dash_header > div > span > input.emogcode',
-        ).val();
-        const name = $data(
-          '#area_dashboards > div > div.dash_header > div > span > a',
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const ungeup = $data(
-          '#area_dashboards > div > div.dash_data > div:nth-child(2) > table > tbody > tr > td:nth-child(1) > div.data_data.emer_bed.data_td_O001 > span:nth-child(2)',
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const susul = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(2) > td:nth-child(2) > div.data_data.data_td_O022`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const singyeong = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(4) > div.data_data.data_td_O011`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const sinseng = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(2) > div.data_data.data_td_O008`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const hyungbu = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(7) > div.data_data.data_td_O016`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const ilban = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(1) > div.data_data.data_td_O017`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const ibwon = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(2) > td:nth-child(1) > div.data_data.data_td_O038`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const naeggwa = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(3) > div.data_data.data_td_O006`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const weggwa = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(5) > div.data_data.data_td_O007`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
-        const singyeongwe = $data(
-          `#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(6) > div.data_data.data_td_O012`,
-        )
-          .text()
-          .replace(/\s+/g, ' ');
+        const emogList = $data('#area_dashboards > div > div.dash_header > div > span > input.emogcode',).val();
+        const name = $data('#area_dashboards > div > div.dash_header > div > span > a',).text().replace(/\s+/g, ' ');
+        const ungeup = $data('#area_dashboards > div > div.dash_data > div:nth-child(2) > table > tbody > tr > td:nth-child(1) > div.data_data.emer_bed.data_td_O001 > span:nth-child(2)',).text().replace(/\s+/g, ' ');
+        const susul = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(2) > td:nth-child(2) > div.data_data.data_td_O022`,).text().replace(/\s+/g, ' ');
+        const singyeong = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(4) > div.data_data.data_td_O011`,).text().replace(/\s+/g, ' ');
+        const sinseng = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(2) > div.data_data.data_td_O008`,).text().replace(/\s+/g, ' ');
+        const hyungbu = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(7) > div.data_data.data_td_O016`,).text().replace(/\s+/g, ' ');
+        const ilban = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(1) > div.data_data.data_td_O017`,).text().replace(/\s+/g, ' ');
+        const ibwon = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(2) > td:nth-child(1) > div.data_data.data_td_O038`,).text().replace(/\s+/g, ' ');
+        const naeggwa = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(3) > div.data_data.data_td_O006`,).text().replace(/\s+/g, ' ');
+        const weggwa = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(5) > div.data_data.data_td_O007`,).text().replace(/\s+/g, ' ');
+        const singyeongwe = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(1) > td:nth-child(6) > div.data_data.data_td_O012`,).text().replace(/\s+/g, ' ');
 
         results.push(
           `${emogList} / ${name} 응급실: ${ungeup}, 수술실: ${susul}, 신경중환자실: ${singyeong}, 신생아중환자실: ${sinseng}, 흉부중환자실: ${hyungbu}, 일반중환자실: ${ilban}, 입원실: ${ibwon}, 내과중환자실: ${naeggwa}, 외과중환자실: ${weggwa}, 신경외과중환자실: ${singyeongwe}`,

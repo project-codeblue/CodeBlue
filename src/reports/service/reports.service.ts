@@ -5,34 +5,149 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
+import { PatientsRepository } from '../../patients/patients.repository';
+import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
-import { Reports } from '../reports.entity';
+import {
+  Symptom,
+  circulatorySymptoms,
+  emergencySymptoms,
+  injurySymptoms,
+  neurologicalSymptoms,
+  otherSymptoms,
+  respiratorySymptoms,
+} from '../constants/symptoms';
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly reportsRepository: ReportsRepository) {}
+  constructor(
+    private readonly reportsRepository: ReportsRepository,
+    private readonly patientsRepository: PatientsRepository,
+  ) {}
 
-  async updateReportPatientInfo(
-    report_id: number,
-    updatedPatientInfo: UpdateReportDto,
-  ): Promise<Reports> {
+  // 환자 증상 정보 입력
+  async createReport(createReportDto: CreateReportDto) {
+    createReportDto.symptoms = JSON.stringify(createReportDto.symptoms);
+
+    // 응급도 계산
+    const symptomsString = createReportDto.symptoms;
+    const parsedSymptoms = JSON.parse(symptomsString);
+    const selectedSymptoms = parsedSymptoms.split(',');
+
+    const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
+    if (invalidSymptoms.length > 0) {
+      const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+
+    const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+    createReportDto.symptom_level = emergencyLevel;
+
+    return this.reportsRepository.createReport(createReportDto, emergencyLevel);
+  }
+
+  // 응급도 알고리즘
+  private calculateEmergencyLevel(selectedSymptoms): number {
+    const symptomCategories = [
+      emergencySymptoms,
+      neurologicalSymptoms,
+      respiratorySymptoms,
+      circulatorySymptoms,
+      injurySymptoms,
+      otherSymptoms,
+    ];
+
+    const symptomScores: number[] = [];
+
+    selectedSymptoms.forEach((symptom) => {
+      const categoryIndex = this.getSymptomCategoryIndex(
+        symptom,
+        symptomCategories,
+      );
+      const score = this.getSymptomScore(
+        symptom,
+        symptomCategories[categoryIndex],
+      );
+      symptomScores.push(score);
+    });
+
+    const totalScore = symptomScores.reduce((total, score) => total + score, 0);
+    const emergencyLevel = this.emergencyLevelByScore(totalScore);
+
+    return emergencyLevel;
+  }
+
+  private getSymptomCategoryIndex(
+    symptom: string,
+    symptomCategories: Symptom[],
+  ): number {
+    for (let i = 0; i < symptomCategories.length; i++) {
+      if (symptomCategories[i].hasOwnProperty(symptom)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private getSymptomScore(symptom: string, symptomCategory: Symptom): number {
+    return symptomCategory[symptom] || 0;
+  }
+
+  private emergencyLevelByScore(score: number): number {
+    if (score > 80) {
+      return 5;
+    } else if (score > 60) {
+      return 4;
+    } else if (score > 40) {
+      return 3;
+    } else if (score > 20) {
+      return 2;
+    } else {
+      return 1;
+    }
+  }
+
+  private getInvalidSymptoms(selectedSymptoms: string[]): string[] {
+    const validSymptoms = [
+      ...Object.keys(emergencySymptoms),
+      ...Object.keys(neurologicalSymptoms),
+      ...Object.keys(respiratorySymptoms),
+      ...Object.keys(circulatorySymptoms),
+      ...Object.keys(injurySymptoms),
+      ...Object.keys(otherSymptoms),
+    ];
+
+    return selectedSymptoms.filter(
+      (symptom) => !validSymptoms.includes(symptom),
+    );
+  }
+
+  // 증상보고서 상세 조회
+  async getReportDetails(report_id: number) {
+    const reportDetails = await this.reportsRepository.getReportDetails(
+      report_id,
+    );
+    console.log('reportDetails: ', reportDetails);
+    if (Object.keys(reportDetails).length === 0) {
+      throw new NotFoundException('일치하는 증상 보고서가 없습니다');
+    }
+    return reportDetails;
+  }
+
+  // 증상 보고서 수정
+  async updateReport(report_id: number, updateReportDto: UpdateReportDto) {
     try {
       const report = await this.reportsRepository.findReport(report_id);
-
       if (!report) {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
       }
-
-      return await this.reportsRepository.updateReportPatientInfo(
-        report_id,
-        updatedPatientInfo,
-      );
+      return this.reportsRepository.updateReport(report_id, updateReportDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
       throw new HttpException(
-        '증상 보고서 환자 데이터 변경에 실패하였습니다.',
+        '증상 보고서 수정에 실패하였습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
