@@ -3,8 +3,8 @@ import { RequestsService } from './requests.service';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
-import { Hospitals } from 'src/hospitals/hospitals.entity';
-import { Reports } from 'src/reports/reports.entity';
+import { Hospitals } from '../../hospitals/hospitals.entity';
+import { Reports } from '../../reports/reports.entity';
 
 describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
@@ -80,6 +80,7 @@ describe('RequestsService Unit Testing', () => {
         date: '2023-05-30~2023-05-31',
         symptom_level: '5',
         site: '경기도',
+        name: '홍길동',
       };
 
       jest
@@ -93,7 +94,11 @@ describe('RequestsService Unit Testing', () => {
         .mockResolvedValue(queries['symptom_level']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['site']);
+        .mockResolvedValue(queries['site'])
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['name'])
+
 
       const search = jest.spyOn(requestsService, 'getSearchRequests');
 
