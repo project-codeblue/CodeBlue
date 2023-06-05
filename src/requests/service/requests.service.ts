@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager, Brackets } from 'typeorm';
@@ -34,7 +39,7 @@ export class RequestsService {
           'patient.name',
           'hospital.name',
           'hospital.phone',
-          'hospital.emogList'
+          'hospital.emogList',
         ])
         .where('1 = 1')
         .where('is_sent = 1');
@@ -108,14 +113,14 @@ export class RequestsService {
   }
 
   async createRequest(report_id: number, hospital_id: number) {
-    const updatedReport = await this.entityManager.transaction(
+    const createdRequest = await this.entityManager.transaction(
       'READ COMMITTED',
       async () => {
         try {
           const hospital = await this.hospitalsRepository.findHospital(
             hospital_id,
           );
-          if (!hospital[0]) {
+          if (!hospital) {
             throw new NotFoundException('병원이 존재하지 않습니다.');
           }
 
@@ -130,7 +135,7 @@ export class RequestsService {
             );
           }
 
-          const available_beds = hospital[0].available_beds;
+          const available_beds = hospital.available_beds;
           if (available_beds === 0) {
             throw new HttpException(
               '병원 이송 신청이 마감되었습니다. 다른 병원에 신청하시길 바랍니다.',
@@ -164,11 +169,11 @@ export class RequestsService {
         }
       },
     );
-    return updatedReport;
+    return createdRequest;
   }
 
   async withdrawRequest(report_id: number) {
-    const updatedReport = await this.entityManager.transaction(
+    const withdrawnRequest = await this.entityManager.transaction(
       'READ COMMITTED',
       async () => {
         try {
@@ -208,6 +213,6 @@ export class RequestsService {
         }
       },
     );
-    return updatedReport;
+    return withdrawnRequest;
   }
 }

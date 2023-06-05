@@ -45,7 +45,7 @@ describe('ReportsService Unit Testing', () => {
     patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
   });
 
-  describe('createReport', () => {
+  describe('createReport()', () => {
     const createReportDto: CreateReportDto = {
       symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
     };
@@ -67,7 +67,10 @@ describe('ReportsService Unit Testing', () => {
     const reportId = 1;
 
     it('should return the report details', async () => {
-      const reportDetails = {} as Reports;
+      const reportDetails = {
+        report_id: reportId,
+        blood_pressure: 130,
+      } as Reports;
       jest
         .spyOn(reportsRepository, 'getReportDetails')
         .mockResolvedValueOnce(reportDetails);
@@ -97,7 +100,7 @@ describe('ReportsService Unit Testing', () => {
       blood_type: BloodType.A,
     };
 
-    it('should update the patient info', async () => {
+    it('should update report', async () => {
       const report = {} as Reports;
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(report);
       jest
