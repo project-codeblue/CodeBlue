@@ -9,7 +9,7 @@ describe('ReportsController Unit Testing', () => {
 
   beforeEach(async () => {
     const mockReportsService = {
-      updateReportPatientInfo: jest.fn().mockReturnValue({}),
+      updateReport: jest.fn().mockReturnValue({}),
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -21,23 +21,20 @@ describe('ReportsController Unit Testing', () => {
     reportsController = moduleRef.get(ReportsController);
   });
 
-  describe('updateReportPatientInfo()', () => {
+  describe('updateReport()', () => {
     it('should return object', async () => {
       const result = {};
       jest
-        .spyOn(reportsService, 'updateReportPatientInfo')
+        .spyOn(reportsService, 'updateReport')
         .mockImplementation(() => result);
 
       const report_id = 1;
       const updatedPatientInfo = new UpdateReportDto();
 
       expect(
-        await reportsController.updateReportPatientInfo(
-          report_id,
-          updatedPatientInfo,
-        ),
+        await reportsController.updateReport(report_id, updatedPatientInfo),
       ).toBe(result);
-      expect(reportsService.updateReportPatientInfo).toHaveBeenCalledWith(
+      expect(reportsService.updateReport).toHaveBeenCalledWith(
         report_id,
         updatedPatientInfo,
       );
