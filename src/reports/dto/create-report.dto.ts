@@ -29,7 +29,7 @@ export class CreateReportDto {
   blood_type?: BloodType;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   patient_rrn?: string;
 
   @IsOptional()
