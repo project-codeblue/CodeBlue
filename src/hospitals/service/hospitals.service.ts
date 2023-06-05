@@ -62,7 +62,7 @@ export class HospitalsService {
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException(
-              `해당 아이디:${report_id}는 존재하지 않습니다.`,
+              `해당 아이디: ${report_id}는 존재하지 않습니다.`,
             );
           }
           //parseFloat = 문자열을 부동 소수점 숫자로 변환

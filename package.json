@@ -96,7 +96,6 @@
         {
           "publicPath": "./src/commons/utils/html-jest-report",
           "filename": "report.html",
-          "openReport": true,
           "includeFailureMsg": true
         }
       ]
