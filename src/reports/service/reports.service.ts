@@ -177,7 +177,8 @@ export class ReportsService {
       report_id,
     );
     console.log('reportDetails: ', reportDetails);
-    if (Object.keys(reportDetails).length === 0) {
+    if (!reportDetails) {
+      // reportDetails가 null 또는 undefined인 경우 예외 처리
       throw new NotFoundException('일치하는 증상 보고서가 없습니다');
     }
     return reportDetails;
