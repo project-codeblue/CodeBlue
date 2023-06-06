@@ -4,14 +4,13 @@ import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
-import { NotFoundException, HttpException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 import { AgeRange, BloodType } from '../reports.enum';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
-  let patientsRepository: PatientsRepository;
 
   beforeEach(async () => {
     const mockReportsRepository = {
@@ -48,7 +47,6 @@ describe('ReportsService Unit Testing', () => {
 
     reportsService = moduleRef.get<ReportsService>(ReportsService);
     reportsRepository = moduleRef.get<ReportsRepository>(ReportsRepository);
-    patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
   });
 
   describe('createReport()', () => {

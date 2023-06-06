@@ -11,8 +11,9 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async createReport(createReportDto: CreateReportDto, emergencyLevel: number) {
+    const { patient_rrn, ...createReportDtoWithOutPatient } = createReportDto;
     const report = this.create({
-      ...createReportDto,
+      ...createReportDtoWithOutPatient,
       symptom_level: emergencyLevel,
     });
     return this.save(report);
