@@ -7,10 +7,12 @@ import { UpdateReportDto } from '../dto/update-report.dto';
 import { NotFoundException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 import { AgeRange, BloodType } from '../reports.enum';
+import { EntityManager } from 'typeorm';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const mockReportsRepository = {
@@ -33,6 +35,13 @@ describe('ReportsService Unit Testing', () => {
       })),
     };
 
+    const mockTransaction = {
+      transaction: jest.fn().mockImplementation((isolationLevel, callback) => {
+        // transaction 메소드에 대한 Mock 구현을 제공합니다.
+        return callback(); // 테스트 시에는 콜백 함수를 실행합니다.
+      }),
+    };
+
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
         ReportsService,
@@ -44,11 +53,16 @@ describe('ReportsService Unit Testing', () => {
           provide: PatientsRepository,
           useValue: mockPatientsRepository,
         },
+        {
+          provide: EntityManager,
+          useValue: mockTransaction,
+        },
       ],
     }).compile();
 
     reportsService = moduleRef.get<ReportsService>(ReportsService);
     reportsRepository = moduleRef.get<ReportsRepository>(ReportsRepository);
+    entityManager = moduleRef.get<EntityManager>(EntityManager);
   });
 
   describe('createReport()', () => {
@@ -79,7 +93,7 @@ describe('ReportsService Unit Testing', () => {
     it('should return the report details', async () => {
       const reportDetails = {
         report_id: reportId,
-        blood_pressure: 130,
+        blood_pressure: '130/80',
       } as Reports;
       jest
         .spyOn(reportsRepository, 'findReport')
@@ -112,7 +126,7 @@ describe('ReportsService Unit Testing', () => {
   describe('updateReport()', () => {
     const report_id = 1;
     const updateReportDto: UpdateReportDto = {
-      blood_pressure: 130,
+      blood_pressure: '130/80',
       age_range: AgeRange.임산부,
       blood_type: BloodType.A,
     };
