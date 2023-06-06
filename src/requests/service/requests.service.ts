@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager, Brackets } from 'typeorm';
@@ -42,7 +37,7 @@ export class RequestsService {
           'hospital.emogList',
         ])
         .where('1 = 1')
-        .where('is_sent = 1');
+        .andWhere('is_sent = 1');
 
       if (queries['date']) {
         // URL 쿼리에 날짜가 존재하면 실행
@@ -64,37 +59,63 @@ export class RequestsService {
         await query.andWhere(
           new Brackets((qb) => {
             qb.andWhere(
-              `reports.createdAt BETWEEN '${dates[0]}' AND '${dates[1]}'`,
-            );
+              'reports.createdAt BETWEEN :a AND :b',
+              {
+                a: `${dates[0]}`,
+                b: `${dates[1]}`
+              }
+            )
           }),
         );
       }
 
       if (queries['symptoms']) {
         // URL 쿼리에 증상이 존재하면 실행
-        const symptoms = queries['symptoms'].split(','); // 쉼표를 기준으로 증상 구분
-        symptoms.forEach((symptom: string) => {
-          query.andWhere(`reports.symptoms LIKE '%${symptom}%'`);
+        const symptoms: string[] = queries['symptoms'].split(','); // 쉼표를 기준으로 증상 구분
+        symptoms.forEach((symptom: string, idx: number) => {
+          query.andWhere(
+            'reports.symptoms LIKE :symp'+idx,
+            {
+              ['symp'+idx]: `%${symptom}%`
+            }
+          );
         });
       }
 
       if (queries['symptom_level']) {
         // URL 쿼리에 증상도가 존재하면 실행
-        query.andWhere(`reports.symptom_level = ${queries['symptom_level']}`);
+        const level: number = parseInt(queries['symptom_level']);
+        query.andWhere(
+          'reports.symptom_level = :level',
+          {
+            level: `${level}`
+          }
+        );
       }
 
       if (queries['site']) {
         // URL 쿼리에 지역이 존재하면 실행
-        query.andWhere(`hospital.address LIKE '%${queries['site']}%'`);
+        const site: string = queries['site'].toString();
+        query.andWhere(
+          'hospital.address LIKE :site',
+          {
+            site: `%${site}%`
+          }
+        );
       }
 
       if (queries['name']) {
         // URL 쿼리에 이름이 존재하면 실행
-        query.andWhere(`patient.name = '${queries['name']}'`);
+        const name: string = queries['name'].toString();
+        query.andWhere(
+          'patient.name = :name',
+          {
+            name: `${name}`
+          }
+        );
       }
 
       const allReports = await query.getRawMany();
-      // const allReports = query.getMany();
 
       if (allReports.length === 0) {
         throw new NotFoundException('검색 결과가 없습니다');
