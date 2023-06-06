@@ -1,20 +1,20 @@
 config:
   target: "http://localhost:3000"
   phases:
-    - arrivalRate: 60
-      duration: 8
+    - arrivalRate: 30
+      duration: 1
 scenarios:
   - flow: 
     - log: "증상 보고서 입력 POST 요청 시도"
     - post:
         url: "http://localhost:3000/report"
         json:
-          symptoms: "저체온증,호흡곤란"
+          symptoms: "빈혈,혈뇨,근육통"
         capture:
           json: "$.report_id"
           as: "report_id"
     - log: "환자 이송 신청 POST 요청 시도"
     - post:
-        url: "http://localhost:3000/request/{{report_id}}/2"
+        url: "http://localhost:3000/request/{{report_id}}/100"
         # params:
         #   hospital_id: "1"

@@ -114,7 +114,7 @@ export class RequestsService {
 
   async createRequest(report_id: number, hospital_id: number) {
     const createdRequest = await this.entityManager.transaction(
-      'READ COMMITTED',
+      'SERIALIZABLE',
       async () => {
         try {
           const hospital = await this.hospitalsRepository.findHospital(
@@ -174,7 +174,7 @@ export class RequestsService {
 
   async withdrawRequest(report_id: number) {
     const withdrawnRequest = await this.entityManager.transaction(
-      'READ COMMITTED',
+      'SERIALIZABLE',
       async () => {
         try {
           const report = await this.reportsRepository.findReport(report_id);
