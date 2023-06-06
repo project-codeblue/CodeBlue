@@ -14,7 +14,7 @@ export class Patients extends BaseEntity {
   @PrimaryGeneratedColumn()
   patient_id: number;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: false, unique: true })
   patient_rrn: string;
 
   @Column({ type: 'varchar', nullable: true })
@@ -26,6 +26,6 @@ export class Patients extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Reports, (report) => report.patient)
+  @OneToMany(() => Reports, (report) => report.patient, { cascade: true })
   reports: Reports[];
 }

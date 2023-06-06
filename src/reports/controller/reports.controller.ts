@@ -4,6 +4,8 @@ import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
+import { ReportBodyValidationPipe } from '../pipe/report-body-data-validation.pipe';
+import { RrnValidationPipe } from '../pipe/rrn-validation.pipe';
 
 @Controller('report')
 export class ReportsController {
@@ -11,8 +13,12 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
-  createReport(@Body() createReportDto: CreateReportDto) {
-    return this.reportsService.createReport(createReportDto);
+  createReport(
+    @Body('patient_rrn', new RrnValidationPipe()) patient_rrn: string,
+    @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
+  ) {
+    this.logger.verbose('증상 보고서 생성 POST API');
+    return this.reportsService.createReport(createReportDto, patient_rrn);
   }
 
   @Get('/:report_id')
@@ -27,7 +33,7 @@ export class ReportsController {
   @Patch('/:report_id')
   async updateReport(
     @Param('report_id') report_id: number,
-    @Body() updatedReport: UpdateReportDto,
+    @Body(new ReportBodyValidationPipe()) updatedReport: UpdateReportDto,
   ): Promise<Reports> {
     this.logger.verbose('증상 보고서 수정 PATCH API');
     return await this.reportsService.updateReport(report_id, updatedReport);
