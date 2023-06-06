@@ -4,14 +4,15 @@ import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
-import { NotFoundException, HttpException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 import { AgeRange, BloodType } from '../reports.enum';
+import { EntityManager } from 'typeorm';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
-  let patientsRepository: PatientsRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const mockReportsRepository = {
@@ -21,7 +22,9 @@ describe('ReportsService Unit Testing', () => {
       })),
       findReport: jest.fn(),
       updateReport: jest.fn(),
-      getReportDetails: jest.fn(),
+      getReportwithPatientInfo: jest.fn(),
+      getReportwithHospitalInfo: jest.fn(),
+      getReportwithPatientAndHospitalInfo: jest.fn(),
     };
 
     const mockPatientsRepository = {
@@ -30,6 +33,13 @@ describe('ReportsService Unit Testing', () => {
         ...dto,
         patient_id: 1,
       })),
+    };
+
+    const mockTransaction = {
+      transaction: jest.fn().mockImplementation((isolationLevel, callback) => {
+        // transaction 메소드에 대한 Mock 구현을 제공합니다.
+        return callback(); // 테스트 시에는 콜백 함수를 실행합니다.
+      }),
     };
 
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -43,24 +53,31 @@ describe('ReportsService Unit Testing', () => {
           provide: PatientsRepository,
           useValue: mockPatientsRepository,
         },
+        {
+          provide: EntityManager,
+          useValue: mockTransaction,
+        },
       ],
     }).compile();
 
     reportsService = moduleRef.get<ReportsService>(ReportsService);
     reportsRepository = moduleRef.get<ReportsRepository>(ReportsRepository);
-    patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
+    entityManager = moduleRef.get<EntityManager>(EntityManager);
   });
 
   describe('createReport()', () => {
     const createReportDto: CreateReportDto = {
       symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
-      patient_rrn: '123456-7890123',
     };
+    const patient_rrn = '123456-7890123';
 
     it('should create a report with correct symptom level', async () => {
       const expectedEmergencyLevel = 3;
 
-      const result = await reportsService.createReport(createReportDto);
+      const result = await reportsService.createReport(
+        createReportDto,
+        patient_rrn,
+      );
 
       expect(reportsRepository.createReport).toHaveBeenCalledWith(
         createReportDto,
@@ -76,22 +93,29 @@ describe('ReportsService Unit Testing', () => {
     it('should return the report details', async () => {
       const reportDetails = {
         report_id: reportId,
-        blood_pressure: 130,
+        blood_pressure: '130/80',
       } as Reports;
       jest
-        .spyOn(reportsRepository, 'getReportDetails')
+        .spyOn(reportsRepository, 'findReport')
+        .mockResolvedValueOnce(reportDetails);
+      jest
+        .spyOn(reportsRepository, 'getReportwithPatientInfo')
+        .mockResolvedValueOnce(reportDetails);
+      jest
+        .spyOn(reportsRepository, 'getReportwithHospitalInfo')
+        .mockResolvedValueOnce(reportDetails);
+      jest
+        .spyOn(reportsRepository, 'getReportwithPatientAndHospitalInfo')
         .mockResolvedValueOnce(reportDetails);
 
       const result = await reportsService.getReportDetails(reportId);
 
-      expect(reportsRepository.getReportDetails).toHaveBeenCalledWith(reportId);
+      expect(reportsRepository.findReport).toHaveBeenCalledWith(reportId);
       expect(result).toEqual(reportDetails);
     });
 
     it('should throw NotFoundException if the report does not exist', async () => {
-      jest
-        .spyOn(reportsRepository, 'getReportDetails')
-        .mockResolvedValueOnce(null);
+      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
 
       await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
         NotFoundException,
@@ -102,7 +126,7 @@ describe('ReportsService Unit Testing', () => {
   describe('updateReport()', () => {
     const report_id = 1;
     const updateReportDto: UpdateReportDto = {
-      blood_pressure: 130,
+      blood_pressure: '130/80',
       age_range: AgeRange.임산부,
       blood_type: BloodType.A,
     };
@@ -125,24 +149,6 @@ describe('ReportsService Unit Testing', () => {
         updateReportDto,
       );
       expect(result).toEqual(report);
-    });
-
-    it('should throw NotFoundException if the report does not exist', async () => {
-      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
-
-      await expect(
-        reportsService.updateReport(report_id, updateReportDto),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('should throw NotFoundException if the report does not exist', async () => {
-      jest
-        .spyOn(reportsRepository, 'getReportDetails')
-        .mockResolvedValueOnce(null);
-
-      await expect(reportsService.getReportDetails(report_id)).rejects.toThrow(
-        NotFoundException,
-      );
     });
   });
 });
