@@ -9,7 +9,6 @@ import { RequestsModule } from './requests/requests.module';
 import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
 import { ConfigValidator } from '../config/config.validator';
-import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -17,12 +16,6 @@ import { BullModule } from '@nestjs/bull';
     TypeOrmModule.forRootAsync({
       useClass: MysqlConfigProvider,
     }), // mySQL 연결을 위해 import
-    BullModule.forRoot('config', {
-      redis: {
-        host: 'redis',
-        port: 6379,
-      },
-    }), // task queue (BullQueue)를 위해 import
     ScheduleModule.forRoot(), // task scheduling을 위해 import
     ReportsModule,
     HospitalsModule,

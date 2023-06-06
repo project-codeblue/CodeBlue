@@ -11,8 +11,13 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
   imports: [
     ReportsModule,
     HospitalsModule,
+    BullModule.forRoot({
+      redis: {
+        host: 'redis',
+        port: 6379,
+      },
+    }), // task queue (BullQueue)를 위해 import
     BullModule.registerQueue({
-      configKey: 'config',
       name: 'requestQueue',
     }),
   ],
