@@ -24,9 +24,10 @@ export class MysqlConfigProvider implements TypeOrmOptionsFactory {
           ? this.config.test_database
           : this.config.database,
       entities: [Hospitals, Reports, Patients],
-      synchronize: this.config.mode === 'test', //true - 변경시마다 새롭게!
+      synchronize: true, //this.config.mode === 'test', //true - 변경시마다 새롭게!
       dropSchema: this.config.mode === 'test',
       logging: this.config.mode !== 'production',
+      timezone: 'Z',
     };
   }
 }
