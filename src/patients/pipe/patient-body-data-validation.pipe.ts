@@ -8,7 +8,9 @@ export class PatientBodyValidationPipe implements PipeTransform {
 
     // 주민등록번호 형식 검사
     if (!rrnRegex.test(value.patient_rrn)) {
-      throw new BadRequestException('주민등록번호 형식이 올바르지 않습니다.');
+      throw new BadRequestException(
+        '주민등록번호 형식이 올바르지 않습니다. (예. 000101-1111111)',
+      );
     }
 
     if (value.patient_rrn) {
