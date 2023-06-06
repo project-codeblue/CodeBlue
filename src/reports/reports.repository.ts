@@ -39,7 +39,7 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async getReportwithHospitalInfo(report_id: number): Promise<any> {
-    return await this.query(
+    const result = await this.query(
       `
           SELECT
             r.report_id,
@@ -58,10 +58,11 @@ export class ReportsRepository extends Repository<Reports> {
           WHERE r.report_id = ${report_id};      
         `,
     );
+    return result[0];
   }
 
   async getReportwithPatientAndHospitalInfo(report_id: number): Promise<any> {
-    return await this.query(
+    const result = await this.query(
       `
           SELECT
             r.report_id,
@@ -84,6 +85,7 @@ export class ReportsRepository extends Repository<Reports> {
           WHERE r.report_id = ${report_id};      
         `,
     );
+    return result[0];
   }
 
   async findReport(report_id: number): Promise<Reports | undefined> {
