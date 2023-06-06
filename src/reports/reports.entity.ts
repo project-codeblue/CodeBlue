@@ -17,8 +17,8 @@ export class Reports extends BaseEntity {
   @PrimaryGeneratedColumn()
   report_id: number;
 
-  @Column({ type: 'float', nullable: true })
-  blood_pressure: number;
+  @Column({ type: 'varchar', nullable: true })
+  blood_pressure: string;
 
   @Column({ nullable: true })
   blood_type: BloodType;

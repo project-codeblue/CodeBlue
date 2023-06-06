@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsEnum,
   IsString,
+  Length,
 } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { AgeRange, BloodType } from '../reports.enum';
@@ -18,8 +19,9 @@ export class CreateReportDto {
   symptoms: string;
 
   @IsOptional()
-  @IsNumber()
-  blood_pressure?: number;
+  @Length(3, 7) // 혈압 3자리 ~ 7자리 e.g. 120/80
+  @IsString()
+  blood_pressure?: string;
 
   @IsOptional()
   @IsEnum(AgeRange)
