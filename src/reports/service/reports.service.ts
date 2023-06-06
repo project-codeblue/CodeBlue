@@ -173,14 +173,34 @@ export class ReportsService {
 
   // 증상보고서 상세 조회
   async getReportDetails(report_id: number) {
-    const reportDetails = await this.reportsRepository.getReportDetails(
-      report_id,
-    );
-    if (!reportDetails) {
+    const report = await this.reportsRepository.findReport(report_id);
+    if (!report) {
       throw new NotFoundException('일치하는 증상 보고서가 없습니다');
     }
-    console.log('reportDetails:', reportDetails);
-    return reportDetails;
+
+    let result;
+    // 환자와 병원 정보가 없을 떄
+    if (!report.hospital_id && !report.patient_id) {
+      result = report;
+    }
+    // 환자 정보만 있을 때
+    else if (!report.hospital_id && report.patient_id) {
+      result = await this.reportsRepository.getReportwithPatientInfo(report_id);
+    }
+    // 병원 정보만 있을 때
+    else if (report.hospital_id && !report.patient_id) {
+      result = await this.reportsRepository.getReportwithHospitalInfo(
+        report_id,
+      );
+    }
+    // 환자와 병원 정보가 모두 있을 때
+    else {
+      result = await this.reportsRepository.getReportwithPatientAndHospitalInfo(
+        report_id,
+      );
+    }
+
+    return result;
   }
 
   // 증상 보고서 수정

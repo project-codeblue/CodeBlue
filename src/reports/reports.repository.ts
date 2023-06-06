@@ -19,44 +19,29 @@ export class ReportsRepository extends Repository<Reports> {
     return this.save(report);
   }
 
-  async getReportDetails(report_id: number): Promise<any> {
-    const report = await this.findOne({ where: { report_id } });
-    // 해당 보고서가 존재하지 않을 때
-    if (!report) {
-      return null;
-    }
+  async getReportwithPatientInfo(report_id: number): Promise<any> {
+    return await this.createQueryBuilder('r')
+      .select([
+        'r.report_id',
+        'p.name',
+        'p.patient_rrn',
+        'p.gender',
+        'r.symptom_level',
+        'r.symptoms',
+        'r.blood_pressure',
+        'r.age_range',
+        'r.is_sent',
+        'r.createdAt',
+        'r.updatedAt',
+      ])
+      .leftJoin('r.patient', 'p')
+      .where('r.report_id = :report_id', { report_id })
+      .getOne();
+  }
 
-    let result;
-    // 환자와 병원 정보가 없을 떄
-    if (!report.hospital_id && !report.patient_id) {
-      result = await this.find({ where: { report_id } });
-    }
-    // 환자 정보만 있을 때
-    else if (!report.hospital_id && report.patient_id) {
-      result = await this.createQueryBuilder('r')
-        .select([
-          'r.report_id',
-          'p.name',
-          'p.patient_rrn',
-          'p.gender',
-          'r.symptom_level',
-          'r.symptoms',
-          'r.blood_pressure',
-          'r.age_range',
-          'r.is_sent',
-          'r.createdAt',
-          'r.updatedAt',
-        ])
-        .leftJoin('r.patient', 'p')
-        .where('r.report_id = :report_id', { report_id })
-        .getOne();
-
-      console.log('result: ', result);
-    }
-    // 병원 정보만 있을 때
-    else if (report.hospital_id && !report.patient_id) {
-      result = await this.query(
-        `
+  async getReportwithHospitalInfo(report_id: number): Promise<any> {
+    return await this.query(
+      `
           SELECT
             r.report_id,
             r.symptom_level,
@@ -73,13 +58,12 @@ export class ReportsRepository extends Repository<Reports> {
           LEFT JOIN hospitals h ON r.hospital_id = h.hospital_id
           WHERE r.report_id = ${report_id};      
         `,
-      );
-    }
+    );
+  }
 
-    // 환자와 병원 정보가 모두 있을 때
-    else {
-      result = await this.query(
-        `
+  async getReportwithPatientAndHospitalInfo(report_id: number): Promise<any> {
+    return await this.query(
+      `
           SELECT
             r.report_id,
             p.name,
@@ -100,9 +84,7 @@ export class ReportsRepository extends Repository<Reports> {
           LEFT JOIN patients p ON r.patient_id = p.patient_id
           WHERE r.report_id = ${report_id};      
         `,
-      );
-    }
-    return result[0] || result;
+    );
   }
 
   async findReport(report_id: number): Promise<Reports | undefined> {

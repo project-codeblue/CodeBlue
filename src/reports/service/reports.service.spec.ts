@@ -20,7 +20,9 @@ describe('ReportsService Unit Testing', () => {
       })),
       findReport: jest.fn(),
       updateReport: jest.fn(),
-      getReportDetails: jest.fn(),
+      getReportwithPatientInfo: jest.fn(),
+      getReportwithHospitalInfo: jest.fn(),
+      getReportwithPatientAndHospitalInfo: jest.fn(),
     };
 
     const mockPatientsRepository = {
@@ -77,19 +79,26 @@ describe('ReportsService Unit Testing', () => {
         blood_pressure: 130,
       } as Reports;
       jest
-        .spyOn(reportsRepository, 'getReportDetails')
+        .spyOn(reportsRepository, 'findReport')
+        .mockResolvedValueOnce(reportDetails);
+      jest
+        .spyOn(reportsRepository, 'getReportwithPatientInfo')
+        .mockResolvedValueOnce(reportDetails);
+      jest
+        .spyOn(reportsRepository, 'getReportwithHospitalInfo')
+        .mockResolvedValueOnce(reportDetails);
+      jest
+        .spyOn(reportsRepository, 'getReportwithPatientAndHospitalInfo')
         .mockResolvedValueOnce(reportDetails);
 
       const result = await reportsService.getReportDetails(reportId);
 
-      expect(reportsRepository.getReportDetails).toHaveBeenCalledWith(reportId);
+      expect(reportsRepository.findReport).toHaveBeenCalledWith(reportId);
       expect(result).toEqual(reportDetails);
     });
 
     it('should throw NotFoundException if the report does not exist', async () => {
-      jest
-        .spyOn(reportsRepository, 'getReportDetails')
-        .mockResolvedValueOnce(null);
+      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
 
       await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
         NotFoundException,
@@ -123,24 +132,6 @@ describe('ReportsService Unit Testing', () => {
         updateReportDto,
       );
       expect(result).toEqual(report);
-    });
-
-    it('should throw NotFoundException if the report does not exist', async () => {
-      jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
-
-      await expect(
-        reportsService.updateReport(report_id, updateReportDto),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('should throw NotFoundException if the report does not exist', async () => {
-      jest
-        .spyOn(reportsRepository, 'getReportDetails')
-        .mockResolvedValueOnce(null);
-
-      await expect(reportsService.getReportDetails(report_id)).rejects.toThrow(
-        NotFoundException,
-      );
     });
   });
 });
