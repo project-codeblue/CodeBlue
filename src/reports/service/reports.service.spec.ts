@@ -11,7 +11,6 @@ import { AgeRange, BloodType } from '../reports.enum';
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
-  let patientsRepository: PatientsRepository;
 
   beforeEach(async () => {
     const mockReportsRepository = {
@@ -50,7 +49,6 @@ describe('ReportsService Unit Testing', () => {
 
     reportsService = moduleRef.get<ReportsService>(ReportsService);
     reportsRepository = moduleRef.get<ReportsRepository>(ReportsRepository);
-    patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
   });
 
   describe('createReport()', () => {
