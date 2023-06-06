@@ -1,9 +1,18 @@
-import { PipeTransform, Injectable } from '@nestjs/common';
+import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { Gender } from '../patients.enum';
 
 @Injectable()
-export class GenderFromRrnPipe implements PipeTransform {
+export class PatientBodyValidationPipe implements PipeTransform {
   transform(value: any): object {
+    const rrnRegex = /^\d{6}-\d{7}$/;
+
+    // 주민등록번호 형식 검사
+    if (!rrnRegex.test(value.patient_rrn)) {
+      throw new BadRequestException(
+        '주민등록번호 형식이 올바르지 않습니다. (예. 000101-1111111)',
+      );
+    }
+
     if (value.patient_rrn) {
       const rrn = value.patient_rrn;
       const gender =
