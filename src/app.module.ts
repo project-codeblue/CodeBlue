@@ -17,7 +17,7 @@ import { BullModule } from '@nestjs/bull';
     TypeOrmModule.forRootAsync({
       useClass: MysqlConfigProvider,
     }), // mySQL 연결을 위해 import
-    BullModule.forRoot({
+    BullModule.forRoot('config', {
       redis: {
         host: 'redis',
         port: 6379,
