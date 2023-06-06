@@ -54,13 +54,16 @@ describe('ReportsService Unit Testing', () => {
   describe('createReport()', () => {
     const createReportDto: CreateReportDto = {
       symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
-      patient_rrn: '123456-7890123',
     };
+    const patient_rrn = '123456-7890123';
 
     it('should create a report with correct symptom level', async () => {
       const expectedEmergencyLevel = 3;
 
-      const result = await reportsService.createReport(createReportDto);
+      const result = await reportsService.createReport(
+        createReportDto,
+        patient_rrn,
+      );
 
       expect(reportsRepository.createReport).toHaveBeenCalledWith(
         createReportDto,

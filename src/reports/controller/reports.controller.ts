@@ -11,8 +11,12 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
-  createReport(@Body() createReportDto: CreateReportDto) {
-    return this.reportsService.createReport(createReportDto);
+  createReport(
+    @Body('patient_rrn') patient_rrn: string,
+    @Body() createReportDto: CreateReportDto,
+  ) {
+    this.logger.verbose('증상 보고서 생성 POST API');
+    return this.reportsService.createReport(createReportDto, patient_rrn);
   }
 
   @Get('/:report_id')
