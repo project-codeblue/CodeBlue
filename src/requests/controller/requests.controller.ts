@@ -10,13 +10,13 @@ export class RequestsController {
 
   @Get()
   getAllRequests(): Promise<Reports[]> {
-    this.logger.verbose('Getting all requests');
+    this.logger.verbose('이송 신청서 전체 조회 GET API');
     return this.requestsService.getAllRequests();
   }
 
   @Get('/search')
   getSearchRequests(@Query() queries: object): Promise<Reports[]> {
-    this.logger.verbose('Getting search requests');
+    this.logger.verbose('이송 신청서 검색 GET API');
     console.log(queries);
     return this.requestsService.getSearchRequests(queries);
   }

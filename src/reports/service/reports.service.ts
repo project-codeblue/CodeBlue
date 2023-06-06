@@ -3,7 +3,6 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
-  BadRequestException,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
@@ -18,81 +17,69 @@ import {
   otherSymptoms,
   respiratorySymptoms,
 } from '../constants/symptoms';
+import { EntityManager } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 
 @Injectable()
 export class ReportsService {
   constructor(
     private readonly reportsRepository: ReportsRepository,
     private readonly patientsRepository: PatientsRepository,
+    @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
   ) {}
 
-  async createReport(createReportDto: CreateReportDto) {
-    console.log('createReportDto:', createReportDto);
-    const { symptoms, patient_rrn } = createReportDto;
+  async createReport(createReportDto: CreateReportDto, patient_rrn: string) {
+    const createdReport = await this.entityManager.transaction(
+      'READ COMMITTED',
+      async () => {
+        try {
+          // 환자 주민등록번호와 증상이 함께 전달된 경우
+          if (patient_rrn) {
+            const patient = await this.patientsRepository.findByRRN(
+              patient_rrn,
+            );
 
-    if (symptoms) {
-      if (patient_rrn) {
-        // 환자 주민등록번호와 증상이 함께 전달된 경우
-        return this.createReportWithPatient(createReportDto);
-      } else {
-        // 증상만 전달된 경우
-        return this.createReportWithoutPatient(createReportDto);
-      }
-    } else {
-      throw new BadRequestException('올바른 요청 형식이 아닙니다.');
-    }
-  }
+            // 환자가 존재하지 않는 경우, 새로운 환자 생성
+            let patientId: number;
+            if (!patient) {
+              const newPatient =
+                await this.patientsRepository.createPatientInfo({
+                  patient_rrn: patient_rrn,
+                });
+              patientId = newPatient.patient_id;
+            } else {
+              patientId = patient.patient_id;
+            }
+            createReportDto.patient_id = patientId;
+          }
 
-  // 주민등록번호가 없는 경우
-  private async createReportWithoutPatient(createReportDto: CreateReportDto) {
-    const { symptoms } = createReportDto;
+          // report 생성
+          const { symptoms } = createReportDto;
 
-    const selectedSymptoms = symptoms.split(',');
+          const selectedSymptoms = symptoms.split(',');
 
-    const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
-    if (invalidSymptoms.length > 0) {
-      const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
+          const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
+          if (invalidSymptoms.length > 0) {
+            const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+          }
 
-    const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
-    createReportDto.symptom_level = emergencyLevel;
+          const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+          createReportDto.symptom_level = emergencyLevel;
 
-    return this.reportsRepository.createReport(createReportDto, emergencyLevel);
-  }
-
-  // 주민등록번호가 있는 경우
-  private async createReportWithPatient(createReportDto: CreateReportDto) {
-    const { symptoms, patient_rrn } = createReportDto;
-
-    // 환자 정보 확인
-    const patient = await this.patientsRepository.findByRRN(patient_rrn);
-
-    // 환자가 존재하지 않는 경우, 새로운 환자 생성
-    let patientId: number;
-    if (!patient) {
-      const newPatient = await this.patientsRepository.createPatientInfo({
-        patient_rrn: patient_rrn,
-      });
-      patientId = newPatient.patient_id;
-    } else {
-      patientId = patient.patient_id;
-    }
-
-    // 보고서 생성
-    const selectedSymptoms = symptoms.split(',');
-
-    const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
-    if (invalidSymptoms.length > 0) {
-      const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-
-    const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
-    createReportDto.symptom_level = emergencyLevel;
-    createReportDto.patient_id = patientId;
-
-    return this.reportsRepository.createReport(createReportDto, emergencyLevel);
+          return this.reportsRepository.createReport(
+            createReportDto,
+            emergencyLevel,
+          );
+        } catch (error) {
+          throw new HttpException(
+            error.response || '증상 보고서 생성에 실패하였습니다.',
+            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      },
+    );
+    return createdReport;
   }
 
   // 응급도 알고리즘
