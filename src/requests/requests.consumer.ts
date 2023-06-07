@@ -11,7 +11,7 @@ export class RequestQueueConsumer {
   // 큐에 쌓인 job들을 FIFO (First In First Out)으로 가져와서 sendRequest() 함수에 전달한다
   async handleAddRequestQueue(job: Job) {
     console.log('*1 handleAddRequestQueue 진입');
-    console.log('consumer - job.data: ', job.data);
+    console.log(`${job.data} 작업 수행 중`);
     return await this.requestsService.sendRequest(
       job.data.report_id,
       job.data.hospital_id,

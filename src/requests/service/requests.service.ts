@@ -124,21 +124,6 @@ export class RequestsService {
     console.log('*2 sendRequest 진입');
     try {
       const hospital = await this.hospitalsRepository.findHospital(hospital_id);
-      if (!hospital) {
-        throw new NotFoundException('병원이 존재하지 않습니다.');
-      }
-
-      const report = await this.reportsRepository.findReport(report_id);
-      if (!report) {
-        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-      }
-      if (report.is_sent) {
-        throw new HttpException(
-          '이미 전송된 증상 보고서입니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
       const available_beds = hospital.available_beds;
       if (available_beds === 0) {
         throw new HttpException(
@@ -223,6 +208,23 @@ export class RequestsService {
 
   // 동시성 제어를 위한 메서드
   async addRequestQueue(report_id: number, hospital_id: number) {
+    // queue에 넣기 전 report_id와 hospital_id validation
+    const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+    if (!hospital) {
+      throw new NotFoundException('병원이 존재하지 않습니다.');
+    }
+
+    const report = await this.reportsRepository.findReport(report_id);
+    if (!report) {
+      throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+    }
+    if (report.is_sent) {
+      throw new HttpException(
+        '이미 전송된 증상 보고서입니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     // 각 이송 신청에 대한 unique한 eventName을 생성해준다
     const eventName = `Request-${report_id}-${
       Math.floor(Math.random() * 89999) + 1
@@ -234,7 +236,11 @@ export class RequestsService {
     const job = await this.requestQueue.add(
       'addRequestQueue',
       { report_id, hospital_id, eventName },
-      { removeOnComplete: true, removeOnFail: true }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
+      {
+        removeOnComplete: true,
+        removeOnFail: true,
+        priority: this.getPriority(report),
+      }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
     );
     console.log('job: ', job);
     console.log('3. waitFinish() 호출');
@@ -274,4 +280,19 @@ export class RequestsService {
       this.eventEmitter.addListener(eventName, listenFn);
     });
   }
+
+  getPriority = (report: Reports): number => {
+    const { symptom_level, age_range } = report;
+    const symptomLevel = 6 - symptom_level;
+
+    const ageRangeMap: { [key: string]: number } = {
+      임산부: 1,
+      영유아: 2,
+      노년: 3,
+      청소년: 4,
+      성인: 5,
+    };
+
+    return !age_range ? symptomLevel : symptomLevel * ageRangeMap[age_range];
+  };
 }
