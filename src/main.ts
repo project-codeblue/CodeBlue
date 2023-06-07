@@ -28,6 +28,6 @@ async function bootstrap() {
   const config = app.get<ConfigType<typeof appConfig>>(appConfig.KEY);
   const port = config.port;
   await app.listen(port);
-  if (config.mode === 'development') logger.log(` ${port}번 포트: 서버 돌아가는 중`);
+  if (config.mode === 'development') logger.log(` ${port}번 포트로 서버 돌아가는 중`);
 }
 bootstrap();
