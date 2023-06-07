@@ -75,7 +75,7 @@ jobs:
     # deploy가 시작되려면 build를 완료해야함
     needs: build
     # ec2에 설치한 Runner로 job 실행
-    runs-on: [self-hosted, label-vog]
+    runs-on: [self-hosted, label-codeblue]
     # Github container registry 로그인
     steps:
       - name: Login to ghcr
