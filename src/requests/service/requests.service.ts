@@ -222,20 +222,21 @@ export class RequestsService {
   }
 
   // 동시성 제어를 위한 메서드
-  async sendRequestQueue(report_id: number, hospital_id: number) {
+  async addRequestQueue(report_id: number, hospital_id: number) {
     // 각 이송 신청에 대한 unique한 eventName을 생성해준다
-    const eventName = `finishRequest-${report_id}-${
+    const eventName = `Request-${report_id}-${
       Math.floor(Math.random() * 89999) + 1
     }`;
     console.log('1. eventName: ', eventName);
 
     console.log('2. requestQueue에 job 추가');
     // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
-    await this.requestQueue.add(
-      'sendRequestQueue',
+    const job = await this.requestQueue.add(
+      'addRequestQueue',
       { report_id, hospital_id, eventName },
       { removeOnComplete: true, removeOnFail: true }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
     );
+    console.log('job: ', job);
     console.log('3. waitFinish() 호출');
     // 대기열 큐에 job을 넣은 후, service 내에서 waitFinish() 함수를 호출한다
     return this.waitFinish(eventName, 2); // 2 = second

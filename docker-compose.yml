@@ -1,9 +1,9 @@
 version: '3.1'
 services:
-  codeBLUE-redis:
+  redis-server:
     image: redis
     command: redis-server --port 6379
-    container_name: codeBLUE-redis
+    container_name: redis-server
     hostname: redis
     ports:
       - 6379:6379
@@ -16,4 +16,4 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - codeBLUE-redis
+      - redis-server

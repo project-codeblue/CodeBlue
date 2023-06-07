@@ -13,7 +13,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
     HospitalsModule,
     BullModule.forRoot({
       redis: {
-        host: 'redis',
+        host: 'localhost', // 일단 localhost로 설정 -> 후에 docker-compose로 변경
         port: 6379,
       },
     }), // task queue (BullQueue)를 위해 import

@@ -7,10 +7,10 @@ import { Job } from 'bull';
 export class RequestQueueConsumer {
   constructor(private readonly requestsService: RequestsService) {}
 
-  @Process()
+  @Process('addRequestQueue')
   // 큐에 쌓인 job들을 FIFO (First In First Out)으로 가져와서 sendRequest() 함수에 전달한다
-  async handleSendRequestQueue(job: Job) {
-    console.log('*1 handleSendRequestQueue 진입');
+  async handleAddRequestQueue(job: Job) {
+    console.log('*1 handleAddRequestQueue 진입');
     console.log('consumer - job.data: ', job.data);
     return await this.requestsService.sendRequest(
       job.data.report_id,
