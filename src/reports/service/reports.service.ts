@@ -197,6 +197,13 @@ export class ReportsService {
       if (!report) {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
       }
+
+      // symptoms가 변경된 경우 symptoms_level 재계산
+      if (updateReportDto.symptoms) {
+        const selectedSymptoms = updateReportDto.symptoms.split(',');
+        const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+        updateReportDto.symptom_level = emergencyLevel;
+      }
       return this.reportsRepository.updateReport(report_id, updateReportDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
