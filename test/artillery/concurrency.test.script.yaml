@@ -2,7 +2,7 @@ config:
   target: "http://localhost:3000"
   phases:
     - arrivalRate: 30
-      duration: 1
+      duration: 5
   payload:
     path: "data.csv"
     order: random
@@ -24,4 +24,4 @@ scenarios:
           as: "report_id"
     - log: "환자 이송 신청 POST 요청 시도"
     - post:
-        url: "http://localhost:3000/request/{{report_id}}/101"
+        url: "http://localhost:3000/request/{{report_id}}/5"

@@ -295,4 +295,8 @@ export class RequestsService {
 
     return !age_range ? symptomLevel : symptomLevel * ageRangeMap[age_range];
   };
+
+  getRequestQueueForBoard() {
+    return this.requestQueue;
+  }
 }
