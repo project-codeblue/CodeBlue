@@ -101,7 +101,6 @@ export class HospitalsService {
           }
 
           // 카카오map API적용 최단시간 거리 계산
-          // console.time('kakaoMapAPI');
           const promises = hospitals.map(async (hospital) => {
             const endLat = hospital[1]['latitude'];
             const endLng = hospital[1]['longitude'];
@@ -135,7 +134,6 @@ export class HospitalsService {
           });
 
           const recommendedHospitals = await Promise.all(promises);
-          // console.timeEnd('kakaoMapAPI');
           // 가중치 적용
           const weightsRecommendedHospitals = [];
           const weights = {
@@ -168,7 +166,6 @@ export class HospitalsService {
             0,
             10,
           );
-
           const emogList = [];
           for (const hospital of top10RecommendedHospitals) {
             emogList.push(hospital['emogList']);
@@ -187,7 +184,6 @@ export class HospitalsService {
           );
 
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
-
           // const end: any = new Date();
           // const t = end - start;
           // console.log(`응답 시간 : ${t}ms`);

@@ -165,19 +165,12 @@ describe('RequestsService Unit Testing', () => {
     it('should withdraw a request successfully', async () => {
       const hospital_id = 1;
       const report_id = 1;
-      const hospital = {
-        hospital_id,
-        available_beds: 4,
-      };
       const report = {
         report_id,
         hospital_id,
         is_sent: true,
       };
 
-      jest
-        .spyOn(hospitalsRepository, 'findHospital')
-        .mockResolvedValueOnce(hospital as Hospitals);
       jest
         .spyOn(reportsRepository, 'findReport')
         .mockResolvedValueOnce(report as Reports);
