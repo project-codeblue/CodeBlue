@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { HospitalsController } from './controller/hospitals.controller';
 import { HospitalsService } from './service/hospitals.service';
 import { HospitalsRepository } from './hospitals.repository';
-import { ReportsRepository } from 'src/reports/reports.repository';
+import { ReportsRepository } from '../reports/reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hospitals } from './hospitals.entity';
-import { Crawling } from 'src/commons/middlewares/crawling';
-import { KakaoMapService } from 'src/commons/providers/kakao-map.service';
-import { MedicalOpenAPI } from 'src/commons/middlewares/medicalOpenAPI';
+import { Crawling } from '../commons/middlewares/crawling';
+import { KakaoMapService } from '../commons/providers/kakao-map.service';
+import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Hospitals])],

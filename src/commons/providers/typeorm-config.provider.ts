@@ -1,8 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { Hospitals } from 'src/hospitals/hospitals.entity';
-import { Reports } from 'src/reports/reports.entity';
+import { Hospitals } from '../../hospitals/hospitals.entity';
+import { Reports } from '../../reports/reports.entity';
+import { Patients } from '../../patients/patients.entity';
 import dbConfig from '../../../config/db.config';
 
 @Injectable()
@@ -18,10 +19,14 @@ export class MysqlConfigProvider implements TypeOrmOptionsFactory {
       port: this.config.port,
       username: this.config.username,
       password: this.config.password,
-      database: this.config.database,
-      entities: [Hospitals, Reports],
-      synchronize: false, //true - 변경시마다 새롭게!
-      logging: true,
+      database:
+        this.config.mode === 'test'
+          ? this.config.test_database
+          : this.config.database,
+      entities: [Hospitals, Reports, Patients],
+      synchronize: this.config.mode === 'test', //true - 변경시마다 새롭게!
+      dropSchema: this.config.mode === 'test',
+      logging: this.config.mode !== 'production',
     };
   }
 }

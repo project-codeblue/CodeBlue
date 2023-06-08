@@ -12,29 +12,48 @@ export class HospitalsRepository extends Repository<Hospitals> {
   }
 
   async getHospitals(): Promise<Hospitals[]> {
-    return await this.find();
-  }
-
-  async findHospital(hospital_id: number): Promise<Hospitals> {
-    return await this.findOne({ where: { hospital_id } });
-  }
-
-  async updateAvailableBeds(hospital_id: number): Promise<void> {
-    await this.update(
-      { hospital_id },
-      {
-        available_beds: () => 'available_beds - 1',
-      },
+    return await this.query(
+      `
+        SELECT * FROM hospitals;
+      `,
     );
   }
 
+  async findHospital(hospital_id: number): Promise<Hospitals> {
+    const hospital = await this.query(
+      `
+        SELECT * FROM hospitals WHERE hospital_id = ${hospital_id}
+      `,
+    );
+    return hospital[0];
+  }
+
+  async decreaseAvailableBeds(hospital_id: number): Promise<void> {
+    await this.query(
+      `
+        UPDATE hospitals SET available_beds = available_beds - 1 WHERE hospital_id = ${hospital_id};
+      `,
+    );
+  }
+
+  async increaseAvailableBeds(hospital_id: number): Promise<void> {
+    await this.query(
+      `
+        UPDATE hospitals SET available_beds = available_beds + 1 WHERE hospital_id = ${hospital_id};
+      `,
+    );
+  }
+
+  // 1시간마다 모든 병원의 가용 병상을 초기화
   @Cron(CronExpression.EVERY_HOUR)
   async setDefaultAvailableBeds(): Promise<void> {
-    const hospitals = await this.find();
-    hospitals.forEach(async (hospital) => {
-      hospital.available_beds = DEFAULT_AVAILABLE_BEDS;
-      await this.save(hospital);
-    });
+    const beds = DEFAULT_AVAILABLE_BEDS;
+    await this.query(
+      `
+        UPDATE hospitals SET available_beds = ${beds}
+        WHERE available_beds != ${beds};
+      `,
+    );
   }
 
   async getHospitalsWithinRadius(
@@ -44,9 +63,9 @@ export class HospitalsRepository extends Repository<Hospitals> {
   ) {
     return await this.query(
       `
-        SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+        SELECT hospital_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
         point) as 'distance'
-        FROM geohospital
+        FROM hospitals
         WHERE ST_Distance_Sphere(POINT(${startLng}, ${startLat}), point) < (${radius})
         order by distance;
       `,
@@ -56,9 +75,9 @@ export class HospitalsRepository extends Repository<Hospitals> {
   async getHospitalsWithoutRadius(startLng: number, startLat: number) {
     return await this.query(
       `
-          SELECT geo_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+          SELECT hospital_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
           point) as 'distance'
-          FROM geohospital
+          FROM hospitals
           order by distance;
       `,
     );

@@ -1,17 +1,11 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Param,
-  Body,
-  Post,
-  NotFoundException,
-} from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Patch } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
-import { UpdateReportDto } from '../dto/update-report.dto';
 import { Reports } from '../reports.entity';
 import { CreateReportDto } from '../dto/create-report.dto';
+import { UpdateReportDto } from '../dto/update-report.dto';
+import { ReportBodyValidationPipe } from '../pipe/report-body-data-validation.pipe';
+import { RrnValidationPipe } from '../pipe/rrn-validation.pipe';
 
 @Controller('report')
 export class ReportsController {
@@ -19,31 +13,30 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
-  createReport(@Body() createReportDto: CreateReportDto) {
-    return this.reportsService.createReport(createReportDto);
+  createReport(
+    @Body('patient_rrn', new RrnValidationPipe()) patient_rrn: string,
+    @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
+  ) {
+    this.logger.verbose('증상 보고서 생성 POST API');
+    return this.reportsService.createReport(createReportDto, patient_rrn);
   }
 
-  @Patch(':report_id')
-  updateReportPatientInfo(
-    @Param('report_id') report_id: number,
-    @Body() updatedPatientInfo: UpdateReportDto,
-  ): Promise<Reports> {
-    this.logger.verbose('증상 보고서 환자 정보 수정 PATCH API');
-    return this.reportsService.updateReportPatientInfo(
-      report_id,
-      updatedPatientInfo,
-    );
-  }
-
-  @Get(':report_id')
+  @Get('/:report_id')
   async getReportDetails(
     @Param('report_id') reportId: number,
   ): Promise<Reports> {
+    this.logger.verbose('증상 보고서 상세 조회 GET API');
     const reportDetails = await this.reportsService.getReportDetails(reportId);
-    if (!reportDetails) {
-      throw new NotFoundException('일치하는 증상보고서가 없습니다');
-    }
     return reportDetails;
+  }
+
+  @Patch('/:report_id')
+  async updateReport(
+    @Param('report_id') report_id: number,
+    @Body(new ReportBodyValidationPipe()) updatedReport: UpdateReportDto,
+  ): Promise<Reports> {
+    this.logger.verbose('증상 보고서 수정 PATCH API');
+    return await this.reportsService.updateReport(report_id, updatedReport);
   }
 
   @Get('/createdummy')

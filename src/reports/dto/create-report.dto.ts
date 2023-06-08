@@ -4,8 +4,10 @@ import {
   IsNumber,
   IsEnum,
   IsString,
+  Length,
 } from 'class-validator';
-import { Gender, BloodType } from '../reports.enum';
+import { Exclude } from 'class-transformer';
+import { AgeRange, BloodType } from '../reports.enum';
 
 export class CreateReportDto {
   @IsOptional()
@@ -17,18 +19,22 @@ export class CreateReportDto {
   symptoms: string;
 
   @IsOptional()
+  @Length(3, 7) // 혈압 3자리 ~ 7자리 e.g. 120/80
   @IsString()
-  name?: string;
+  blood_pressure?: string;
 
   @IsOptional()
-  @IsEnum(Gender)
-  gender?: Gender;
-
-  @IsOptional()
-  @IsNumber()
-  age?: number;
+  @IsEnum(AgeRange)
+  age_range?: AgeRange;
 
   @IsOptional()
   @IsEnum(BloodType)
   blood_type?: BloodType;
+
+  @Exclude() // patient_rrn을 createReportDto에서 제외
+  patient_rrn?: string;
+
+  @IsOptional()
+  @IsNumber()
+  patient_id?: number;
 }

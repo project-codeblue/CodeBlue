@@ -11,6 +11,7 @@ describe('RequestsController Unit Testing', () => {
       getAllRequests: jest.fn().mockReturnValue({}),
       getSearchRequests: jest.fn().mockReturnValue({}),
       createRequest: jest.fn().mockReturnValue({}),
+      withdrawRequest: jest.fn().mockReturnValue({}),
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -18,8 +19,8 @@ describe('RequestsController Unit Testing', () => {
       providers: [{ provide: RequestsService, useValue: mockRequestsService }],
     }).compile();
 
-    requestsService = moduleRef.get(RequestsService);
-    requestsController = moduleRef.get(RequestsController);
+    requestsService = moduleRef.get<RequestsService>(RequestsService);
+    requestsController = moduleRef.get<RequestsController>(RequestsController);
   });
 
   describe('getAllRequests()', () => {
@@ -45,6 +46,8 @@ describe('RequestsController Unit Testing', () => {
         date: '2023-05-27~2023-05-28',
         symptoms: '체중감소',
         symptom_level: 1,
+        site: '강원도',
+        name: '홍길동'
       };
 
       expect(await requestsController.getSearchRequests(queries)).toBe(
@@ -72,6 +75,20 @@ describe('RequestsController Unit Testing', () => {
         report_id,
         hospital_id,
       );
+    });
+  });
+
+  describe('withdrawRequest()', () => {
+    it('should return object', async () => {
+      const result = {};
+      jest
+        .spyOn(requestsService, 'withdrawRequest')
+        .mockImplementation(() => result);
+
+      const report_id = 1;
+
+      expect(await requestsController.withdrawRequest(report_id)).toBe(result);
+      expect(requestsService.withdrawRequest).toHaveBeenCalledWith(report_id);
     });
   });
 });

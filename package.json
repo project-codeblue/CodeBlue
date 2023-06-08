@@ -1,5 +1,5 @@
 {
-  "name": "CodeBlue",
+  "name": "codeblue",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -17,19 +17,25 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "MODE=test jest --config ./test/supertest-e2e/jest-e2e.json"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.8.0",
+    "@bull-board/api": "^5.2.1",
+    "@bull-board/express": "^5.2.1",
+    "@bull-board/koa": "^5.2.1",
+    "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/event-emitter": "^1.4.1",
     "@nestjs/mapped-types": "^1.2.2",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^2.2.2",
+    "@nestjs/serve-static": "^3.0.1",
     "@nestjs/typeorm": "^9.0.1",
     "@types/js-yaml": "^4.0.5",
     "axios": "^1.4.0",
+    "bull": "^4.10.4",
     "cheerio": "^1.0.0-rc.12",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -94,9 +100,8 @@
       [
         "jest-html-reporters",
         {
-          "publicPath": "./src/commons/utils/html-jest-report",
+          "publicPath": "./test/html-jest-report",
           "filename": "report.html",
-          "openReport": true,
           "includeFailureMsg": true
         }
       ]
