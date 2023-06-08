@@ -206,7 +206,7 @@ export class HospitalsService {
           await this.cacheManager.set(
             `cache:${report_id.toString()}`,
             JSON.stringify(results),
-            60 * 1000,
+            60 * 1000, // ms
           );
           console.log('redis cache에 저장');
 
