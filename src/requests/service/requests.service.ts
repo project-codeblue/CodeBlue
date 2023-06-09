@@ -5,6 +5,7 @@ import { EntityManager, Brackets } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Reports } from '../../reports/reports.entity';
 import * as date from 'date-and-time';
+import { Elk } from '../../commons/middlewares/elk';
 
 @Injectable()
 export class RequestsService {
@@ -12,6 +13,7 @@ export class RequestsService {
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
+    private elk: Elk,
   ) {}
 
   async getAllRequests(): Promise<Reports[]> {
@@ -116,6 +118,26 @@ export class RequestsService {
       }
 
       const allReports = await query.getRawMany();
+
+      if (allReports.length === 0) {
+        throw new NotFoundException('검색 결과가 없습니다');
+      }
+
+      return allReports;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        error.response || '검색 조회에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getELKSearch(queries: object)/*: Promise<Reports[]>*/ {
+    try {
+      const allReports = await this.elk.search(queries);
 
       if (allReports.length === 0) {
         throw new NotFoundException('검색 결과가 없습니다');
