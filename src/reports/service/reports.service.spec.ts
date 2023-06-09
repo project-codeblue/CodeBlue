@@ -88,11 +88,11 @@ describe('ReportsService Unit Testing', () => {
   });
 
   describe('getReportDetails()', () => {
-    const reportId = 1;
+    const report_id = 1;
 
     it('should return the report details', async () => {
       const reportDetails = {
-        report_id: reportId,
+        report_id,
         blood_pressure: '130/80',
       } as Reports;
       jest
@@ -108,16 +108,16 @@ describe('ReportsService Unit Testing', () => {
         .spyOn(reportsRepository, 'getReportwithPatientAndHospitalInfo')
         .mockResolvedValueOnce(reportDetails);
 
-      const result = await reportsService.getReportDetails(reportId);
+      const result = await reportsService.getReportDetails(report_id);
 
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(reportId);
+      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
       expect(result).toEqual(reportDetails);
     });
 
     it('should throw NotFoundException if the report does not exist', async () => {
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
 
-      await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
+      await expect(reportsService.getReportDetails(report_id)).rejects.toThrow(
         NotFoundException,
       );
     });

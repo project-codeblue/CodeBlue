@@ -3,6 +3,7 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
@@ -12,6 +13,8 @@ import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { InjectEntityManager } from '@nestjs/typeorm'; //transaction사용을 위한 모듈 임포트
 import { EntityManager } from 'typeorm'; //transaction사용을 위한 모듈 임포트
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class HospitalsService {
@@ -22,6 +25,7 @@ export class HospitalsService {
     private kakaoMapService: KakaoMapService,
     private openAPI: MedicalOpenAPI,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async getHospitals(): Promise<Hospitals[]> {
@@ -52,12 +56,22 @@ export class HospitalsService {
   async getRecommendedHospitals(
     report_id: number,
     queries: object,
-  ): Promise<string[] | object> {
+  ): Promise<any> {
     // const start: any = new Date();
     const getHospitals = await this.entityManager.transaction(
       'READ COMMITTED',
       async () => {
         try {
+          // redis cache로 캐싱되어 있는 report_id인지 먼저 확인
+          const cachedResult: string = await this.cacheManager.get(
+            `cache:${report_id.toString()}`,
+          );
+          // 캐싱되어 있으면 바로 return
+          if (cachedResult) {
+            console.log('캐싱된 데이터를 사용합니다.');
+            return JSON.parse(cachedResult);
+          }
+
           //사용자 위치
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
@@ -101,7 +115,6 @@ export class HospitalsService {
           }
 
           // 카카오map API적용 최단시간 거리 계산
-          // console.time('kakaoMapAPI');
           const promises = hospitals.map(async (hospital) => {
             const endLat = hospital[1]['latitude'];
             const endLng = hospital[1]['longitude'];
@@ -135,7 +148,6 @@ export class HospitalsService {
           });
 
           const recommendedHospitals = await Promise.all(promises);
-          // console.timeEnd('kakaoMapAPI');
           // 가중치 적용
           const weightsRecommendedHospitals = [];
           const weights = {
@@ -168,7 +180,6 @@ export class HospitalsService {
             0,
             10,
           );
-
           const emogList = [];
           for (const hospital of top10RecommendedHospitals) {
             emogList.push(hospital['emogList']);
@@ -187,10 +198,18 @@ export class HospitalsService {
           );
 
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
-
           // const end: any = new Date();
           // const t = end - start;
           // console.log(`응답 시간 : ${t}ms`);
+
+          // redis cache에 저장
+          await this.cacheManager.set(
+            `cache:${report_id.toString()}`,
+            JSON.stringify(results),
+            60 * 1000, // ms
+          );
+          console.log('redis cache에 저장');
+
           return results;
         } catch (error) {
           if (error instanceof NotFoundException) {

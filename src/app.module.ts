@@ -3,12 +3,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ReportsModule } from './reports/reports.module';
+import { PatientsModule } from './patients/patients.module';
 import { HospitalsModule } from './hospitals/hospitals.module';
 import { RequestsModule } from './requests/requests.module';
 import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
 import { ConfigValidator } from '../config/config.validator';
-import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
