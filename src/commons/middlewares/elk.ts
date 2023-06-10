@@ -1,12 +1,18 @@
-import { Module, Injectable } from '@nestjs/common';
+import { Module, Injectable, Inject } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import appConfig from '../../../config/app.config';
 import { Client } from '@elastic/elasticsearch';
 import { Reports } from 'src/reports/reports.entity';
 
 @Injectable()
 export class Elk {
+  constructor(
+    @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
+  ) {}
+
   async allSearch(): Promise<string[]> {
     const client = new Client({
-      nodes: ['http://localhost:9200'],
+      nodes: [`${this.config.elasticsearchIP}`],
     });
     const datas = await client.search({
       index: 'reports',
@@ -38,14 +44,14 @@ export class Elk {
     const name = queries['name'];
 
     const client = new Client({
-      nodes: ['http://localhost:9200'],
+      nodes: [`${this.config.elasticsearchIP}`],
     });
     const datas = await client.search({
       index: 'reports',
       size: 10000,
       query: {
         bool: {
-          should: [
+          must: [
             {
               query_string: {
                 default_field: 'date',
