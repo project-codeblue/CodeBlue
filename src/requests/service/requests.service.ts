@@ -38,39 +38,88 @@ export class RequestsService {
           'reports.report_id',
           'reports.symptom_level',
           'reports.symptoms',
-          'reports.createdAt',
+          'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
           'patient.name',
+          'reports.age_range',
           'hospital.name',
           'hospital.phone',
           'hospital.emogList',
         ])
         .where('1 = 1')
         .andWhere('is_sent = 1');
-
-      if (queries['date']) {
-        // URL 쿼리에 날짜가 존재하면 실행
-        const dates: string[] = queries['date'].split('~'); // '~' 를 기준으로 날짜 범위 구분
+      
+      if (queries['fromDate'] && queries['toDate']) {
+        // URL 쿼리에 fromDate & toDate가 존재하면 실행
+        const rawFromDate: string = queries['fromDate'];
+        const rawToDate: string = queries['toDate'];
 
         const regex = /^\d{4}-\d{2}-\d{2}$/;
-        for (const date of dates) {
-          if (!regex.test(date)) {
-            throw new Error('날짜 형식이 맞지 않습니다');
+        if (regex.test(rawFromDate) && regex.test(rawToDate)) {
+          if (rawFromDate > rawToDate) {
+            throw new NotFoundException('정확한 날짜를 찾을 수 없습니다. 날짜의 범위를 확인해주세요.');
           }
-        }
+          let transFromDate: Date = new Date(rawFromDate);
+          let transToDate: Date = new Date(rawToDate);
+          transToDate = date.addHours(transToDate, 23);
+          transToDate = date.addMinutes(transToDate, 59);
+          transToDate = date.addSeconds(transToDate, 59);
 
-        if (dates.length === 1) {
-          const temp = new Date(dates[0]);
-          temp.setDate(temp.getDate() + 1);
-          dates.push(date.format(temp, 'YYYY-MM-DD'));
+          const fromDate: string = date.format(transFromDate, 'YYYY-MM-DD HH:mm:ss', true);
+          const toDate: string = date.format(transToDate, 'YYYY-MM-DD HH:mm:ss', true);
+
+          await query.andWhere(
+            new Brackets((qb) => {
+              qb.andWhere(
+                'reports.createdAt BETWEEN :a AND :b',
+                {
+                  a: `${fromDate}`,
+                  b: `${toDate}`
+                }
+              )
+            }),
+          );
+        } else {
+          throw new NotFoundException('정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.');
+        };
+      } else if (queries['fromDate']) {
+        // URL 쿼리에 fromDate만 존재하면 실행 (ex. 2023.06.10 00:00:00 이후)
+        const fromDate: string = queries['fromDate'];
+
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!regex.test(fromDate)) {
+          throw new NotFoundException('정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.');
         }
+        await query.andWhere(
+          new Brackets((qb) => {
+            qb.andWhere(
+              'reports.createdAt > :date',
+              {
+                date: `${fromDate}`,
+              }
+            )
+          }),
+        );
+      } else if (queries['toDate']) {
+        // URL 쿼리에 toDate만 존재하면 실행 (ex. 2023.06.10 23:59:59 이전)
+        const rawToDate: string = queries['toDate'];
+
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!regex.test(rawToDate)) {
+          throw new NotFoundException('정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.');
+        }
+        let transToDate: Date = new Date(rawToDate);
+        transToDate = date.addHours(transToDate, 23);
+        transToDate = date.addMinutes(transToDate, 59);
+        transToDate = date.addSeconds(transToDate, 59);
+
+        const toDate: string = date.format(transToDate, 'YYYY-MM-DD HH:mm:ss', true);
 
         await query.andWhere(
           new Brackets((qb) => {
             qb.andWhere(
-              'reports.createdAt BETWEEN :a AND :b',
+              'reports.createdAt < :date',
               {
-                a: `${dates[0]}`,
-                b: `${dates[1]}`
+                date: `${toDate}`
               }
             )
           }),
@@ -91,7 +140,7 @@ export class RequestsService {
       }
 
       if (queries['symptom_level']) {
-        // URL 쿼리에 증상도가 존재하면 실행
+        // URL 쿼리에 증상도가 존재하면 실행 (1 ~ 5)
         const level: number = parseInt(queries['symptom_level']);
         query.andWhere(
           'reports.symptom_level = :level',
@@ -123,6 +172,17 @@ export class RequestsService {
         );
       }
 
+      if (queries['age_range']) {
+        // URL 쿼리에 연령대가 존재하면 실행 (영유아, 청소년, 성인, 임산부, 노인)
+        const name: string = queries['name'].toString();
+        query.andWhere(
+          'patient.name = :name',
+          {
+            name: `${name}`
+          }
+        );
+      }
+
       const allReports = await query.getRawMany();
 
       if (allReports.length === 0) {
@@ -130,14 +190,16 @@ export class RequestsService {
       }
 
       return allReports;
+      
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
+      } else {
+        throw new HttpException(
+          error.response || '검색 조회에 실패하였습니다.',
+          error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
-      throw new HttpException(
-        error.response || '검색 조회에 실패하였습니다.',
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
   }
 
