@@ -64,7 +64,9 @@ export class HospitalsService {
         try {
           // redis cache로 캐싱되어 있는 report_id인지 먼저 확인
           const cachedResult: string = await this.cacheManager.get(
-            `cache:${report_id.toString()}`,
+            `cache:${report_id.toString()}:${queries['radius']}:${
+              queries['max_count']
+            }`,
           );
           // 캐싱되어 있으면 바로 return
           if (cachedResult) {
@@ -204,7 +206,9 @@ export class HospitalsService {
 
           // redis cache에 저장
           await this.cacheManager.set(
-            `cache:${report_id.toString()}`,
+            `cache:${report_id.toString()}:${queries['radius']}:${
+              queries['max_count']
+            }`,
             JSON.stringify(results),
             60 * 1000, // ms
           );
