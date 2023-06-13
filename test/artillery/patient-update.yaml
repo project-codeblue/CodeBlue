@@ -1,0 +1,18 @@
+config:
+  target: "https://ksnx3684.shop"
+  phases:
+    - duration: 60
+      arrivalRate: 100
+scenarios:
+  - flow:
+    - log: "사용자가 환자 정보를 입력 후 정보 수정"
+    - post:
+        url: "/report"
+        json:
+          symptoms: "{{symptoms}}"
+          age_range: "{{age_range}}"
+        capture:
+          json: "$.report_id"
+          as: "report_id"
+    - get:
+        url: "/hospital/1?latitude=37.1&longitude=127.1"

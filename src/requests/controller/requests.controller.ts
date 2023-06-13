@@ -10,7 +10,7 @@ export class RequestsController {
 
   @Get()
   getAllRequests(): Promise<Reports[]> {
-    this.logger.verbose('이송 신청서 전체 조회 GET API');
+    this.logger.verbose('증상 보고서 전체 조회 GET API');
     return this.requestsService.getAllRequests();
   }
 
@@ -32,14 +32,14 @@ export class RequestsController {
 
   @Get('/search')
   getSearchRequests(@Query() queries: object): Promise<Reports[]> {
-    this.logger.verbose('이송 신청서 검색 GET API');
+    this.logger.verbose('증상 보고서 검색 GET API');
     console.log(queries);
     return this.requestsService.getSearchRequests(queries);
   }
 
   @Get('/advancedSearch')
   getELKSearch(@Query() queries: object)/*: Promise<Reports[]>*/ {
-    this.logger.verbose('이송 신청서 검색 GET API with ELK');
+    this.logger.verbose('증상 보고서 검색 GET API with ELK');
     console.log(queries);
     return this.requestsService.getELKSearch(queries);
   }
