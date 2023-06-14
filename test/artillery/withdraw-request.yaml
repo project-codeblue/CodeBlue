@@ -1,0 +1,12 @@
+config:
+  target: "https://ksnx3684.shop"
+  phases:
+    - duration: 10
+      arrivalRate: 10
+scenarios:
+  - flow:
+    - log: "사용자가 이송 신청을 했다가 철회"
+    - post:
+        url: "/request/1/1"
+    - delete:
+        url: "/request/1"

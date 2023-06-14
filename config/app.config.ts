@@ -5,4 +5,5 @@ export default registerAs('app', () => ({
   mode: process.env.MODE || 'development',
   kakaoApiKey: process.env.KAKAOMAP_REST_API_KEY,
   medicalOpenApiKey: process.env.MEDICAL_DATA_API_KEY,
+  elasticsearchIP: process.env.ELASTICSEARCH_IP,
 }));

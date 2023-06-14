@@ -10,7 +10,7 @@ describe('RequestsController Unit Testing', () => {
     const mockRequestsService = {
       getAllRequests: jest.fn().mockReturnValue({}),
       getSearchRequests: jest.fn().mockReturnValue({}),
-      createRequest: jest.fn().mockReturnValue({}),
+      sendRequest: jest.fn().mockReturnValue({}),
       withdrawRequest: jest.fn().mockReturnValue({}),
     };
 
@@ -58,20 +58,20 @@ describe('RequestsController Unit Testing', () => {
     });
   });
 
-  describe('createRequest()', () => {
+  describe('sendRequest()', () => {
     it('should return object', async () => {
       const result = {};
       jest
-        .spyOn(requestsService, 'createRequest')
+        .spyOn(requestsService, 'sendRequest')
         .mockImplementation(() => result);
 
       const report_id = 1;
       const hospital_id = 1;
 
       expect(
-        await requestsController.createRequest(report_id, hospital_id),
+        await requestsController.sendRequest(report_id, hospital_id),
       ).toBe(result);
-      expect(requestsService.createRequest).toHaveBeenCalledWith(
+      expect(requestsService.addRequestQueue).toHaveBeenCalledWith(
         report_id,
         hospital_id,
       );
