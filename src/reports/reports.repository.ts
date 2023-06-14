@@ -3,6 +3,7 @@ import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { AgeRange, BloodType } from './reports.enum';
 
 @Injectable()
 export class ReportsRepository extends Repository<Reports> {
@@ -115,20 +116,18 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async createDummyReport(
-    hospital_id: number,
-    patient_id: number,
+    blood_pressure: string,
+    blood_type: BloodType,
+    age_range: AgeRange,
     symptom_level: number,
-    symptom: string[],
-    latitude: number,
-    longitude: number,
+    symptoms: string[],
   ) {
     await this.save({
-      hospital_id,
-      patient_id,
+      blood_pressure,
+      blood_type,
+      age_range,
       symptom_level,
-      symptoms: `[${symptom}]`,
-      latitude,
-      longitude,
+      symptoms: `[${symptoms}]`,
     });
   }
 

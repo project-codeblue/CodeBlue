@@ -39,7 +39,7 @@ export class ReportsController {
     return await this.reportsService.updateReport(report_id, updatedReport);
   }
 
-  @Get('/createdummy')
+  @Get('/create/dummy')
   createDummyReport() {
     return this.reportsService.createDummyReport();
   }
