@@ -3,8 +3,16 @@ config:
   phases:
     - duration: 60
       arrivalRate: 100
+  payload:
+    path: "data-number.csv"
+    skipHeader: false
+    delimiter: ","
+    loadAll: true
+    fields:
+      - "patient_id"
+    
 scenarios:
   - flow:
     - log: "사용자가 증상 보고서를 상세 조회"
     - get:
-        url: "/report/1"
+        url: "http://localhost:3000/report/{{patient_id}}"
