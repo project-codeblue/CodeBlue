@@ -3,11 +3,12 @@ config:
   phases:
     - duration: 60
       arrivalRate: 100
+
 scenarios:
   - flow:
     - log: "사용자가 증상 보고서 검색"
     - get:
-        url: "/request/search"
+        url: "http://localhost:3000/request/search"
         qs:
           fromDate: "2023-06-01"
           toDate: "2023-06-30"
@@ -17,7 +18,7 @@ scenarios:
           name: "홍길동"
           age_range: "성인"
     - get: 
-        url: "/request/search"
+        url: "http://localhost:3000/request/search"
         qs:
           fromDate: "2023-06-01"
           symptom_level: 3
