@@ -1,14 +1,23 @@
 config:
-  target: "https://ksnx3684.shop"
+  target: "http://localhost:3000"
   phases:
-    - duration: 10
-      arrivalRate: 2
+    - duration: 60
+      arrivalRate: 10
+  payload:
+    path: "concurrency.test.script.csv"
+    order: sequence
+    delimiter: "|"
+    skipHeader: true
+    fields:
+      - "symptoms"
+      - "age_range"
+      - "patient_id"
 
 scenarios:
   - flow:
     - log: "사용자가 증상 보고서를 입력 후 병원 추천"
     - post:
-        url: "https://ksnx3684.shop/report"
+        url: "http://localhost:3000/report"
         json:
           symptoms: "{{symptoms}}"
           age_range: "{{age_range}}"
@@ -16,7 +25,7 @@ scenarios:
           json: "$.report_id"
           as: "report_id"
     - get:
-        url: "/hospital/1"
+        url: "http://localhost:3000/hospital/{{report_id}}"
         qs:
           latitude: 37.1
           longitude: 127.1
