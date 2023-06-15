@@ -9,6 +9,7 @@ import { Elk } from '../../commons/middlewares/elk';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AgeRange } from 'src/reports/reports.enum';
 
 
 @Injectable()
@@ -174,11 +175,11 @@ export class RequestsService {
 
       if (queries['age_range']) {
         // URL 쿼리에 연령대가 존재하면 실행 (영유아, 청소년, 성인, 임산부, 노인)
-        const name: string = queries['name'].toString();
+        const age_range: AgeRange = queries['age_range'].toString();
         query.andWhere(
-          'patient.name = :name',
+          'reports.age_range = :age_range',
           {
-            name: `${name}`
+            age_range: `${age_range}`
           }
         );
       }
@@ -195,6 +196,7 @@ export class RequestsService {
       if (error instanceof NotFoundException) {
         throw error;
       } else {
+        console.log(error);
         throw new HttpException(
           error.response || '검색 조회에 실패하였습니다.',
           error.status || HttpStatus.INTERNAL_SERVER_ERROR,
