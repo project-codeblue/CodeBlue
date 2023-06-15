@@ -8,9 +8,20 @@ import { Hospitals } from './hospitals.entity';
 import { Crawling } from '../commons/middlewares/crawling';
 import { KakaoMapService } from '../commons/providers/kakao-map.service';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Hospitals])],
+  imports: [
+    TypeOrmModule.forFeature([Hospitals]),
+    CacheModule.register({
+      name: 'redis-cache',
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+      ttl: 60,
+    }),
+  ],
   controllers: [HospitalsController],
   providers: [
     HospitalsService,

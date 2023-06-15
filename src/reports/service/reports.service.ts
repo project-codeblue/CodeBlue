@@ -131,15 +131,15 @@ export class ReportsService {
 
   private emergencyLevelByScore(score: number): number {
     if (score > 80) {
-      return 5;
+      return 1;
     } else if (score > 60) {
-      return 4;
+      return 2;
     } else if (score > 40) {
       return 3;
     } else if (score > 20) {
-      return 2;
+      return 4;
     } else {
-      return 1;
+      return 5;
     }
   }
 
@@ -196,6 +196,13 @@ export class ReportsService {
       const report = await this.reportsRepository.findReport(report_id);
       if (!report) {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+      }
+
+      // symptoms가 변경된 경우 symptoms_level 재계산
+      if (updateReportDto.symptoms) {
+        const selectedSymptoms = updateReportDto.symptoms.split(',');
+        const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+        updateReportDto.symptom_level = emergencyLevel;
       }
       return this.reportsRepository.updateReport(report_id, updateReportDto);
     } catch (error) {

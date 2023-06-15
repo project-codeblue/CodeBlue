@@ -19,24 +19,12 @@ export class ReportsRepository extends Repository<Reports> {
     return this.save(report);
   }
 
-  async getReportwithPatientInfo(report_id: number): Promise<any> {
-    return await this.createQueryBuilder('r')
-      .select([
-        'r.report_id',
-        'p.name',
-        'p.patient_rrn',
-        'p.gender',
-        'r.symptom_level',
-        'r.symptoms',
-        'r.blood_pressure',
-        'r.age_range',
-        'r.is_sent',
-        'r.createdAt',
-        'r.updatedAt',
-      ])
-      .leftJoin('r.patient', 'p')
-      .where('r.report_id = :report_id', { report_id })
-      .getOne();
+  async getReportwithPatientInfo(report_id: number): Promise<Reports> {
+    const report = await this.findOne({
+      where: { report_id },
+      relations: ['patient'],
+    });
+    return report;
   }
 
   async getReportwithHospitalInfo(report_id: number): Promise<any> {
@@ -167,14 +155,6 @@ export class ReportsRepository extends Repository<Reports> {
 
     report.hospital_id = null;
     await report.save();
-  }
-
-  async getReportWithPatientInfo(report_id: number): Promise<Reports> {
-    const report = await this.findOne({
-      where: { report_id },
-      relations: ['patient'],
-    });
-    return report;
   }
 
   async addPatientIdInReport(report_id: number, patient_id: number) {

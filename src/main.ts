@@ -4,10 +4,11 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './commons/exceptions/http-exception.filter';
 import { ConfigType } from '@nestjs/config';
 import appConfig from '../config/app.config';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const logger = new Logger();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // global validation pipe
   app.useGlobalPipes(
