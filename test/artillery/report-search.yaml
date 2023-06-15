@@ -1,0 +1,25 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 100
+
+scenarios:
+  - flow:
+    - log: "사용자가 증상 보고서 검색"
+    - get:
+        url: "http://localhost:3000/request/search"
+        qs:
+          fromDate: "2023-06-01"
+          toDate: "2023-06-30"
+          symptoms: "저체온증"
+          symptom_level: 1
+          site: "강원도"
+          name: "홍길동"
+          age_range: "성인"
+    - get: 
+        url: "http://localhost:3000/request/search"
+        qs:
+          fromDate: "2023-06-01"
+          symptom_level: 3
+          site: "강원도"

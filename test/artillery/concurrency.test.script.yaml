@@ -1,16 +1,18 @@
 config:
   target: "http://localhost:3000"
   phases:
-    - arrivalRate: 30
-      duration: 1
+    - arrivalRate: 60
+      duration: 10
   payload:
-    path: "data.csv"
+    path: "concurrency.test.script.csv"
     order: random
     delimiter: "|"
     skipHeader: true
     fields:
       - "symptoms"
       - "age_range"
+      - "patient_id"
+      
 scenarios:
   - flow: 
     - log: "증상 보고서 입력 POST 요청 시도"

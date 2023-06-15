@@ -220,7 +220,7 @@ export class HospitalsService {
             throw error;
           }
           throw new HttpException(
-            error.response || '병원 조회에 실패하였습니다.',
+            error.response.data || '병원 조회에 실패하였습니다.',
             error.status || HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
@@ -248,5 +248,9 @@ export class HospitalsService {
       durationWeight * durationScore +
       available_bedsWeight * available_bedsScore;
     return rating;
+  }
+
+  async getSymptomCrawl() {
+    const data = await this.crawling.symptomCrawl();
   }
 }
