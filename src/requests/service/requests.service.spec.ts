@@ -5,12 +5,18 @@ import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
 import { Hospitals } from '../../hospitals/hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
+import { Elk } from '../../commons/middlewares/elk';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Queue } from 'bull';
 
 describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
   let hospitalsRepository: HospitalsRepository;
   let reportsRepository: ReportsRepository;
+  let elk: Elk;
+  let eventEmitter: EventEmitter2;
   let entityManager: EntityManager;
+  let requestQueue: Queue;
 
   beforeEach(async () => {
     const mockHospitalsRepository = {
@@ -29,12 +35,17 @@ describe('RequestsService Unit Testing', () => {
       createQueryBuilder: jest.fn(),
       leftJoinAndSelect: jest.fn(),
     };
+    const mockElk = {
+      allSearch: jest.fn(),
+      search: jest.fn(),
+    };
     const mockTransaction = {
       transaction: jest.fn().mockImplementation((isolationLevel, callback) => {
         // transaction 메소드에 대한 Mock 구현을 제공합니다.
         return callback(); // 테스트 시에는 콜백 함수를 실행합니다.
       }),
     };
+    
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -51,12 +62,18 @@ describe('RequestsService Unit Testing', () => {
           provide: EntityManager,
           useValue: mockTransaction,
         },
+        {
+          provide: Elk,
+          useValue: mockElk,
+        },
       ],
     }).compile();
 
     requestsService = moduleRef.get(RequestsService);
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
+    elk = moduleRef.get(Elk);
+    eventEmitter = moduleRef.get(EventEmitter2);
     entityManager = moduleRef.get(EntityManager);
   });
 
@@ -77,15 +94,20 @@ describe('RequestsService Unit Testing', () => {
       const allReports = [];
       const queries: object = {
         symptoms: '발작',
-        date: '2023-05-30~2023-05-31',
+        fromDate: '2023-05-30',
+        toDate: '2023-05-31',
         symptom_level: '5',
         site: '경기도',
         name: '홍길동',
+        age_range: '성인',
       };
 
       jest
         .spyOn(requestsService, 'getSearchRequests')
-        .mockResolvedValue(queries['date']);
+        .mockResolvedValue(queries['fromDate']);
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['toDate']);
       jest
         .spyOn(requestsService, 'getSearchRequests')
         .mockResolvedValue(queries['symptoms']);
@@ -98,6 +120,9 @@ describe('RequestsService Unit Testing', () => {
       jest
         .spyOn(requestsService, 'getSearchRequests')
         .mockResolvedValue(queries['name']);
+      jest
+        .spyOn(requestsService, 'getSearchRequests')
+        .mockResolvedValue(queries['age_range']);
 
       const search = jest.spyOn(requestsService, 'getSearchRequests');
 
@@ -111,6 +136,7 @@ describe('RequestsService Unit Testing', () => {
     it('should create a request successfully', async () => {
       const hospital_id = 1;
       const report_id = 1;
+      const eventName = 'test';
       const hospital = [
         {
           hospital_id,
@@ -132,12 +158,13 @@ describe('RequestsService Unit Testing', () => {
       jest.spyOn(hospitalsRepository, 'decreaseAvailableBeds');
       jest.spyOn(reportsRepository, 'updateReportBeingSent');
       jest
-        .spyOn(reportsRepository, 'getReportWithPatientInfo')
+        .spyOn(reportsRepository, 'getReportwithPatientInfo')
         .mockResolvedValueOnce(report as Reports);
 
-      const result = await requestsService.createRequest(
+      const result = await requestsService.sendRequest(
         report_id,
         hospital_id,
+        eventName,
       );
 
       expect(result).toEqual(report);
@@ -155,7 +182,7 @@ describe('RequestsService Unit Testing', () => {
       expect(reportsRepository.updateReportBeingSent).toHaveBeenCalledWith(
         report_id,
       );
-      expect(reportsRepository.getReportWithPatientInfo).toHaveBeenCalledWith(
+      expect(reportsRepository.getReportwithPatientInfo).toHaveBeenCalledWith(
         report_id,
       );
     });
@@ -165,10 +192,6 @@ describe('RequestsService Unit Testing', () => {
     it('should withdraw a request successfully', async () => {
       const hospital_id = 1;
       const report_id = 1;
-      const hospital = {
-        hospital_id,
-        available_beds: 4,
-      };
       const report = {
         report_id,
         hospital_id,
@@ -176,16 +199,13 @@ describe('RequestsService Unit Testing', () => {
       };
 
       jest
-        .spyOn(hospitalsRepository, 'findHospital')
-        .mockResolvedValueOnce(hospital as Hospitals);
-      jest
         .spyOn(reportsRepository, 'findReport')
         .mockResolvedValueOnce(report as Reports);
       jest.spyOn(reportsRepository, 'deleteTargetHospital');
       jest.spyOn(hospitalsRepository, 'increaseAvailableBeds');
       jest.spyOn(reportsRepository, 'updateReportBeingNotSent');
       jest
-        .spyOn(reportsRepository, 'getReportWithPatientInfo')
+        .spyOn(reportsRepository, 'getReportwithPatientInfo')
         .mockResolvedValueOnce(report as Reports);
 
       const result = await requestsService.withdrawRequest(report_id);
@@ -201,7 +221,7 @@ describe('RequestsService Unit Testing', () => {
       expect(reportsRepository.updateReportBeingNotSent).toHaveBeenCalledWith(
         report_id,
       );
-      expect(reportsRepository.getReportWithPatientInfo).toHaveBeenCalledWith(
+      expect(reportsRepository.getReportwithPatientInfo).toHaveBeenCalledWith(
         report_id,
       );
     });

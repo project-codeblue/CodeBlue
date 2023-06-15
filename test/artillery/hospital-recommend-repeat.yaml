@@ -1,0 +1,15 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 100
+
+scenarios:
+  - flow:
+    - log: "사용자가 동일한 위치 환경에서 반복적인 병원 추천 실행"
+    - get:
+        url: "http://localhost:3000/hospital/1"
+        qs:
+          latitude: 37.1
+          longitude: 127.1
+          radius: 30

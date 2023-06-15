@@ -50,7 +50,8 @@ export class HospitalsRepository extends Repository<Hospitals> {
     const beds = DEFAULT_AVAILABLE_BEDS;
     await this.query(
       `
-        UPDATE hospitals SET available_beds = ${beds};
+        UPDATE hospitals SET available_beds = ${beds}
+        WHERE available_beds != ${beds};
       `,
     );
   }
