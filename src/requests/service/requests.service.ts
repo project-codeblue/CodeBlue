@@ -5,7 +5,6 @@ import { EntityManager, Brackets } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Reports } from '../../reports/reports.entity';
 import * as date from 'date-and-time';
-import { Elk } from '../../commons/middlewares/elk';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -17,7 +16,6 @@ export class RequestsService {
   constructor(
     private readonly reportsRepository: ReportsRepository,
     private readonly hospitalsRepository: HospitalsRepository,
-    private elk: Elk,
     private readonly eventEmitter: EventEmitter2, // eventEmitter DI
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션 DI
     @InjectQueue('requestQueue') private requestQueue: Queue, // bullqueue DI
@@ -202,26 +200,6 @@ export class RequestsService {
           error.status || HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-    }
-  }
-
-  async getELKSearch(queries: object)/*: Promise<Reports[]>*/ {
-    try {
-      const allReports = await this.elk.search(queries);
-
-      if (allReports.length === 0) {
-        throw new NotFoundException('검색 결과가 없습니다');
-      }
-
-      return allReports;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new HttpException(
-        error.response || '검색 조회에 실패하였습니다.',
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
   }
 

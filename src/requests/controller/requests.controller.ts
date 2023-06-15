@@ -37,10 +37,4 @@ export class RequestsController {
     return this.requestsService.getSearchRequests(queries);
   }
 
-  @Get('/advancedSearch')
-  getELKSearch(@Query() queries: object)/*: Promise<Reports[]>*/ {
-    this.logger.verbose('증상 보고서 검색 GET API with ELK');
-    console.log(queries);
-    return this.requestsService.getELKSearch(queries);
-  }
 }
