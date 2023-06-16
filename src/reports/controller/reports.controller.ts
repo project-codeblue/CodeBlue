@@ -30,13 +30,13 @@ export class ReportsController {
   }
 
   @Get('/:report_id')
-  @Render('reportDetail')
+  // @Render('reportDetail')
   async getReportDetails(
     @Param('report_id') reportId: number,
-  ): Promise<Reports> {
+  ): Promise<object> {
     this.logger.verbose('증상 보고서 상세 조회 GET API');
     const reportDetails = await this.reportsService.getReportDetails(reportId);
-    return reportDetails;
+    return { reportDetails };
   }
 
   @Patch('/:report_id')
