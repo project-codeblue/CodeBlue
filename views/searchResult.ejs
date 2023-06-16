@@ -92,8 +92,8 @@
               <strong>환자 성명:</strong> <%=searchedData[i].patient_name %>
             </div>
             <div>
-              <strong>환자 연령대:</strong> <%=searchedData[i].reports_age_range
-              %>
+              <strong>환자 연령대:</strong>
+              <%=searchedData[i].reports_age_range%>
             </div>
             <br />
             <div>
@@ -107,12 +107,12 @@
               <strong>증상:</strong> <%=searchedData[i].reports_symptoms %>
             </div>
             <br />
-            <% const originalDate = searchedData[i].reports_createdAt; %> <%
-            const year = originalDate.getFullYear(); %> <% const month =
-            originalDate.getMonth() + 1; %> <% const date =
-            originalDate.getDate(); %> <% const hours = originalDate.getHours();
-            %> <% const minutes = originalDate.getMinutes(); %> <%= `${year}년
-            ${month}월 ${date}일 ${hours}시 ${minutes}분` %>
+            <% const originalDate = searchedData[i].reports_createdAt; %> 
+            <% const year = originalDate.getFullYear(); %> 
+            <% const month = originalDate.getMonth() + 1; %> 
+            <% const date = originalDate.getDate(); %> 
+            <% const hours = originalDate.getHours(); %> 
+            <% const minutes = originalDate.getMinutes(); %>
             <div>
               <strong>생성 일자:</strong> <%= `${year}년 ${month}월 ${date}일
               ${hours}시 ${minutes}분` %>
