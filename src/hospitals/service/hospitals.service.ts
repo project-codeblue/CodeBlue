@@ -146,6 +146,7 @@ export class HospitalsService {
               phone: hospital[1]['phone'],
               available_beds: hospital[1]['available_beds'],
               emogList: hospital[1]['emogList'],
+              ...report,
             };
           });
 
@@ -263,9 +264,9 @@ export class HospitalsService {
     const surgeryRoom = data.match(surgeryRoomRegex);
     const ward = data.match(wardRegex);
     return {
-      emergencyRoom: emergencyRoom ? emergencyRoom[1] : null,
-      surgeryRoom: surgeryRoom ? surgeryRoom[1] : null,
-      ward: ward ? ward[1] : null,
+      emergencyRoom: emergencyRoom ? emergencyRoom[1] : '정보없음',
+      surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
+      ward: ward ? ward[1] : '정보없음',
     };
   }
 }

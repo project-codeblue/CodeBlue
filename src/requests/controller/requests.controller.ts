@@ -1,4 +1,12 @@
-import { Controller, Get, Delete, Post, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Post,
+  Param,
+  Query,
+  Render,
+} from '@nestjs/common';
 import { RequestsService } from '../service/requests.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from 'src/reports/reports.entity';
@@ -31,6 +39,7 @@ export class RequestsController {
   }
 
   @Get('/search')
+  @Render('reportSearchEngine')
   getSearchRequests(@Query() queries: object): Promise<Reports[]> {
     this.logger.verbose('증상 보고서 검색 GET API');
     console.log(queries);
@@ -38,7 +47,7 @@ export class RequestsController {
   }
 
   @Get('/advancedSearch')
-  getELKSearch(@Query() queries: object)/*: Promise<Reports[]>*/ {
+  getELKSearch(@Query() queries: object) /*: Promise<Reports[]>*/ {
     this.logger.verbose('증상 보고서 검색 GET API with ELK');
     console.log(queries);
     return this.requestsService.getELKSearch(queries);
