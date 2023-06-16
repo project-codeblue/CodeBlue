@@ -187,16 +187,17 @@ export class HospitalsService {
             emogList.push(hospital['emogList']);
           }
           const datas = await this.crawling.getNearbyHospitals(emogList);
-          const results: Array<string | object> = top10RecommendedHospitals.map(
-            (hospital) => {
+          const results: Array<string | object> = await Promise.all(
+            top10RecommendedHospitals.map(async (hospital) => {
               const result = { ...hospital };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
-                  result['real_time_beds_info'] = data;
+                  const beds_object = await this.parseHospitalData(data);
+                  result['real_time_beds_info'] = beds_object;
                 }
               }
               return result;
-            },
+            }),
           );
 
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
@@ -210,7 +211,7 @@ export class HospitalsService {
               queries['max_count']
             }`,
             JSON.stringify(results),
-            6000 * 1000, // ms
+            1 * 1000, // ms
           );
           console.log('redis cache에 저장');
 
@@ -252,5 +253,19 @@ export class HospitalsService {
 
   async getSymptomCrawl() {
     const data = await this.crawling.symptomCrawl();
+  }
+
+  async parseHospitalData(data: string) {
+    const emergencyRoomRegex = /응급실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const surgeryRoomRegex = /수술실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const wardRegex = /입원실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const emergencyRoom = data.match(emergencyRoomRegex);
+    const surgeryRoom = data.match(surgeryRoomRegex);
+    const ward = data.match(wardRegex);
+    return {
+      응급실: emergencyRoom ? emergencyRoom[1] : null,
+      수술실: surgeryRoom ? surgeryRoom[1] : null,
+      입원실: ward ? ward[1] : null,
+    };
   }
 }
