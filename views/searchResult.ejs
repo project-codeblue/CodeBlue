@@ -18,6 +18,10 @@
 
       .button {
         font-family: 'Noto Sans KR', sans-serif;
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+        width: 95px;
       }
 
       .container {
@@ -88,9 +92,11 @@
         <div class="box">
           <% for (let i = 0; i < searchedData.length; i++) { %>
           <div class="box has-background-light">
+            <% if (searchedData[i].patient_name) { %>
             <div>
               <strong>환자 성명:</strong> <%=searchedData[i].patient_name %>
             </div>
+            <% } %>
             <div>
               <strong>환자 연령대:</strong>
               <%=searchedData[i].reports_age_range%>
@@ -107,15 +113,19 @@
               <strong>증상:</strong> <%=searchedData[i].reports_symptoms %>
             </div>
             <br />
-            <% const originalDate = searchedData[i].reports_createdAt; %> 
-            <% const year = originalDate.getFullYear(); %> 
-            <% const month = originalDate.getMonth() + 1; %> 
-            <% const date = originalDate.getDate(); %> 
-            <% const hours = originalDate.getHours(); %> 
-            <% const minutes = originalDate.getMinutes(); %>
+            <% const originalDate = searchedData[i].reports_createdAt; %> <%
+            const year = originalDate.getFullYear(); %> <% const month =
+            originalDate.getMonth() + 1; %> <% const date =
+            originalDate.getDate(); %> <% const hours = originalDate.getHours();
+            %> <% const minutes = originalDate.getMinutes(); %>
             <div>
               <strong>생성 일자:</strong> <%= `${year}년 ${month}월 ${date}일
               ${hours}시 ${minutes}분` %>
+              <a
+                href="/report/<%=searchedData[i].reports_report_id %>"
+                class="button is-info"
+                >상세 보기</a
+              >
             </div>
           </div>
           <% } %>
