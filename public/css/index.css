@@ -1,0 +1,38 @@
+* {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.button {
+  font-family: 'Noto Sans KR', sans-serif;
+  margin: 50px;
+  width: 160px;
+  height: 150px;
+}
+
+.logo {
+  margin: 40px;
+}
+
+.selections {
+  display: flex; 
+  justify-content: center;
+}
+
+.main {
+  margin-top: 50px;
+}
+
+.logo img {
+  display: block;
+  margin: auto;
+  width: 200px;
+}
+
+.menu {
+  display: block;
+  margin: auto;
+}
+
+.request img {
+  width: 300px;
+}

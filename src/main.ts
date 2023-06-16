@@ -5,10 +5,14 @@ import { HttpExceptionFilter } from './commons/exceptions/http-exception.filter'
 import { ConfigType } from '@nestjs/config';
 import appConfig from '../config/app.config';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
   const logger = new Logger();
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useStaticAssets(join(__dirname, '../../', 'public'));
+  app.setBaseViewsDir(join(__dirname, '../../', 'views'));
+  app.setViewEngine('ejs');
 
   // global validation pipe
   app.useGlobalPipes(

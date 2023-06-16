@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Body, Post, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Body,
+  Post,
+  Patch,
+  Render,
+} from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -22,12 +30,13 @@ export class ReportsController {
   }
 
   @Get('/:report_id')
+  @Render('reportDetail')
   async getReportDetails(
     @Param('report_id') reportId: number,
-  ): Promise<Reports> {
+  ): Promise<object> {
     this.logger.verbose('증상 보고서 상세 조회 GET API');
     const reportDetails = await this.reportsService.getReportDetails(reportId);
-    return reportDetails;
+    return { reportDetails };
   }
 
   @Patch('/:report_id')
@@ -37,10 +46,5 @@ export class ReportsController {
   ): Promise<Reports> {
     this.logger.verbose('증상 보고서 수정 PATCH API');
     return await this.reportsService.updateReport(report_id, updatedReport);
-  }
-
-  @Get('/createdummy')
-  createDummyReport() {
-    return this.reportsService.createDummyReport();
   }
 }
