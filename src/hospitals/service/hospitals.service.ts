@@ -138,8 +138,8 @@ export class HospitalsService {
             const seconds = Math.floor(duration % 60);
             return {
               duration,
-              minute: `${minutes}분`,
-              secondes: `${seconds}초`,
+              minutes: `${minutes}분`,
+              seconds: `${seconds}초`,
               distance: `${distance / 1000}km`,
               hospital_id: hospital[1]['hospital_id'],
               name: hospital[1]['name'],
@@ -210,7 +210,7 @@ export class HospitalsService {
               queries['max_count']
             }`,
             JSON.stringify(results),
-            60 * 1000, // ms
+            6000 * 1000, // ms
           );
           console.log('redis cache에 저장');
 

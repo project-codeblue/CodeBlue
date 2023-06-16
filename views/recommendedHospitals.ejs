@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeBlue - 응급 환자 이송 신청 시스템</title>
+
+    <!-- css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <!-- <link href="./css/index.css" rel="stylesheet" type="text/css" /> -->
+
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .hospital_title {
+        display: flex;
+        align-items: center;
+      }
+
+      .hospital_title h3 {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .button {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+    </style>
+
+    <!-- jquery -->
+  </head>
+  <body class="container is-widescreen">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="http:localhost:3000">
+          <img
+            src="https://bulma.io/images/bulma-logo.png"
+            width="112"
+            height="28"
+          />
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item"> 증상보고서 입력 </a>
+
+          <a class="navbar-item"> 증상보고서 검색 </a>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item"> 가까운 응급실 조회 </a>
+              <a class="navbar-item"> 증상보고서 수정 </a>
+              <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item"> Report an issue </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="content hospitals_block" style="margin-top: 30px">
+      <div class="card">
+        <div class="card-content">
+          <div class="content">환자의 중증도 레벨: 5</div>
+        </div>
+      </div>
+      <h2>추천 병원 목록</h2>
+      <div class="box">
+        <% for (let i = 1; i < hospitals_data.length; i++) { %>
+        <div class="box">
+          <div class="hospital_title">
+            <h3 sty><%= hospitals_data[i].name %></h3>
+            <button class="button is-dark">전화 걸기</button>
+          </div>
+          <h6>
+            소요시간: <%= hospitals_data[i].minutes %> <%=
+            hospitals_data[i].seconds %>
+          </h6>
+
+          <%= hospitals_data[i].real_time_beds_info %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
+          is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
