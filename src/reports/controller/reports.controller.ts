@@ -30,7 +30,7 @@ export class ReportsController {
   }
 
   @Get('/:report_id')
-  // @Render('reportDetail')
+  @Render('reportDetail')
   async getReportDetails(
     @Param('report_id') reportId: number,
   ): Promise<object> {

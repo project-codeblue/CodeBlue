@@ -32,7 +32,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
-            p.name,
+            p.name AS patient_name,
             p.patient_rrn,
             p.gender
           FROM reports r
@@ -56,7 +56,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
-            h.name,
+            h.name AS hospital_name,
             h.address,
             h.phone
           FROM reports r
@@ -72,7 +72,7 @@ export class ReportsRepository extends Repository<Reports> {
       `
           SELECT
             r.report_id,
-            p.name,
+            p.name AS patient_name,
             p.patient_rrn,
             p.gender,
             r.symptom_level,
@@ -83,7 +83,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
-            h.name,
+            h.name AS hospital_name,
             h.address,
             h.phone
           FROM reports r

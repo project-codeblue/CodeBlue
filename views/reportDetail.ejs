@@ -32,7 +32,7 @@
         <% if (reportDetails.patient_rrn) { %>
         <h3>환자 정보</h3>
         <ul>
-          <li><strong>이름 </strong><%=reportDetails.name%></li>
+          <li><strong>이름 </strong><%=reportDetails.patient_name%></li>
           <li><strong>성별 </strong><%=reportDetails.gender%></li>
           <li><strong>주민등록번호 </strong><%=reportDetails.patient_rrn%></li>
         </ul>
@@ -74,16 +74,16 @@
         <table>
           <tbody>
             <tr>
-              <td>병원명</td>
-              <td><%=reportDetails.symptom_level%></td>
+              <td><strong>병원명</strong></td>
+              <td><%=reportDetails.hospital_name%></td>
             </tr>
             <tr>
-              <td>병원주소</td>
-              <td>강원도 강릉시 강릉대로419번길 42 (포남동)</td>
+              <td><strong>병원 주소</strong></td>
+              <td><%=reportDetails.address%></td>
             </tr>
             <tr>
-              <td>연락처</td>
-              <td>033-650-6113</td>
+              <td><strong>연락처</strong></td>
+              <td><%=reportDetails.phone%></td>
             </tr>
           </tbody>
         </table>
