@@ -38,6 +38,7 @@
     "@types/js-yaml": "^4.0.5",
     "axios": "^1.4.0",
     "bull": "^4.10.4",
+    "bulma": "^0.9.4",
     "cache-manager": "^5.2.2",
     "cache-manager-ioredis": "^2.1.0",
     "cheerio": "^1.0.0-rc.12",
