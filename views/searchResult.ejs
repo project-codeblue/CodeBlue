@@ -16,25 +16,10 @@
           font-family: 'Noto Sans KR', sans-serif;
         }
   
-        .hospital_title {
-          display: flex;
-          align-items: center;
-        }
-  
-        .hospital_title h3 {
-          margin: 10px 10px 10px 0px;
-        }
-  
-        .title-call-button {
-          display: flex;
-          justify-content: flex-end;
-          margin-left: auto;
-        }
-  
         .button {
           font-family: 'Noto Sans KR', sans-serif;
         }
-    </style>
+      </style>
 
     <!-- google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -94,56 +79,17 @@
       </div>
     </nav>
     <div class="container">
-      <div class="content hospitals_block" style="margin-top: 30px">
-        <h2>현재 위치 기반 추천 병원 목록 (<%=hospitals_data[0]%> 기준)</h2>
-        <div class="card">
-          <div class="card-content">
-            <div class="content">
-              <h5>환자 증상 정보</h5>
-              <div class="has-text-link has-text-weight-bold">
-                환자의 중증도 레벨: <%=hospitals_data[1].symptom_level%>
-              </div>
-              <div>환자의 혈압: <%=hospitals_data[1].blood_pressure%></div>
-              <div>환자의 혈액형: <%=hospitals_data[1].blood_type%></div>
-            </div>
-          </div>
-        </div>
+      <div class="content" style="margin-top: 30px">
+        <h2>증상 보고서 검색 결과</h2>
         <div class="box">
-          <% for (let i = 1; i < hospitals_data.length; i++) { %>
+          <% for (let i = 0; i < searchedData.length; i++) { %>
           <div class="box has-background-light">
-            <div class="hospital_title">
-              <h3><%=hospitals_data[i].name %></h3>
-              <div class="title-call-button">
-                <button class="button is-dark mr-3 mt-3">전화 걸기</button>
-                <button class="button is-danger is-dark mt-3">
-                  환자 이송신청
-                </button>
-              </div>
-            </div>
-            <h6 class="mb-2">
-              소요시간: <%=hospitals_data[i].minutes %>
-              <%=hospitals_data[i].seconds %>
-            </h6>
-            <h6>이동거리: <%=hospitals_data[i].distance %></h6>
-            <div class="columns">
-              <div class="column">
-                실시간 가용병상: 
-              </div>
-              <div class="column has-text-danger has-text-weight-bold">
-                응급실: <%=hospitals_data[i].real_time_beds_info.emergencyRoom
-                %>
-              </div>
-              <div class="column has-text-weight-bold">
-                수술실: <%=hospitals_data[i].real_time_beds_info.surgeryRoom %>
-              </div>
-              <div class="column has-text-weight-bold">
-                입원실: <%=hospitals_data[i].real_time_beds_info.ward %>
-              </div>
-              <div class="column has-text-link has-text-weight-bold">
-                이송신청 잔여병상: <%=hospitals_data[i].available_beds %>/5
-              </div>
-            </div>
-          </div>
+            <div>환자 성명: <%=searchedData[i].patient_name %></div>
+            <div>환자 연령대: <%=searchedData[i].reports_age_range %></div>
+            <div>이송 병원: <%=searchedData[i].hospital_name %></div>
+            <div>생성 일자: <%=searchedData[i].reports_createdAt %></div>
+            <div>중증도: <%=searchedData[i].reports_symptom_level %></div>
+            <div>증상: <%=searchedData[i].reports_symptoms %></div>
           <% } %>
         </div>
       </div>

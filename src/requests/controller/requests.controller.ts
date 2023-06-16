@@ -39,11 +39,13 @@ export class RequestsController {
   }
 
   @Get('/search')
-  @Render('reportSearchEngine')
-  getSearchRequests(@Query() queries: object): Promise<Reports[]> {
+  @Render('searchResult')
+  async getSearchRequests(@Query() queries: object): Promise<object> {
     this.logger.verbose('증상 보고서 검색 GET API');
     console.log(queries);
-    return this.requestsService.getSearchRequests(queries);
+    const searchedData = await this.requestsService.getSearchRequests(queries);
+    console.log('searchedData: ', searchedData);
+    return { searchedData };
   }
 
   @Get('/advancedSearch')
