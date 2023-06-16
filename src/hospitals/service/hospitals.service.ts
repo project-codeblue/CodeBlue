@@ -212,7 +212,7 @@ export class HospitalsService {
               queries['max_count']
             }`,
             JSON.stringify(results),
-            6000 * 1000, // ms
+            60 * 1000, // ms
           );
           console.log('redis cache에 저장');
 
