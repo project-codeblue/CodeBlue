@@ -45,7 +45,9 @@ export class RequestsService {
           'hospital.emogList',
         ])
         .where('1 = 1')
-        .andWhere('is_sent = 1');
+        .andWhere('is_sent = 1')
+        .orderBy('reports_createdAt', 'ASC')
+        .limit(100);
       
       if (queries['fromDate'] && queries['toDate']) {
         // URL 쿼리에 fromDate & toDate가 존재하면 실행
