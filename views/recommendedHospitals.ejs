@@ -97,18 +97,20 @@
         <% for (let i = 1; i < hospitals_data.length; i++) { %>
         <div class="box">
           <div class="hospital_title">
-            <h3 sty><%= hospitals_data[i].name %></h3>
+            <h3 sty><%=hospitals_data[i].name %></h3>
             <button class="button is-dark">전화 걸기</button>
           </div>
+          <h6 class="mb-2">
+            소요시간: <%=hospitals_data[i].minutes %> <%=hospitals_data[i].seconds %>
+          </h6>
           <h6>
-            소요시간: <%= hospitals_data[i].minutes %> <%=
-            hospitals_data[i].seconds %>
+            이동거리: <%=hospitals_data[i].distance %>
           </h6>
           <div class="columns">
-            <div class="column">응급실: 19</div>
-            <div class="column">수술실: 10/20</div>
-            <div class="column">입원실: 165/616</div>
-            <div class="column">이송신청 잔여병상: 4/5</div>
+            <div class="column">응급실: <%=hospitals_data[i].real_time_beds_info.emergencyRoom %></div>
+            <div class="column">수술실: <%=hospitals_data[i].real_time_beds_info.surgeryRoom %></div>
+            <div class="column">입원실: <%=hospitals_data[i].real_time_beds_info.ward %></div>
+            <div class="column">이송신청 잔여병상: <%=hospitals_data[i].available_beds %>/5</div>
             <button class="button is-warning" style="width: 180px">
               환자 이송신청
             </button>

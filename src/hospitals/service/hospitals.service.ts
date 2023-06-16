@@ -140,7 +140,7 @@ export class HospitalsService {
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
-              distance: `${distance / 1000}km`,
+              distance: `${(distance / 1000).toFixed(1)}km`,
               hospital_id: hospital[1]['hospital_id'],
               name: hospital[1]['name'],
               phone: hospital[1]['phone'],
@@ -211,7 +211,7 @@ export class HospitalsService {
               queries['max_count']
             }`,
             JSON.stringify(results),
-            1 * 1000, // ms
+            6000 * 1000, // ms
           );
           console.log('redis cache에 저장');
 
@@ -263,9 +263,9 @@ export class HospitalsService {
     const surgeryRoom = data.match(surgeryRoomRegex);
     const ward = data.match(wardRegex);
     return {
-      응급실: emergencyRoom ? emergencyRoom[1] : null,
-      수술실: surgeryRoom ? surgeryRoom[1] : null,
-      입원실: ward ? ward[1] : null,
+      emergencyRoom: emergencyRoom ? emergencyRoom[1] : null,
+      surgeryRoom: surgeryRoom ? surgeryRoom[1] : null,
+      ward: ward ? ward[1] : null,
     };
   }
 }

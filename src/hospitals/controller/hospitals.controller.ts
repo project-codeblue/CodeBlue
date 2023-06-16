@@ -13,7 +13,7 @@ export class HospitalsController {
   }
 
   @Get('/:report_id') // hospital/1?latitude=37.1&longitude=127.1
-  // @Render('recommendedHospitals')
+  @Render('recommendedHospitals')
   async getRecommendedHospitals(
     @Param('report_id') report_id: number,
     @Query() queries: object,
