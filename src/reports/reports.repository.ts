@@ -21,11 +21,27 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async getReportwithPatientInfo(report_id: number): Promise<Reports> {
-    const report = await this.findOne({
-      where: { report_id },
-      relations: ['patient'],
-    });
-    return report;
+    const report = await this.query(
+      `
+          SELECT
+            r.report_id,
+            r.symptom_level,
+            r.symptoms,
+            r.blood_pressure,
+            r.age_range,
+            r.is_sent,
+            r.createdAt,
+            r.updatedAt,
+            r.hospital_id,
+            p.name AS patient_name,
+            p.patient_rrn,
+            p.gender
+          FROM reports r
+          LEFT JOIN patients p ON r.patient_id = p.patient_id
+          WHERE r.report_id = ${report_id};      
+        `,
+    );
+    return report[0];
   }
 
   async getReportwithHospitalInfo(report_id: number): Promise<any> {
@@ -41,6 +57,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
+            h.name AS hospital_name,
             h.address,
             h.phone
           FROM reports r
@@ -56,7 +73,7 @@ export class ReportsRepository extends Repository<Reports> {
       `
           SELECT
             r.report_id,
-            p.name,
+            p.name AS patient_name,
             p.patient_rrn,
             p.gender,
             r.symptom_level,
@@ -67,6 +84,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
+            h.name AS hospital_name,
             h.address,
             h.phone
           FROM reports r

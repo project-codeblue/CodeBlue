@@ -1,14 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>증상 보고서 상세 페이지</title>
-</head>
-<body>
-    <%=data.name%><br>
-    <%=data.report_id%><br>
-    <%=data.address%><br>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeBlue - 증상 보고서 상세 페이지</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .title {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="section" style="margin-top: 30px">
+      <div class="reportdetail_block">
+        <h2 class="title">조회하신 보고서의 상세 내용입니다.</h2>
+      </div>
+    </section>
+    <form class="box" style="margin-left: 50px; margin-right: 50px">
+      <div class="content">
+        <% if (reportDetails.patient_rrn) { %>
+        <h3>환자 정보</h3>
+        <ul>
+          <li><strong>이름 </strong><%=reportDetails.patient_name%></li>
+          <li><strong>성별 </strong><%=reportDetails.gender%></li>
+          <li><strong>주민등록번호 </strong><%=reportDetails.patient_rrn%></li>
+        </ul>
+        <% } %>
+
+        <ul style="margin-bottom: 70px"></ul>
+        <h3>증상 상세 정보</h3>
+        <ul>
+          <li><strong>응급도 </strong><%=reportDetails.symptom_level%></li>
+          <li><strong>연령대 </strong><%=reportDetails.age_range%></li>
+          <li><strong>혈압 </strong><%=reportDetails.blood_pressure%></li>
+          <li><strong>세부 증상 </strong></li>
+        </ul>
+        <blockquote><%=reportDetails.symptoms%></blockquote>
+        <ul>
+          <% const originalDate = reportDetails.createdAt; %> <% const year =
+          originalDate.getFullYear(); %> <% const month =
+          originalDate.getMonth() + 1; %> <% const date =
+          originalDate.getDate(); %> <% const hours = originalDate.getHours();
+          %> <% const minutes = originalDate.getMinutes(); %> <% const
+          updateDate = reportDetails.updatedAt; %> <% const updatedYear =
+          updateDate.getFullYear(); %> <% const updatedMonth =
+          updateDate.getMonth() + 1; %> <% const updatedDate =
+          updateDate.getDate(); %> <% const updatedHours =
+          updateDate.getHours(); %> <% const updatedMinutes =
+          updateDate.getMinutes(); %>
+          <li>
+            <strong>작성 날짜 </strong> <%= `${year}년 ${month}월 ${date}일
+            ${hours}시 ${minutes}분` %>
+          </li>
+          <li>
+            <strong>최종 수정 날짜 </strong><%= `${updatedYear}년
+            ${updatedMonth}월 ${updatedDate}일 ${updatedHours}시
+            ${updatedMinutes}분` %>
+          </li>
+          <ul style="margin-bottom: 70px"></ul>
+        </ul>
+        <h3>이송 병원 정보</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>병원명</strong></td>
+              <td><%=reportDetails.hospital_name%></td>
+            </tr>
+            <tr>
+              <td><strong>병원 주소</strong></td>
+              <td><%=reportDetails.address%></td>
+            </tr>
+            <tr>
+              <td><strong>연락처</strong></td>
+              <td><%=reportDetails.phone%></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
+          is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>
