@@ -46,9 +46,9 @@
       <div class="navbar-brand">
         <a class="navbar-item" href="http:localhost:3000">
           <img
-            src="https://bulma.io/images/bulma-logo.png"
-            width="112"
-            height="28"
+            src="https://user-images.githubusercontent.com/76824986/246324142-743e6431-3870-4c20-8123-16e11f8582cb.jpg"
+            width="40"
+            height="auto"
           />
         </a>
         <a
@@ -85,12 +85,14 @@
       </div>
     </nav>
     <div class="content hospitals_block" style="margin-top: 30px">
+      <h2>현재 위치 기반 추천 병원 목록</h2>
       <div class="card">
         <div class="card-content">
-          <div class="content">환자의 중증도 레벨: 5</div>
+          <div class="content is-size-4 has-text-weight-semibold">
+            환자의 중증도 레벨: 5
+          </div>
         </div>
       </div>
-      <h2>추천 병원 목록</h2>
       <div class="box">
         <% for (let i = 1; i < hospitals_data.length; i++) { %>
         <div class="box">
@@ -102,8 +104,16 @@
             소요시간: <%= hospitals_data[i].minutes %> <%=
             hospitals_data[i].seconds %>
           </h6>
-
-          <%= hospitals_data[i].real_time_beds_info %>
+          <div class="columns">
+            <div class="column">응급실: 19</div>
+            <div class="column">수술실: 10/20</div>
+            <div class="column">입원실: 165/616</div>
+            <div class="column">이송신청 잔여병상: 4/5</div>
+            <button class="button is-warning" style="width: 180px">
+              환자 이송신청
+            </button>
+          </div>
+          <!-- <%= hospitals_data[i].real_time_beds_info %> -->
         </div>
         <% } %>
       </div>
