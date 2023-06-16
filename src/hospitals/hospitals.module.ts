@@ -19,7 +19,7 @@ import * as redisStore from 'cache-manager-ioredis';
       store: redisStore,
       host: 'localhost',
       port: 6379,
-      ttl: 6000,
+      ttl: 60,
     }),
   ],
   controllers: [HospitalsController],

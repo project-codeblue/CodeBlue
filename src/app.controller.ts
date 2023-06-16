@@ -10,4 +10,10 @@ export class AppController {
   root() {
     return { name: 'name' };
   }
+
+  @Get('/search')
+  @Render('reportSearchEngine')
+  search() {
+    return { name: 'name' };
+  }
 }

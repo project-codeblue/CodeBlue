@@ -4,21 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CodeBlue - 응급 환자 이송 신청 시스템</title>
+    <title>CodeBlue - 위치 기반 추천 응급실 조회 페이지</title>
 
     <!-- css -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
-    />
-    <!-- <link href="./css/index.css" rel="stylesheet" type="text/css" /> -->
-
-    <!-- google font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
-      rel="stylesheet"
     />
     <style>
       * {
@@ -34,22 +25,40 @@
         margin: 10px 10px 10px 0px;
       }
 
+      .title-call-button {
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+      }
+
       .button {
         font-family: 'Noto Sans KR', sans-serif;
       }
     </style>
 
-    <!-- jquery -->
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="container is-widescreen">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+  <body>
+    <nav
+      class="navbar is-info is-light"
+      role="navigation"
+      aria-label="main navigation"
+      style="padding: 0 10px 0 75px"
+    >
       <div class="navbar-brand">
-        <a class="navbar-item" href="http:localhost:3000">
-          <img
+        <a class="navbar-item" href="/">
+          <!-- <img
             src="https://user-images.githubusercontent.com/76824986/246324142-743e6431-3870-4c20-8123-16e11f8582cb.jpg"
             width="40"
             height="auto"
-          />
+          /> -->
+          CodeBLUE
         </a>
         <a
           role="button"
@@ -68,7 +77,7 @@
         <div class="navbar-start">
           <a class="navbar-item"> 증상보고서 입력 </a>
 
-          <a class="navbar-item"> 증상보고서 검색 </a>
+          <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
 
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
@@ -84,41 +93,60 @@
         </div>
       </div>
     </nav>
-    <div class="content hospitals_block" style="margin-top: 30px">
-      <h2>현재 위치 기반 추천 병원 목록</h2>
-      <div class="card">
-        <div class="card-content">
-          <div class="content is-size-4 has-text-weight-semibold">
-            환자의 중증도 레벨: 5
+    <div class="container is-max-widescreen">
+      <div class="content hospitals_block" style="margin-top: 30px">
+        <h2>현재 위치 기반 추천 병원 목록 (<%=hospitals_data[0]%> 기준)</h2>
+        <div class="card">
+          <div class="card-content">
+            <div class="content">
+              <h5>환자 증상 정보</h5>
+              <div class="has-text-link has-text-weight-bold">
+                환자의 중증도 레벨: <%=hospitals_data[1].symptom_level%>
+              </div>
+              <div>환자의 혈압: <%=hospitals_data[1].blood_pressure%></div>
+              <div>환자의 혈액형: <%=hospitals_data[1].blood_type%></div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="box">
-        <% for (let i = 1; i < hospitals_data.length; i++) { %>
         <div class="box">
-          <div class="hospital_title">
-            <h3 sty><%= hospitals_data[i].name %></h3>
-            <button class="button is-dark">전화 걸기</button>
+          <% for (let i = 1; i < hospitals_data.length; i++) { %>
+          <div class="box has-background-light">
+            <div class="hospital_title">
+              <h3><%=hospitals_data[i].name %></h3>
+              <div class="title-call-button">
+                <button class="button is-dark mr-3 mt-3">전화 걸기</button>
+                <button class="button is-danger is-dark mt-3">
+                  환자 이송신청
+                </button>
+              </div>
+            </div>
+            <h6 class="mb-2">
+              소요시간: <%=hospitals_data[i].minutes %>
+              <%=hospitals_data[i].seconds %>
+            </h6>
+            <h6>이동거리: <%=hospitals_data[i].distance %></h6>
+            <div class="columns">
+              <div class="column">실시간 가용병상:</div>
+              <div class="column has-text-danger has-text-weight-bold">
+                응급실: <%=hospitals_data[i].real_time_beds_info.emergencyRoom
+                %>
+              </div>
+              <div class="column has-text-weight-bold">
+                수술실: <%=hospitals_data[i].real_time_beds_info.surgeryRoom %>
+              </div>
+              <div class="column has-text-weight-bold">
+                입원실: <%=hospitals_data[i].real_time_beds_info.ward %>
+              </div>
+              <div class="column has-text-link has-text-weight-bold">
+                이송신청 잔여병상: <%=hospitals_data[i].available_beds %>/5
+              </div>
+            </div>
           </div>
-          <h6>
-            소요시간: <%= hospitals_data[i].minutes %> <%=
-            hospitals_data[i].seconds %>
-          </h6>
-          <div class="columns">
-            <div class="column">응급실: 19</div>
-            <div class="column">수술실: 10/20</div>
-            <div class="column">입원실: 165/616</div>
-            <div class="column">이송신청 잔여병상: 4/5</div>
-            <button class="button is-warning" style="width: 180px">
-              환자 이송신청
-            </button>
-          </div>
-          <!-- <%= hospitals_data[i].real_time_beds_info %> -->
+          <% } %>
         </div>
-        <% } %>
       </div>
     </div>
-    <footer class="footer">
+    <footer class="footer mt-5">
       <div class="content has-text-centered">
         <p>
           <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
