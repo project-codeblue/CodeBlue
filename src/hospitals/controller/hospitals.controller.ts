@@ -20,4 +20,9 @@ export class HospitalsController {
     this.logger.verbose('추천 병원 조회 GET API');
     return this.hospitalsService.getRecommendedHospitals(report_id, queries);
   }
+
+  @Get('/crawl/naver')
+  getSymptomCrawl() {
+    return this.hospitalsService.getSymptomCrawl();
+  }
 }

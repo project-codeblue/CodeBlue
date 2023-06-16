@@ -1,0 +1,18 @@
+.main {
+  margin-top: 50px;
+}
+
+.logo img {
+  display: block;
+  margin: auto;
+  width: 200px;
+}
+
+.menu {
+  display: block;
+  margin: auto;
+}
+
+.request img {
+  width: 300px;
+}

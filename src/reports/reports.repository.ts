@@ -3,6 +3,7 @@ import { Reports } from './reports.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { AgeRange, BloodType } from './reports.enum';
 
 @Injectable()
 export class ReportsRepository extends Repository<Reports> {
@@ -19,24 +20,12 @@ export class ReportsRepository extends Repository<Reports> {
     return this.save(report);
   }
 
-  async getReportwithPatientInfo(report_id: number): Promise<any> {
-    return await this.createQueryBuilder('r')
-      .select([
-        'r.report_id',
-        'p.name',
-        'p.patient_rrn',
-        'p.gender',
-        'r.symptom_level',
-        'r.symptoms',
-        'r.blood_pressure',
-        'r.age_range',
-        'r.is_sent',
-        'r.createdAt',
-        'r.updatedAt',
-      ])
-      .leftJoin('r.patient', 'p')
-      .where('r.report_id = :report_id', { report_id })
-      .getOne();
+  async getReportwithPatientInfo(report_id: number): Promise<Reports> {
+    const report = await this.findOne({
+      where: { report_id },
+      relations: ['patient'],
+    });
+    return report;
   }
 
   async getReportwithHospitalInfo(report_id: number): Promise<any> {
@@ -127,20 +116,18 @@ export class ReportsRepository extends Repository<Reports> {
   }
 
   async createDummyReport(
-    hospital_id: number,
-    patient_id: number,
+    blood_pressure: string,
+    blood_type: BloodType,
+    age_range: AgeRange,
     symptom_level: number,
-    symptom: string[],
-    latitude: number,
-    longitude: number,
+    symptoms: string[],
   ) {
     await this.save({
-      hospital_id,
-      patient_id,
+      blood_pressure,
+      blood_type,
+      age_range,
       symptom_level,
-      symptoms: `[${symptom}]`,
-      latitude,
-      longitude,
+      symptoms: `[${symptoms}]`,
     });
   }
 
@@ -167,14 +154,6 @@ export class ReportsRepository extends Repository<Reports> {
 
     report.hospital_id = null;
     await report.save();
-  }
-
-  async getReportWithPatientInfo(report_id: number): Promise<Reports> {
-    const report = await this.findOne({
-      where: { report_id },
-      relations: ['patient'],
-    });
-    return report;
   }
 
   async addPatientIdInReport(report_id: number, patient_id: number) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Body, Post, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Patch, Render } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -22,6 +22,7 @@ export class ReportsController {
   }
 
   @Get('/:report_id')
+  @Render('reportDetail')
   async getReportDetails(
     @Param('report_id') reportId: number,
   ): Promise<Reports> {
@@ -39,7 +40,7 @@ export class ReportsController {
     return await this.reportsService.updateReport(report_id, updatedReport);
   }
 
-  @Get('/createdummy')
+  @Get('/create/dummy')
   createDummyReport() {
     return this.reportsService.createDummyReport();
   }

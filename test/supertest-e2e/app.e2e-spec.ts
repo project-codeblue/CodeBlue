@@ -3,10 +3,10 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { Repository } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppModule } from './../src/app.module';
-import { HttpExceptionFilter } from '../src/commons/exceptions/http-exception.filter';
-import { MysqlConfigProvider } from '../src/commons/providers/typeorm-config.provider';
-import { Hospitals } from '../src/hospitals/hospitals.entity';
+import { AppModule } from '../../src/app.module';
+import { HttpExceptionFilter } from '../../src/commons/exceptions/http-exception.filter';
+import { MysqlConfigProvider } from '../../src/commons/providers/typeorm-config.provider';
+import { Hospitals } from '../../src/hospitals/hospitals.entity';
 
 // !!!!!!!! e2e test 전 반드시 .env 파일의 mode를 test로 변경해주어야합니다 !!!!!!!!
 
