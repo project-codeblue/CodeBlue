@@ -12,14 +12,18 @@
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
     <style>
-        * {
-          font-family: 'Noto Sans KR', sans-serif;
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .button {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .container {
+          margin: 50px 85px 50px 85px;
         }
-  
-        .button {
-          font-family: 'Noto Sans KR', sans-serif;
-        }
-      </style>
+    </style>
 
     <!-- google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -79,33 +83,57 @@
       </div>
     </nav>
     <div class="container">
-      <div class="content" style="margin-top: 30px">
+      <div class="content results" style="margin-top: 30px">
         <h2>증상 보고서 검색 결과</h2>
         <div class="box">
           <% for (let i = 0; i < searchedData.length; i++) { %>
           <div class="box has-background-light">
-            <div>환자 성명: <%=searchedData[i].patient_name %></div>
-            <div>환자 연령대: <%=searchedData[i].reports_age_range %></div>
-            <div>이송 병원: <%=searchedData[i].hospital_name %></div>
-            <div>생성 일자: <%=searchedData[i].reports_createdAt %></div>
-            <div>중증도: <%=searchedData[i].reports_symptom_level %></div>
-            <div>증상: <%=searchedData[i].reports_symptoms %></div>
-          <% } %>
+            <div>
+              <strong>환자 성명:</strong> <%=searchedData[i].patient_name %>
+            </div>
+            <div>
+              <strong>환자 연령대:</strong> <%=searchedData[i].reports_age_range
+              %>
+            </div>
+            <br />
+            <div>
+              <strong>이송 병원:</strong> <%=searchedData[i].hospital_name %>
+            </div>
+            <div>
+              <strong>중증도:</strong> <%=searchedData[i].reports_symptom_level
+              %>
+            </div>
+            <div>
+              <strong>증상:</strong> <%=searchedData[i].reports_symptoms %>
+            </div>
+            <br />
+            <% const originalDate = searchedData[i].reports_createdAt; %> <%
+            const year = originalDate.getFullYear(); %> <% const month =
+            originalDate.getMonth() + 1; %> <% const date =
+            originalDate.getDate(); %> <% const hours = originalDate.getHours();
+            %> <% const minutes = originalDate.getMinutes(); %> <%= `${year}년
+            ${month}월 ${date}일 ${hours}시 ${minutes}분` %>
+            <div>
+              <strong>생성 일자:</strong> <%= `${year}년 ${month}월 ${date}일
+              ${hours}시 ${minutes}분` %>
+            </div>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>
-    <footer class="footer mt-5">
-      <div class="content has-text-centered">
-        <p>
-          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
-          is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
-          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-            >CC BY NC SA 4.0</a
-          >.
-        </p>
-      </div>
-    </footer>
   </body>
+  <footer class="footer mt-5">
+    <div class="content has-text-centered">
+      <p>
+        <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code is
+        licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+        website content is licensed
+        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+          >CC BY NC SA 4.0</a
+        >.
+      </p>
+    </div>
+  </footer>
 </html>
