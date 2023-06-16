@@ -1,12 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>증상 보고서 상세 페이지</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeBlue -증상 보고서 상세 페이지</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .title {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="section" style="margin-top: 30px">
+      <div class="reportdetail_block">
+        <h2 class="title">조회하신 보고서의 상세 내용입니다.</h2>
+      </div>
+    </section>
+    <form class="box" style="margin-left: 50px; margin-right: 50px">
+      <div class="content">
+        <h3>환자정보</h3>
+        <div style="margin-left: 20px">
+          <p><strong>이름 </strong> 황비정</p>
+          <p><strong>성별 </strong> F</p>
+          <p><strong>주민등록번호 </strong> 001231-2222222</p>
+        </div>
+        <ul style="margin-bottom: 70px"></ul>
+        <h3>증상상세정보</h3>
+        <ul>
+          <li>응급도</li>
+          <li>연령대</li>
+          <li>혈압</li>
+          <li>세부증상</li>
+        </ul>
+        <blockquote>피똥싸는중</blockquote>
+        <ul>
+          <li>작성날짜</li>
+          <li>최종수정날짜</li>
+          <ul style="margin-bottom: 70px"></ul>
+        </ul>
+        <h3>이송병원정보</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>이송신청여부</th>
+              <th>O</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>병원명</td>
+              <td>Four</td>
+            </tr>
+            <tr>
+              <td>병원주소</td>
+              <td>강원도 강릉시 강릉대로419번길 42 (포남동)</td>
+            </tr>
+            <tr>
+              <td>연락처</td>
+              <td>033-650-6113</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
+          is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>
