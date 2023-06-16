@@ -1,5 +1,26 @@
 version: '3.1'
 services:
+  proxy:
+    image: nginx:latest
+    container_name: proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot-etc:/etc/letsencrypt
+    restart: unless-stopped
+
+  certbot:
+    depends_on:
+      - proxy
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot-etc:/etc/letsencrypt
+      - ./myweb:/usr/share/nginx/html
+    command: certonly --dry-run --webroot --webroot-path=/usr/share/nginx/html --email ksnx3684@naver.com --agree-tos --no-eff-email --keep-until-expiring -d codeblue.site
+  
   redis-server:
     image: redis
     command: redis-server --port 6379
@@ -8,12 +29,16 @@ services:
     ports:
       - 6379:6379
     restart: unless-stopped
+  
   api-server:
     build:
-      dockerfile: Dockerfile
       context: ./
-    container_name: api-server
+    container_name: codeblue
     ports:
       - '3000:3000'
+    volumes:
+      - ./src:/src
+      - ./node_modules
+    restart: unless-stopped
     depends_on:
       - redis-server
