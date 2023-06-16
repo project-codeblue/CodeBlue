@@ -44,6 +44,42 @@
       rel="stylesheet"
     />
   </head>
+  <script>
+    function sendRequest(report_id, hospital_id) {
+      const url = `/request/${report_id}/${hospital_id}`;
+
+      fetch(url, {
+        method: 'POST',
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          const notification = document.querySelector('.notification');
+          notification.style.display = 'block';
+          notification.textContent = `
+            해당 ${data.hospital.name}에 환자 이송 신청이 접수되었습니다.
+            환자의 증상 보고서가 병원측으로 전달되었습니다.
+          `
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      (document.querySelectorAll('.notification .delete') || []).forEach(
+        ($delete) => {
+          const $notification = $delete.parentNode;
+
+          $delete.addEventListener('click', () => {
+            $notification.parentNode.removeChild($notification);
+          });
+        },
+      );
+    });
+  </script>
   <body>
     <nav
       class="navbar is-info is-light"
@@ -106,6 +142,11 @@
               <div>환자의 혈압: <%=hospitals_data[1].blood_pressure%></div>
               <div>환자의 혈액형: <%=hospitals_data[1].blood_type%></div>
             </div>
+            <div class="notification is-danger is-light" style="display: none">
+              <button class="delete"></button>
+              해당 병원에 환자 이송 신청이 접수되었습니다.
+              환자의 증상 보고서가 병원측으로 전달되었습니다.
+            </div>
           </div>
         </div>
         <div class="box">
@@ -115,7 +156,10 @@
               <h3><%=hospitals_data[i].name %></h3>
               <div class="title-call-button">
                 <button class="button is-dark mr-3 mt-3">전화 걸기</button>
-                <button class="button is-danger is-dark mt-3">
+                <button
+                  class="button is-danger is-dark mt-3"
+                  onclick="sendRequest(`<%=hospitals_data[1].report_id%>`, `<%=hospitals_data[i].hospital_id%>`)"
+                >
                   환자 이송신청
                 </button>
               </div>

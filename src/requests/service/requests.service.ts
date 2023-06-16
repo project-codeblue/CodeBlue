@@ -352,10 +352,10 @@ export class RequestsService {
     console.log('job: ', job);
     console.log('3. waitFinish() 호출');
     // 대기열 큐에 job을 넣은 후, service 내에서 waitFinish() 함수를 호출한다
-    return this.waitFinish(eventName, 2); // 2 = second
+    return this.waitFinish(eventName, 2, hospital); // 2 = second
   }
 
-  async waitFinish(eventName: string, second: number) {
+  async waitFinish(eventName: string, second: number, hospital: object) {
     console.log('4. waitFinish() 진입');
     return new Promise((resolve, reject) => {
       console.log('5. Promise 진입');
@@ -379,7 +379,7 @@ export class RequestsService {
         console.log('7. listenFn 진입');
         clearTimeout(wait);
         this.eventEmitter.removeAllListeners(eventName);
-        success ? resolve({ message: '이송 신청 성공' }) : reject(exception);
+        success ? resolve({ hospital }) : reject(exception);
       };
       console.log('6. this.eventEmitter.addListener 세팅');
       // sendRequest()에서 전해준 이벤트가 성공이든 실패든,
