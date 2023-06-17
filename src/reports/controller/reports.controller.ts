@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Body, Post, Patch, Render } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Body,
+  Post,
+  Patch,
+  Render,
+} from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -18,7 +26,11 @@ export class ReportsController {
     @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
   ) {
     this.logger.verbose('증상 보고서 생성 POST API');
-    return this.reportsService.createReport(createReportDto, patient_rrn);
+    const createReports = this.reportsService.createReport(
+      createReportDto,
+      patient_rrn,
+    );
+    return { createReports };
   }
 
   @Get('/:report_id')

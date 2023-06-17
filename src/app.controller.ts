@@ -16,4 +16,10 @@ export class AppController {
   search() {
     return { name: 'name' };
   }
+
+  @Get('/report')
+  @Render('createReport')
+  report() {
+    return { name: 'name' };
+  }
 }
