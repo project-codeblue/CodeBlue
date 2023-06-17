@@ -278,4 +278,13 @@ export class ReportsService {
     console.log(`소요시간 : ${t / 1000}초`);
     console.log(`${count}개 생성`);
   }
+
+  async getDataCount() {
+    const count = await this.reportsRepository
+                              .createQueryBuilder('reports')
+                              .select('COUNT(*) AS count')
+                              .getRawOne();
+    const result = parseInt(count.count).toLocaleString();            
+    return result
+  }
 }
