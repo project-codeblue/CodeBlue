@@ -12,14 +12,21 @@ services:
     restart: unless-stopped
 
   certbot:
-    depends_on:
-      - proxy
     image: certbot/certbot
-    container_name: certbot
+    restart: unless-stopped
     volumes:
-      - ./certbot-etc:/etc/letsencrypt
-      - ./myweb:/usr/share/nginx/html
-    command: certonly --dry-run --webroot --webroot-path=/usr/share/nginx/html --email ksnx3684@naver.com --agree-tos --no-eff-email --keep-until-expiring -d codeblue.site
+      - ./data/certbot/conf:/etc/letsencrypt 
+      - ./data/certbot/www:/var/www/certbot
+
+  # certbot:
+  #   depends_on:
+  #     - proxy
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - ./certbot-etc:/etc/letsencrypt
+  #     - ./myweb:/usr/share/nginx/html
+  #   command: certonly --dry-run --webroot --webroot-path=/usr/share/nginx/html --email ksnx3684@naver.com --agree-tos --no-eff-email --keep-until-expiring -d codeblue.site
   
   redis-server:
     image: redis
