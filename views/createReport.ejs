@@ -24,6 +24,24 @@
         margin: 50px 85px 50px 85px;
       }
     </style>
+    <script>
+      function sendRequest(patient_rrn, CreateReportDto) {
+        const url = `/report`;
+
+        fetch(url, {
+          method: 'POST',
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    </script>
   </head>
   <body>
     <nav
@@ -72,22 +90,155 @@
     </nav>
 
     <div class="container">
-        <div class="content results" style="margin-top: 30px">
-          <h2>조회하신 보고서의 상세 내용입니다.</h2>
+      <section class="hero has-background-link-light m-6">
+        <div class="hero-body my-6" style="text-align: center; padding: 20px">
+          <p class="title">환자 증상 보고서 입력</p>
+          <p class="subtitle">
+            <br />
+            환자의 상태는 필수로 입력해주시고, 나머지 항목은 선택사항입니다.
+            <br />
+            <br />
+          </p>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">주민등록번호</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    placeholder="ex) 990101-2111111"
+                  />
+                </div>
+                <p class="help">숫자6자리-숫자7자리로 입력해주세요.</p>
+              </div>
+            </div>
+          </div>
 
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">성별</label>
+            </div>
+            <div class="field-body">
+              <div class="field is-narrow">
+                <div class="control">
+                  <label class="radio">
+                    <input type="radio" name="member" />
+                    F
+                  </label>
+                  <label class="radio">
+                    <input type="radio" name="member" />
+                    M
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">연령대</label>
+            </div>
+            <div class="field-body">
+              <div class="field is-narrow">
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select>
+                      <option>영유아</option>
+                      <option>청소년</option>
+                      <option>성인</option>
+                      <option>노년</option>
+                      <option>임산부</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">혈액형</label>
+            </div>
+            <div class="field-body">
+              <div class="field is-narrow">
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select>
+                      <option>A</option>
+                      <option>B</option>
+                      <option>AB</option>
+                      <option>O</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">혈압</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <input class="input" type="text" placeholder="ex) 120/80" />
+                </div>
+                <p class="help">숫자/숫자로 입력해주세요.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">환자증상</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <textarea
+                    class="textarea is-danger"
+                    placeholder="환자의 증상을 서술해주세요"
+                  ></textarea>
+                </div>
+                <p class="help is-danger">
+                  필수입력값입니다. 환자의 증상을 최대한 상세하게 적어주세요.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <div class="field is-grouped is-grouped-centered">
+                <div class="control">
+                  <button class="button is-link">제출</button>
+                </div>
+                <div class="control">
+                  <button class="button is-link is-light">취소</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <footer class="footer">
-        <div class="content has-text-centered">
-          <p>
-            <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
-            is licensed
-            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-            website content is licensed
-            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-              >CC BY NC SA 4.0</a
-            >.
-          </p>
-        </div>
-      </footer>
+      <div class="content has-text-centered">
+        <p>
+          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
+          is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

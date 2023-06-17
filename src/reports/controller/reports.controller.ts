@@ -6,6 +6,7 @@ import {
   Post,
   Patch,
   Render,
+  Query,
 } from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
@@ -21,13 +22,12 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
-  @Render('createReport')
-  createReport(
-    @Body('patient_rrn', new RrnValidationPipe()) patient_rrn: string,
-    @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
-  ) {
+  async createReport(
+    @Query('patient_rrn', new RrnValidationPipe()) patient_rrn: string,
+    @Query(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
+  ): Promise<object> {
     this.logger.verbose('증상 보고서 생성 POST API');
-    const createReports = this.reportsService.createReport(
+    const createReports = await this.reportsService.createReport(
       createReportDto,
       patient_rrn,
     );
