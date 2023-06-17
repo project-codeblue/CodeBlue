@@ -1,15 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- css -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
-    <link href="./css/index.css" rel="stylesheet" type="text/css" />
+    <style>
+      html,
+      body {
+        font-family: 'Noto Sans KR', sans-serif;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 600px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
+      .logo {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+      .selections {
+        margin-top: 20px;
+      }
+    </style>
 
     <!-- google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,25 +46,32 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    
+
     <title>CodeBLUE - 메인 페이지</title>
-</head>
-<body>
-  <div class="container">
-    <div class="logo">
-      <img src="./image/codeblue.png">
-    </div>
-    <div class="box">
-      <strong>응급 환자를 위한 위치 기반 실시간 잔여 병상 조회 및 환자 이송 신청 시스템</strong><br />
-      응급 구조사는 환자의 현재 위치와 입력한 증상 보고서를 기반으로 주변 병원 추천 / 실시간 잔여 병실 수를 조회하고, 병원에 환자 이송 신청을 할 수 있습니다.
-    </div>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title is-4">
+        응급 환자를 위한 위치 기반 실시간 잔여 병상 조회 및 환자 이송 신청
+        시스템
+      </h1>
+      <p>
+        응급 구조사는 환자의 현재 위치와 입력한 증상 보고서를 기반으로 주변 병원
+        추천 / 실시간 잔여 병실 수를 조회하고, 병원에 환자 이송 신청을 할 수
+        있습니다.
+      </p>
       <div class="selections">
-        <a href="/report" class="button is-info is-light is-size-5 has-text-weight-bold">추천 응급실 조회</a>
-        <a href="/search" class="button is-info is-light is-size-5 has-text-weight-bold" >증상 보고서 검색</a>
+        <a
+          href="/report"
+          class="button is-info is-light is-size-5 has-text-weight-bold"
+          >추천 응급실 조회</a
+        >
+        <a
+          href="/search"
+          class="button is-info is-light is-size-5 has-text-weight-bold"
+          >증상 보고서 검색</a
+        >
       </div>
     </div>
-  </div>
-  
-
-</body>
+  </body>
 </html>
