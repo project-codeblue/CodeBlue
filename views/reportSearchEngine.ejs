@@ -103,12 +103,13 @@
               <div class="search">
                 <label for="fromDate" class="form-label mx-5 my-6">
                   시작 일자<br />
+                  <% const today = new Date().toISOString().split('T')[0]; %>
                   <input
                     type="date"
                     id="fromDate"
                     name="fromDate"
                     min="2010-01-01"
-                    max="2099-12-31"
+                    max=<%= today %>
                     style="
                       font-family: 'Noto Sans KR', sans-serif;
                       margin-bottom: 10px;
@@ -122,7 +123,7 @@
                     id="toDate"
                     name="toDate"
                     min="2010-01-01"
-                    max="2099-12-31"
+                    max=<%= today %>
                     style="
                       font-family: 'Noto Sans KR', sans-serif;
                       margin-bottom: 10px;
