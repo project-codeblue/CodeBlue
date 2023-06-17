@@ -136,7 +136,9 @@ export class HospitalsService {
             }
             const minutes = Math.floor(duration / 60);
             const seconds = Math.floor(duration % 60);
-            return {
+
+            const obj = {
+              ...report,
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
@@ -146,11 +148,12 @@ export class HospitalsService {
               phone: hospital[1]['phone'],
               available_beds: hospital[1]['available_beds'],
               emogList: hospital[1]['emogList'],
-              ...report,
             };
+            return obj;
           });
 
           const recommendedHospitals = await Promise.all(promises);
+
           // 가중치 적용
           const weightsRecommendedHospitals = [];
           const weights = {
@@ -183,6 +186,7 @@ export class HospitalsService {
             0,
             10,
           );
+
           const emogList = [];
           for (const hospital of top10RecommendedHospitals) {
             emogList.push(hospital['emogList']);
@@ -190,7 +194,7 @@ export class HospitalsService {
           const datas = await this.crawling.getNearbyHospitals(emogList);
           const results: Array<string | object> = await Promise.all(
             top10RecommendedHospitals.map(async (hospital) => {
-              const result = { ...hospital };
+              const result = { ...hospital, report_id };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
                   const beds_object = await this.parseHospitalData(data);
@@ -200,7 +204,6 @@ export class HospitalsService {
               return result;
             }),
           );
-
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
           // const end: any = new Date();
           // const t = end - start;
@@ -230,6 +233,7 @@ export class HospitalsService {
     );
     return getHospitals;
   }
+
   async calculateRating(
     hospital,
     weights: {

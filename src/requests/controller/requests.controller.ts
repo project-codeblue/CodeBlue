@@ -36,7 +36,6 @@ export class RequestsController {
     this.logger.verbose('증상 보고서 검색 GET API');
     console.log(queries);
     const searchedData = await this.requestsService.getSearchRequests(queries);
-    console.log('searchedData: ', searchedData);
     return { searchedData };
   }
 }
