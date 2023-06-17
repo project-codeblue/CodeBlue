@@ -25,9 +25,7 @@
       }
     </style>
     <script>
-      function sendRequest(patient_rrn, CreateReportDto) {
-        const url = `/report`;
-
+      function sendReport() {
         fetch(url, {
           method: 'POST',
           headers: {
@@ -119,142 +117,166 @@
             <br />
             <br />
           </p>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">주민등록번호</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="control">
-                  <input
-                    class="input"
-                    type="text"
-                    placeholder="ex) 990101-2111111"
-                  />
-                </div>
-                <p class="help">숫자6자리-숫자7자리로 입력해주세요.</p>
+          <form action="./report" method="POST">
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">주민등록번호</label>
               </div>
-            </div>
-          </div>
-
-          <div class="field is-horizontal">
-            <div class="field-label">
-              <label class="label">성별</label>
-            </div>
-            <div class="field-body">
-              <div class="field is-narrow">
-                <div class="control">
-                  <label class="radio">
-                    <input type="radio" name="member" />
-                    F
-                  </label>
-                  <label class="radio">
-                    <input type="radio" name="member" />
-                    M
-                  </label>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="text"
+                      placeholder="ex) 990101-2111111"
+                      maxlength="14"
+                      name="patient_rrn"
+                      id="patient_rrn"
+                    />
+                  </div>
+                  <p class="help">숫자6자리-숫자7자리로 입력해주세요.</p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">연령대</label>
-            </div>
-            <div class="field-body">
-              <div class="field is-narrow">
-                <div class="control">
-                  <div class="select is-fullwidth">
-                    <select>
-                      <option disabled selected>연령대 선택</option>
-                      <option>영유아</option>
-                      <option>청소년</option>
-                      <option>성인</option>
-                      <option>노년</option>
-                      <option>임산부</option>
-                    </select>
+            <!-- <div class="field is-horizontal">
+              <div class="field-label">
+                <label class="label">성별</label>
+              </div>
+              <div class="field-body">
+                <div class="field is-narrow">
+                  <div class="control">
+                    <label class="radio">
+                      <input type="radio" id="gender" name="gender" />
+                      F
+                    </label>
+                    <label class="radio">
+                      <input type="radio" id="gender" name="gender" />
+                      M
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">연령대</label>
+              </div>
+              <div class="field-body">
+                <div class="field is-narrow">
+                  <div class="control">
+                    <div class="select is-fullwidth">
+                      <select
+                        class="form-select"
+                        id="age_range"
+                        name="age_range"
+                        style="font-family: 'Noto Sans KR', sans-serif"
+                      >
+                        <option disabled selected>연령대 선택</option>
+                        <option>영유아</option>
+                        <option>청소년</option>
+                        <option>성인</option>
+                        <option>노년</option>
+                        <option>임산부</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">혈액형</label>
-            </div>
-            <div class="field-body">
-              <div class="field is-narrow">
-                <div class="control">
-                  <div class="select is-fullwidth">
-                    <select>
-                      <option disabled selected>혈액형 선택</option>
-                      <option>A</option>
-                      <option>B</option>
-                      <option>AB</option>
-                      <option>O</option>
-                    </select>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">혈액형</label>
+              </div>
+              <div class="field-body">
+                <div class="field is-narrow">
+                  <div class="control">
+                    <div class="select is-fullwidth">
+                      <select
+                        class="form-select"
+                        id="blood_type"
+                        name="blood_type"
+                        style="font-family: 'Noto Sans KR', sans-serif"
+                      >
+                        <option disabled selected>혈액형 선택</option>
+                        <option>A</option>
+                        <option>B</option>
+                        <option>AB</option>
+                        <option>O</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">혈압</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="control">
-                  <input class="input" type="text" placeholder="ex) 120/80" />
-                </div>
-                <p class="help">숫자/숫자로 입력해주세요.</p>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">혈압</label>
               </div>
-            </div>
-          </div>
-
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">환자증상</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="control">
-                  <textarea
-                    class="textarea is-danger"
-                    placeholder="환자의 증상을 서술해주세요"
-                  ></textarea>
-                </div>
-                <p class="help is-danger">
-                  필수입력값입니다. 환자의 증상을 최대한 상세하게 적어주세요.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="field is-horizontal">
-            <div class="field-body">
-              <div class="field is-grouped is-grouped-centered">
-                <div class="control">
-                  <button
-                    class="button is-link"
-                    onclick="scrollToTop(); sendRequest();"
-                  >
-                    제출
-                  </button>
-                </div>
-                <div class="control">
-                  <button
-                    class="button is-link is-light"
-                    onclick="refreshBrowser()"
-                  >
-                    취소
-                  </button>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input"
+                      id="blood_pressure"
+                      name="blood_pressure"
+                      type="text"
+                      placeholder="ex) 120/80"
+                    />
+                  </div>
+                  <p class="help">숫자/숫자로 입력해주세요.</p>
                 </div>
               </div>
             </div>
-          </div>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label" for="symptoms">환자증상</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <textarea
+                      id="symptoms"
+                      name="symptoms"
+                      class="textarea is-danger"
+                      placeholder="환자의 증상을 서술해주세요"
+                    ></textarea>
+                  </div>
+                  <p class="help is-danger">
+                    필수입력값입니다. 환자의 증상을 최대한 상세하게 적어주세요.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-body">
+                <div class="field is-grouped is-grouped-centered">
+                  <div class="control">
+                    <button
+                      type="submit"
+                      class="button is-link"
+                      onclick="scrollToTop(); sendReport();"
+                    >
+                      제출
+                    </button>
+                  </div>
+                  <div class="control">
+                    <button
+                      class="button is-link is-light"
+                      onclick="refreshBrowser()"
+                    >
+                      취소
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </section>
     </div>
