@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Query, Render } from '@nestjs/common';
 import { HospitalsService } from '../service/hospitals.service';
 
 @Controller('hospital')
@@ -13,12 +13,18 @@ export class HospitalsController {
   }
 
   @Get('/:report_id') // hospital/1?latitude=37.1&longitude=127.1
-  getRecommendedHospitals(
+  @Render('recommendedHospitals')
+  async getRecommendedHospitals(
     @Param('report_id') report_id: number,
     @Query() queries: object,
-  ): Promise<string[] | object> {
-    this.logger.verbose('추천 병원 조회 GET API');
-    return this.hospitalsService.getRecommendedHospitals(report_id, queries);
+  ): Promise<object> {
+    this.logger.verbose('Getting Recommended hospitals');
+    const hospitals_data = await this.hospitalsService.getRecommendedHospitals(
+      report_id,
+      queries,
+    );
+    console.log(hospitals_data);
+    return { hospitals_data };
   }
 
   @Get('/crawl/naver')

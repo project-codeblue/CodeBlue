@@ -138,14 +138,15 @@ export class HospitalsService {
             const seconds = Math.floor(duration % 60);
             return {
               duration,
-              minute: `${minutes}분`,
-              secondes: `${seconds}초`,
-              distance: `${distance / 1000}km`,
+              minutes: `${minutes}분`,
+              seconds: `${seconds}초`,
+              distance: `${(distance / 1000).toFixed(1)}km`,
               hospital_id: hospital[1]['hospital_id'],
               name: hospital[1]['name'],
               phone: hospital[1]['phone'],
               available_beds: hospital[1]['available_beds'],
               emogList: hospital[1]['emogList'],
+              ...report,
             };
           });
 
@@ -187,16 +188,17 @@ export class HospitalsService {
             emogList.push(hospital['emogList']);
           }
           const datas = await this.crawling.getNearbyHospitals(emogList);
-          const results: Array<string | object> = top10RecommendedHospitals.map(
-            (hospital) => {
+          const results: Array<string | object> = await Promise.all(
+            top10RecommendedHospitals.map(async (hospital) => {
               const result = { ...hospital };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
-                  result['real_time_beds_info'] = data;
+                  const beds_object = await this.parseHospitalData(data);
+                  result['real_time_beds_info'] = beds_object;
                 }
               }
               return result;
-            },
+            }),
           );
 
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
@@ -252,5 +254,19 @@ export class HospitalsService {
 
   async getSymptomCrawl() {
     const data = await this.crawling.symptomCrawl();
+  }
+
+  async parseHospitalData(data: string) {
+    const emergencyRoomRegex = /응급실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const surgeryRoomRegex = /수술실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const wardRegex = /입원실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const emergencyRoom = data.match(emergencyRoomRegex);
+    const surgeryRoom = data.match(surgeryRoomRegex);
+    const ward = data.match(wardRegex);
+    return {
+      emergencyRoom: emergencyRoom ? emergencyRoom[1] : '정보없음',
+      surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
+      ward: ward ? ward[1] : '정보없음',
+    };
   }
 }

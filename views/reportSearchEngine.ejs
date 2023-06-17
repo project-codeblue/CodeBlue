@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeBlue - 증상 보고서 검색 페이지</title>
+
+    <!-- css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .button {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .search {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .label {
+        width: 50px;
+      }
+    </style>
+
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav
+      class="navbar is-info is-light"
+      role="navigation"
+      aria-label="main navigation"
+      style="padding: 0 10px 0 75px"
+    >
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img
+            src="https://user-images.githubusercontent.com/76824986/246389195-f678674a-4c4e-46cf-a97c-4ad6f9cc95d9.png"
+            width="120"
+            height="auto"
+          />
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item"> 증상보고서 입력 </a>
+
+          <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item"> 가까운 응급실 조회 </a>
+              <a class="navbar-item"> 증상보고서 수정 </a>
+              <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item"> Report an issue </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <section class="hero has-background-link-light m-6">
+        <div class="hero-body my-6" style="text-align: center; padding: 20px">
+          <p class="title">증상보고서 검색 엔진</p>
+          <p class="subtitle">
+            <br />
+            현재 1,560,220개의 누적 증상보고서가 있습니다.
+            <br />
+            보고서 생성 날짜, 증상, 중증도 레벨, 이송 병원 지역, 환자 성명을
+            통해 검색해보세요.
+          </p>
+          <form action="./request/search" method="GET">
+            <div class="mb-3 mt-3">
+              <div class="search">
+                <label for="fromDate" class="form-label mx-5 my-6">
+                  시작 일자<br />
+                  <input
+                    type="date"
+                    id="fromDate"
+                    name="fromDate"
+                    min="2010-01-01"
+                    max="2099-12-31"
+                    style="
+                      font-family: 'Noto Sans KR', sans-serif;
+                      margin-bottom: 10px;
+                    "
+                  />
+                </label>
+                <label for="toDate" class="form-label m-5">
+                  마지막 일자<br />
+                  <input
+                    type="date"
+                    id="toDate"
+                    name="toDate"
+                    min="2010-01-01"
+                    max="2099-12-31"
+                    style="
+                      font-family: 'Noto Sans KR', sans-serif;
+                      margin-bottom: 10px;
+                    "
+                  />
+                </label>
+                <label
+                  for="symptom_level"
+                  class="form-label select m-5 is-hovered"
+                >
+                  <select
+                    class="form-select"
+                    id="symptom_level"
+                    name="symptom_level"
+                    style="font-family: 'Noto Sans KR', sans-serif"
+                  >
+                    <option disabled selected>중증도 레벨</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </label>
+                <label for="site" class="form-label select m-5 is-hovered">
+                  <select
+                    class="form-select"
+                    id="site"
+                    name="site"
+                    style="font-family: 'Noto Sans KR', sans-serif"
+                  >
+                    <option disabled selected>이송 병원 지역</option>
+                    <option>서울</option>
+                    <option>부산</option>
+                    <option>대구</option>
+                    <option>인천</option>
+                    <option>광주</option>
+                    <option>대전</option>
+                    <option>울산</option>
+                    <option>세종</option>
+                    <option>경기</option>
+                    <option>충북</option>
+                    <option>충남</option>
+                    <option>전북</option>
+                    <option>전남</option>
+                    <option>경북</option>
+                    <option>경남</option>
+                    <option>강원</option>
+                    <option>제주</option>
+                  </select>
+                </label>
+                <label for="age_range" class="form-label select m-5 is-hovered">
+                  <select
+                    class="form-select"
+                    id="age_range"
+                    name="age_range"
+                    style="font-family: 'Noto Sans KR', sans-serif"
+                  >
+                    <option disabled selected>환자 연령대</option>
+                    <option>영유아</option>
+                    <option>청소년</option>
+                    <option>성인</option>
+                    <option>노년</option>
+                    <option>임산부</option>
+                  </select>
+                </label>
+                <label for="name" class="form-label m-5">
+                  <input
+                    class="input form-control"
+                    type="text"
+                    id="name"
+                    placeholder="환자 성명"
+                    name="name"
+                    style="font-family: 'Noto Sans KR', sans-serif"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="button is-large is-responsive is-info"
+              style="width: 130px"
+            >
+              검색
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <div id="result"></div>
+
+    <footer class="footer mt-5">
+      <div class="content has-text-centered">
+        <p>
+          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
+          is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
