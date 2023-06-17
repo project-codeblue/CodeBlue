@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Body, Post, Patch, Render } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Body,
+  Post,
+  Patch,
+  Render,
+} from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
@@ -13,6 +21,7 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
+  @Render('createReport')
   createReport(
     @Body('patient_rrn', new RrnValidationPipe()) patient_rrn: string,
     @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
