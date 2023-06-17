@@ -3,7 +3,6 @@ import { RequestsController } from './controller/requests.controller';
 import { RequestsService } from './service/requests.service';
 import { ReportsModule } from '../reports/reports.module';
 import { HospitalsModule } from '../hospitals/hospitals.module';
-import { Elk } from '../commons/middlewares/elk';
 import { BullModule, InjectQueue } from '@nestjs/bull';
 import { RequestQueueConsumer } from './requests.consumer';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -28,7 +27,7 @@ import { Queue } from 'bull';
     }),
   ],
   controllers: [RequestsController],
-  providers: [RequestsService, RequestQueueConsumer, EventEmitter2, Elk],
+  providers: [RequestsService, RequestQueueConsumer, EventEmitter2],
 })
 export class RequestsModule {
   constructor(@InjectQueue('requestQueue') private requestQueue: Queue) {}
