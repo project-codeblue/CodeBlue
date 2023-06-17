@@ -1,36 +1,5 @@
 version: '3.1'
-services:
-  proxy:
-    image: nginx:latest
-    container_name: proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./proxy/nginx.conf:/proxy/nginx.conf
-      - ./data/certbot/conf:/etc/letsencrypt 
-      - ./data/certbot/www:/var/www/certbot
-    restart: unless-stopped
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-
-  certbot:
-    image: certbot/certbot
-    restart: unless-stopped
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt 
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-  # certbot:
-  #   depends_on:
-  #     - proxy
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   volumes:
-  #     - ./certbot-etc:/etc/letsencrypt
-  #     - ./myweb:/usr/share/nginx/html
-  #   command: certonly --dry-run --webroot --webroot-path=/usr/share/nginx/html --email ksnx3684@naver.com --agree-tos --no-eff-email --keep-until-expiring -d codeblue.site
-  
+services:  
   redis-server:
     image: redis
     command: redis-server --port 6379
@@ -40,7 +9,7 @@ services:
       - 6379:6379
     restart: unless-stopped
   
-  api-server:
+  codeblue:
     build:
       context: ./
     container_name: codeblue
