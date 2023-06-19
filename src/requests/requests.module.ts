@@ -17,7 +17,8 @@ import { Queue } from 'bull';
     HospitalsModule,
     BullModule.forRoot('bullqueue-config', {
       redis: {
-        host: 'localhost', // 일단 localhost로 설정 -> 후에 docker-compose로 변경
+        maxRetriesPerRequest: 20,
+        host: 'host.docker.internal', // 일단 localhost로 설정 -> 후에 docker-compose로 변경
         port: 6379,
       },
     }), // task queue (BullQueue)를 위해 import
