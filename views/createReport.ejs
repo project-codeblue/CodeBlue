@@ -25,8 +25,58 @@
       }
     </style>
     <script>
+      function getUserLocation() {
+        //수정필요. query 형식이여야함
+        // if (navigator.geolocation) {
+        //   navigator.geolocation.getCurrentPosition(
+        //     (position) => {
+        //       const latitude = position.coords.latitude;
+        //       const longitude = position.coords.longitude;
+        //       const patient_rrn = document.getElementById('rrn-input').value;
+        //       const symptoms = document.getElementById('symptoms-input').value;
+        //       const bloodPressure = document.getElementById(
+        //         'blood-pressure-input',
+        //       ).value;
+        //       const bloodType =
+        //         document.getElementById('blood-type-select').value;
+        //       const AgeRange =
+        //         document.getElementById('age-range-select').value;
+        //       const createReportDto = {
+        //         symptoms: symptoms,
+        //         bloodPressure: bloodPressure,
+        //         bloodType: bloodType,
+        //         AgeRange: AgeRange,
+        //         latitude: latitude,
+        //         longitude: longitude,
+        //       };
+        //       sendRequest(patient_rrn, createReportDto);
+        //     },
+        //     (error) => {
+        //       console.error(error);
+        //       alert('위치 정보를 가져오지 못했습니다.');
+        //     },
+        //   );
+        // } else {
+        //   alert('이 브라우저는 위치 서비스를 지원하지 않습니다.');
+        // }
+      }
+
       function sendRequest(patient_rrn, CreateReportDto) {
         const url = `/report`;
+        const patient_rrn = document.getElementById('rrn-input').value;
+        const symptoms = document.getElementById('symptoms-input').value;
+        const bloodPressure = document.getElementById(
+          'blood-pressure-input',
+        ).value;
+        const bloodType = document.getElementById('blood-type-select').value;
+        const AgeRange = document.getElementById('age-range-select').value;
+
+        const createReportDto = {
+          symptoms: symptoms,
+          bloodPressure: bloodPressure,
+          bloodType: bloodType,
+          AgeRange: AgeRange,
+        };
 
         fetch(url, {
           method: 'POST',
@@ -43,7 +93,27 @@
           })
           .then((data) => {
             console.log(data);
-            alert('데이터가 성공적으로 저장되었습니다.');
+            const reportId = data.report_id;
+            alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+
+            const radius = document.getElementById('radius-input').value;
+            const maxCount = document.getElementById('max-count-input').value;
+
+            let getLocalHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
+            if (radius) {
+              getLocalHospitals += `&radius=${radius}`;
+            }
+            if (maxCount) {
+              getLocalHospitals += `&max_count=${maxCount}`;
+            }
+
+            return fetch(getLocalHospitals)
+              .then((response) => {
+                return response.json();
+              })
+              .then((otherData) => {
+                console.log(otherData);
+              });
           })
           .catch((error) => {
             console.error(error);
@@ -130,29 +200,10 @@
                     class="input"
                     type="text"
                     placeholder="ex) 990101-2111111"
+                    id="rrn-input"
                   />
                 </div>
                 <p class="help">숫자6자리-숫자7자리로 입력해주세요.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="field is-horizontal">
-            <div class="field-label">
-              <label class="label">성별</label>
-            </div>
-            <div class="field-body">
-              <div class="field is-narrow">
-                <div class="control">
-                  <label class="radio">
-                    <input type="radio" name="member" />
-                    F
-                  </label>
-                  <label class="radio">
-                    <input type="radio" name="member" />
-                    M
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -165,7 +216,7 @@
               <div class="field is-narrow">
                 <div class="control">
                   <div class="select is-fullwidth">
-                    <select>
+                    <select id="age-range-select">
                       <option disabled selected>연령대 선택</option>
                       <option>영유아</option>
                       <option>청소년</option>
@@ -187,7 +238,7 @@
               <div class="field is-narrow">
                 <div class="control">
                   <div class="select is-fullwidth">
-                    <select>
+                    <select id="blood-type-select">
                       <option disabled selected>혈액형 선택</option>
                       <option>A</option>
                       <option>B</option>
@@ -207,7 +258,12 @@
             <div class="field-body">
               <div class="field">
                 <div class="control">
-                  <input class="input" type="text" placeholder="ex) 120/80" />
+                  <input
+                    class="input"
+                    type="text"
+                    placeholder="ex) 120/80"
+                    id="blood-pressure-input"
+                  />
                 </div>
                 <p class="help">숫자/숫자로 입력해주세요.</p>
               </div>
@@ -224,6 +280,7 @@
                   <textarea
                     class="textarea is-danger"
                     placeholder="환자의 증상을 서술해주세요"
+                    id="symptoms-input"
                   ></textarea>
                 </div>
                 <p class="help is-danger">
@@ -239,7 +296,7 @@
                 <div class="control">
                   <button
                     class="button is-link"
-                    onclick="scrollToTop(); sendRequest();"
+                    onclick="scrollToTop(); sendRequest(); getUserLocation();"
                   >
                     제출
                   </button>
