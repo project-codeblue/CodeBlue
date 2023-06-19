@@ -92,12 +92,12 @@
       <div class="content results" style="margin-top: 30px">
         <h2>조회하신 보고서의 상세 내용입니다.</h2>
         <button
-        id="BackButton"
-        class="button has-background-info-dark has-text-white-bis"
-        onclick="backtopage()"
-      >
-        돌아가기
-      </button>
+          id="BackButton"
+          class="button has-background-info-dark has-text-white-bis"
+          onclick="backtopage()"
+        >
+          돌아가기
+        </button>
         <div class="box">
           <div class="box has-background-light">
             <% if (reportDetails.patient_rrn) { %>
@@ -105,36 +105,43 @@
             <div style="margin-left: 20px">
               <p><strong>이름 </strong><%=reportDetails.patient_name%></p>
               <p><strong>성별 </strong><%=reportDetails.gender%></p>
-              <p><strong>주민등록번호 </strong><%=reportDetails.patient_rrn%></p>
+              <p>
+                <strong>주민등록번호 </strong><%=reportDetails.patient_rrn%>
+              </p>
             </div>
             <% } %>
           </div>
           <div class="box has-background-light">
             <% if (reportDetails.patient_rrn) { %>
-              <h3>증상 상세 정보</h3>
-              <div style="margin-left: 20px">
-                <p><strong>중증도 등급 </strong><%=reportDetails.symptom_level%></p>
-                <p><strong>연령대 </strong><%=reportDetails.age_range%></p>
-                <p><strong>혈압 </strong><%=reportDetails.blood_pressure%></p>
-                <p><strong>세부 증상 </strong></p>
-              </div>
-              <div style="margin-left: 20px; margin-top: 5px">
-              <blockquote style="background-color: rgb(182, 204, 224);"><%=reportDetails.symptoms%></blockquote>
+            <h3>증상 상세 정보</h3>
+            <div style="margin-left: 20px">
+              <p>
+                <strong>중증도 등급 </strong><%=reportDetails.symptom_level%>
+              </p>
+              <p><strong>연령대 </strong><%=reportDetails.age_range%></p>
+              <p><strong>혈압 </strong><%=reportDetails.blood_pressure%></p>
+              <p><strong>세부 증상 </strong></p>
+            </div>
+            <div style="margin-left: 20px; margin-top: 5px">
+              <blockquote style="background-color: rgb(182, 204, 224)">
+                <%=reportDetails.symptoms%>
+              </blockquote>
               <ul>
-                <% const originalDate = reportDetails.createdAt; %> <% const year =
-                originalDate.getFullYear(); %> <% const month =
+                <% const originalDate = reportDetails.createdAt; %> <% const
+                year = originalDate.getFullYear(); %> <% const month =
                 originalDate.getMonth() + 1; %> <% const date =
-                originalDate.getDate(); %> <% const hours = originalDate.getHours();
-                %> <% const minutes = originalDate.getMinutes(); %> <% const
-                updateDate = reportDetails.updatedAt; %> <% const updatedYear =
+                originalDate.getDate(); %> <% const hours =
+                originalDate.getHours(); %> <% const minutes =
+                originalDate.getMinutes(); %> <% const updateDate =
+                reportDetails.updatedAt; %> <% const updatedYear =
                 updateDate.getFullYear(); %> <% const updatedMonth =
                 updateDate.getMonth() + 1; %> <% const updatedDate =
                 updateDate.getDate(); %> <% const updatedHours =
                 updateDate.getHours(); %> <% const updatedMinutes =
                 updateDate.getMinutes(); %>
               </ul>
-              </div>
-              <div style="margin-left: 20px">
+            </div>
+            <div style="margin-left: 20px">
               <p>
                 <strong>작성 날짜 </strong> <%= `${year}년 ${month}월 ${date}일
                 ${hours}시 ${minutes}분` %>
@@ -144,7 +151,7 @@
                 ${updatedMonth}월 ${updatedDate}일 ${updatedHours}시
                 ${updatedMinutes}분` %>
               </p>
-              </div>
+            </div>
             <% } %>
           </div>
           <div class="box has-background-light">
@@ -166,18 +173,21 @@
               </tbody>
             </table>
           </div>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
-          is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
-          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-            >CC BY NC SA 4.0</a
-          >.
-        </p>
+        </div>
       </div>
-    </footer>
+      <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+            <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source
+            code is licensed
+            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+            The website content is licensed
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+              >CC BY NC SA 4.0</a
+            >.
+          </p>
+        </div>
+      </footer>
+    </div>
   </body>
 </html>
