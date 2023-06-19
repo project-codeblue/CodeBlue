@@ -58,7 +58,26 @@
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            alert('데이터가 성공적으로 저장되었습니다.');
+            const reportId = data.report_id;
+            alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+
+            const radius = document.getElementById('radius-input').value;
+            const maxCount = document.getElementById('max-count-input').value;
+
+            let getLocalHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
+            if (radius) {
+              getLocalHospitals += `&radius=${radius}`;
+            }
+            if (maxCount) {
+              getLocalHospitals += `&max_count=${maxCount}`;
+            }
+            return fetch(getLocalHospitals)
+              .then((response) => {
+                return response.json();
+              })
+              .then((otherData) => {
+                console.log(otherData);
+              });
           })
           .catch((error) => {
             console.error(error);

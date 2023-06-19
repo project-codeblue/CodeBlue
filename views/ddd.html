@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>실시간 위치정보</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <button id="shareLocation">위치 정보 공유 시작</button>
+    <h1 id="locationInfo">위도: , 경도:</h1>
+
+    <script>
+      const updateInterval = 30 * 1000; // 30초마다 위치 정보 업데이트
+
+      async function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+      }
+
+      async function updateLocationInfo(latitude, longitude) {
+        const locationInfo = document.getElementById('locationInfo');
+        locationInfo.innerText = `위도: ${latitude}, 경도: ${longitude}`;
+      }
+
+      async function findNearestHospitals() {
+        try {
+          const position = await getCurrentPosition();
+          const userLatitude = position.coords.latitude;
+          const userLongitude = position.coords.longitude;
+
+          updateLocationInfo(userLatitude, userLongitude);
+
+          // 위도, 경도 값 처리 (서버로 전달, 계산 등)
+        } catch (error) {
+          console.error('위치 정보 가져오기 실패:', error);
+        }
+      }
+
+      async function repeatLocationUpdate() {
+        await findNearestHospitals();
+
+        // 인터벌 설정 후 다시 반복
+        setTimeout(repeatLocationUpdate, updateInterval);
+      }
+
+      document.getElementById('shareLocation').addEventListener('click', () => {
+        // 사용자 동의 후 위치 정보 공유 시작
+        repeatLocationUpdate();
+      });
+    </script>
+  </body>
+</html>
