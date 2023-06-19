@@ -26,11 +26,7 @@ export class ReportsController {
     @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
   ) {
     this.logger.verbose('증상 보고서 생성 POST API');
-    const createReports = this.reportsService.createReport(
-      createReportDto,
-      patient_rrn,
-    );
-    return { createReports };
+    return this.reportsService.createReport(createReportDto, patient_rrn);
   }
 
   @Get('/:report_id')
