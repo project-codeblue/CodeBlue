@@ -330,10 +330,10 @@ export class ReportsService {
 
   async getDataCount() {
     const count = await this.reportsRepository
-                              .createQueryBuilder('reports')
-                              .select('COUNT(*) AS count')
-                              .getRawOne();
-    const result = parseInt(count.count).toLocaleString();            
-    return result
+      .createQueryBuilder('reports')
+      .select('COUNT(*) AS count')
+      .getRawOne();
+    const result = parseInt(count.count).toLocaleString();
+    return result;
   }
 }
