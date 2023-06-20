@@ -67,7 +67,6 @@
 
       .input {
         margin: 10px 10px 10px 0px;
-
       }
     </style>
 
@@ -91,14 +90,16 @@
         })
         .then((data) => {
           console.log(data);
-          const notification = document.querySelector('.notification');
+          const notification = document.querySelector('#notification');
           notification.style.display = 'block';
-          notification.innerHTML = `
-            <strong>${data.hospital.name}</strong>에 환자 이송 신청이 접수되었습니다. <br />
-            환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
-            <strong>병원 주소</strong>: ${data.hospital.address} <br />
-            <strong>병원 전화번호</strong>: ${data.hospital.phone} <br />
-          `;
+          if (data.success === 'true') {
+            notification.innerHTML = `
+              <strong>${data.hospital.name}</strong>에 환자 이송 신청이 접수되었습니다. <br />
+              환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
+              <strong>병원 주소</strong>: ${data.hospital.address} <br />
+              <strong>병원 전화번호</strong>: ${data.hospital.phone} <br />
+            `;
+          }
           const withdrawButton = document.querySelector('.withdraw');
           withdrawButton.style.display = 'block';
         })
@@ -224,7 +225,9 @@
               style="font-family: 'Noto Sans KR', sans-serif"
               placeholder="추천 병원 최대 개수 (숫자 입력)"
             />
-            <button class="button is-info" onclick="addQueryString()">검색</button>
+            <button class="button is-info" onclick="addQueryString()">
+              검색
+            </button>
           </div>
         </div>
         <button
@@ -238,11 +241,15 @@
           <div class="card-content">
             <div class="content">
               <h5>환자 증상 정보</h5>
-              <div class="has-text-link has-text-weight-bold">
+
+              <div class="has-text-danger has-text-weight-bold">
                 환자의 중증도 등급: <%=hospitals_data[1].symptom_level%>
               </div>
+              <% if (hospitals_data[1].blood_pressure) { %>
               <div>환자의 혈압: <%=hospitals_data[1].blood_pressure%></div>
+              <% } %> <% if (hospitals_data[1].blood_type) { %>
               <div>환자의 혈액형: <%=hospitals_data[1].blood_type%></div>
+              <% } %>
             </div>
             <% if (hospitals_data[1].is_sent) { %>
             <button
@@ -251,9 +258,25 @@
             >
               병원 이송 신청 철회
             </button>
+            <div class="notification is-warning is-light mt-3">
+              <strong><%= hospitals_data[2].name%></strong>에 환자 이송 신청이
+              접수되었습니다. <br />
+              환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
+              <strong>병원 주소</strong>: <%= hospitals_data[2].address%> <br />
+              <strong>병원 전화번호</strong>: <%= hospitals_data[2].phone%>
+              <br />
+            </div>
             <% } %>
+            <button
+              class="withdraw button is-link is-light"
+              onclick="scrollToTop(); unsendRequest(`<%=hospitals_data[1].report_id%>`);"
+              style="display: none"
+            >
+              병원 이송 신청 철회
+            </button>
             <div
               class="notification is-danger is-light mt-3"
+              id="notification"
               style="display: none"
             >
               이미 병원에 이송 신청이 접수되었습니다. <br />
@@ -262,7 +285,7 @@
           </div>
         </div>
         <div class="box">
-          <% for (let i = 1; i < hospitals_data.length; i++) { %>
+          <% for (let i = 3; i < hospitals_data.length; i++) { %>
           <div class="box has-background-light">
             <div class="hospital_title">
               <h3><%=hospitals_data[i].name %></h3>

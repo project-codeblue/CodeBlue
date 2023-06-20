@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager, Brackets } from 'typeorm';
@@ -47,7 +52,7 @@ export class RequestsService {
         .andWhere('is_sent = 1')
         .orderBy('reports_createdAt', 'ASC')
         .limit(100);
-      
+
       if (queries['fromDate'] && queries['toDate']) {
         // URL 쿼리에 fromDate & toDate가 존재하면 실행
         const rawFromDate: string = queries['fromDate'];
