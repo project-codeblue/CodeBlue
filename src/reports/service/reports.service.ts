@@ -12,6 +12,7 @@ import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { AgeRange, BloodType } from '../reports.enum';
 import axios from 'axios';
+import { Gender } from '../../patients/patients.enum';
 
 @Injectable()
 export class ReportsService {
@@ -35,9 +36,18 @@ export class ReportsService {
             // 환자가 존재하지 않는 경우, 새로운 환자 생성
             let patientId: number;
             if (!patient) {
+              // 주민등록번호로 gender 판별
+              const gender =
+                patient_rrn[7] === '1' || patient_rrn[7] === '3'
+                  ? Gender.M
+                  : patient_rrn[7] === '2' || patient_rrn[7] === '4'
+                  ? Gender.F
+                  : null;
+
               const newPatient =
                 await this.patientsRepository.createPatientInfo({
-                  patient_rrn: patient_rrn,
+                  patient_rrn,
+                  gender,
                 });
               patientId = newPatient.patient_id;
             } else {
