@@ -20,6 +20,7 @@ import {
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { AgeRange, BloodType } from '../reports.enum';
+import axios from 'axios';
 
 @Injectable()
 export class ReportsService {
@@ -64,6 +65,17 @@ export class ReportsService {
             const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
           }
+
+          // const emergencyLevelApiResponse = await axios.get(
+          //   'http://localhost:5000/ai',
+          //   {
+          //     params: {
+          //       sentence: symptoms,
+          //     },
+          //   },
+          // );
+
+          // console.log(emergencyLevelApiResponse.data);
 
           const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
           createReportDto.symptom_level = emergencyLevel;
