@@ -11,11 +11,10 @@ export class ReportsRepository extends Repository<Reports> {
     super(Reports, dataSource.createEntityManager());
   }
 
-  async createReport(createReportDto: CreateReportDto, emergencyLevel: number) {
-    const { patient_rrn, ...createReportDtoWithOutPatient } = createReportDto;
+  async createReport(createReportDto: CreateReportDto) {
+    const { ...createReportDtoWithOutPatient } = createReportDto;
     const report = this.create({
       ...createReportDtoWithOutPatient,
-      symptom_level: emergencyLevel,
     });
     return this.save(report);
   }

@@ -1,9 +1,13 @@
 import { Controller, Get, Render } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ReportsService } from './reports/service/reports.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly reportService: ReportsService,
+  ) {}
 
   @Get()
   @Render('index')
@@ -13,7 +17,14 @@ export class AppController {
 
   @Get('/search')
   @Render('reportSearchEngine')
-  search() {
+  async search() {
+    const count = await this.reportService.getDataCount();
+    return { count: count };
+  }
+
+  @Get('/report')
+  @Render('createReport')
+  report() {
     return { name: 'name' };
   }
 }

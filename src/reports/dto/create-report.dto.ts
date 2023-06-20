@@ -19,7 +19,6 @@ export class CreateReportDto {
   symptoms: string;
 
   @IsOptional()
-  @Length(3, 7) // 혈압 3자리 ~ 7자리 e.g. 120/80
   @IsString()
   blood_pressure?: string;
 
