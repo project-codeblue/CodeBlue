@@ -61,7 +61,7 @@
           .then((data) => {
             console.log(data);
             const reportId = data.report_id;
-            alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+            // alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
 
             getCurrentPosition()
               .then((position) => {
@@ -81,7 +81,7 @@
                   .then((response) => response.text())
                   .then((text) => {
                     console.log(text);
-                    alert('병원추천 페이지로 이동합니다.');
+                    // alert('병원추천 페이지로 이동합니다.');
                     window.location.href = recommendedHospitals;
                   })
                   .catch((error) => {

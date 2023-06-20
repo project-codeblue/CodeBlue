@@ -6,17 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="./image/codeblue-favicon.png"/> 
-    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png"/> 
+    <link rel="icon" href="./image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png" />
 
     <title>CodeBlue - 위치 기반 추천 응급실 조회 페이지</title>
 
     <!-- Meta Tag -->
-    <meta property="og:url" content="https://codeblue.site">
-    <meta property="og:title" content="CodeBLUE">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="./image/codeblue.png">
-    <meta property="og:description" content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지">
+    <meta property="og:url" content="https://codeblue.site" />
+    <meta property="og:title" content="CodeBLUE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./image/codeblue.png" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"
+    />
 
     <!-- css -->
     <link
@@ -54,6 +57,17 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
+      }
+
+      .query-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .input {
+        margin: 10px 10px 10px 0px;
+
       }
     </style>
 
@@ -122,6 +136,23 @@
     function refreshBrowser() {
       window.location.reload();
     }
+
+    function addQueryString(position) {
+      // 현재 URL 가져오기
+      var currentUrl = window.location.href;
+
+      // URL에 쿼리 스트링 추가하기
+      var params = new URLSearchParams(window.location.search);
+      const radius = document.querySelector('#radius').value;
+      const max_count = document.querySelector('#max_count').value;
+      console.log(radius, max_count);
+      params.set('radius', radius);
+      params.set('max_count', max_count);
+      var updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
+      console.log(updatedUrl);
+      // 페이지 다시 로드
+      window.location.href = updatedUrl;
+    }
   </script>
   <body>
     <nav
@@ -174,7 +205,28 @@
     </nav>
     <div class="container is-max-widescreen">
       <div class="content hospitals_block" style="margin-top: 30px">
-        <h2>현재 위치 기반 추천 병원 목록 (<%=hospitals_data[0]%> 기준)</h2>
+        <div>
+          <h2>현재 위치 기반 추천 병원 목록 (<%=hospitals_data[0]%> 기준)</h2>
+          <div class="query-container">
+            <input
+              class="input is-info"
+              type="text"
+              name="radius"
+              id="radius"
+              style="font-family: 'Noto Sans KR', sans-serif"
+              placeholder="몇 km 반경 내 병원 검색 (숫자 입력)"
+            />
+            <input
+              class="input is-info"
+              type="text"
+              name="max_count"
+              id="max_count"
+              style="font-family: 'Noto Sans KR', sans-serif"
+              placeholder="추천 병원 최대 개수 (숫자 입력)"
+            />
+            <button class="button is-info" onclick="addQueryString()">검색</button>
+          </div>
+        </div>
         <button
           id="fixedButton"
           class="button has-background-info-dark has-text-white-bis"

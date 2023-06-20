@@ -6,7 +6,7 @@ import { ReportsService } from './reports/service/reports.service';
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly reportService: ReportsService
+    private readonly reportService: ReportsService,
   ) {}
 
   @Get()
@@ -28,4 +28,3 @@ export class AppController {
     return { name: 'name' };
   }
 }
-
