@@ -10,6 +10,8 @@ import { createBullBoard } from '@bull-board/api';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { Queue } from 'bull';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
@@ -18,8 +20,8 @@ import { Queue } from 'bull';
     BullModule.forRoot('bullqueue-config', {
       redis: {
         maxRetriesPerRequest: 20,
-        host: 'host.docker.internal', // 일단 localhost로 설정 -> 후에 docker-compose로 변경
-        port: 6379,
+        host: process.env.REDIS_HOST, // 일단 localhost로 설정 -> 후에 docker-compose로 변경
+        port: parseInt(process.env.REDIS_PORT),
       },
     }), // task queue (BullQueue)를 위해 import
     BullModule.registerQueue({
