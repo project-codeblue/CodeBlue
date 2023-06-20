@@ -25,17 +25,19 @@
       }
     </style>
     <script>
+      function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+      }
+
       function sendReport() {
         event.preventDefault();
         const patient_rrn = document.querySelector('#patient_rrn').value;
         const age_range_form = document.querySelector('#age_range');
-        const age_range = age_range_form
-          ? age_range_form.options[age_range_form.selectedIndex].value
-          : null;
-        const blood_type_form = document.querySelector('#blood_type').value;
-        const blood_type = blood_type_form
-          ? blood_type_form.options[blood_type_form.selectedIndex].value
-          : null;
+        const age_range = age_range_form.value || null;
+        const blood_type_form = document.querySelector('#blood_type');
+        const blood_type = blood_type_form.value || null;
         const blood_pressure = document.querySelector('#blood_pressure').value;
         const symptoms = document.querySelector('#symptoms').value;
         const createReportDto = {
@@ -45,8 +47,8 @@
           blood_pressure,
           symptoms,
         };
-        console.log(createReportDto);
 
+        console.log('createReportDto', createReportDto);
         const url = '/report';
         fetch(url, {
           method: 'POST',
@@ -58,15 +60,48 @@
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            alert('데이터가 성공적으로 저장되었습니다.');
+            const reportId = data.report_id;
+            // alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+
+            getCurrentPosition()
+              .then((position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const radius = null;
+                const maxCount = null;
+
+                let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
+                if (radius) {
+                  recommendedHospitals += `&radius=${radius}`;
+                }
+                if (maxCount) {
+                  recommendedHospitals += `&max_count=${maxCount}`;
+                }
+                return fetch(recommendedHospitals)
+                  .then((response) => response.text())
+                  .then((text) => {
+                    console.log(text);
+                    // alert('병원추천 페이지로 이동합니다.');
+                    window.location.href = recommendedHospitals;
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    alert('병원추천 페이지로 이동하는데 실패했습니다.');
+                  });
+              })
+              .catch((error) => {
+                console.error(error);
+                alert('위치 정보를 가져오는데 실패했습니다.');
+              });
           })
           .catch((error) => {
-            console.error(error);
-            alert('데이터 저장에 실패했습니다. 다시 시도해주세요.');
+            console.error('Error:', error);
+            alert('데이터 저장 중에 오류가 발생했습니다.');
           });
       }
 
       function scrollToTop() {
+        event.preventDefault();
         window.scrollTo({
           top: 0,
           behavior: 'smooth',
@@ -74,6 +109,7 @@
       }
 
       function refreshBrowser() {
+        event.preventDefault();
         window.location.reload();
       }
     </script>
@@ -155,26 +191,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- <div class="field is-horizontal">
-              <div class="field-label">
-                <label class="label">성별</label>
-              </div>
-              <div class="field-body">
-                <div class="field is-narrow">
-                  <div class="control">
-                    <label class="radio">
-                      <input type="radio" id="gender" name="gender" />
-                      F
-                    </label>
-                    <label class="radio">
-                      <input type="radio" id="gender" name="gender" />
-                      M
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div> -->
 
             <div class="field is-horizontal">
               <div class="field-label is-normal">
@@ -264,7 +280,8 @@
                     ></textarea>
                   </div>
                   <p class="help is-danger">
-                    필수입력값입니다. 환자의 증상을 최대한 상세하게 적어주세요.
+                    필수 입력값 입니다. 환자의 증상을 최대한 상세하게
+                    적어주세요.
                   </p>
                 </div>
               </div>
@@ -285,7 +302,7 @@
                   <div class="control">
                     <button
                       class="button is-link is-light"
-                      onclick="refreshBrowser()"
+                      onclick="refreshBrowser();"
                     >
                       취소
                     </button>
