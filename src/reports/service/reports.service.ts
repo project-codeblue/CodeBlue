@@ -8,15 +8,6 @@ import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
-import {
-  Symptom,
-  circulatorySymptoms,
-  emergencySymptoms,
-  injurySymptoms,
-  neurologicalSymptoms,
-  otherSymptoms,
-  respiratorySymptoms,
-} from '../constants/symptoms';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { AgeRange, BloodType } from '../reports.enum';
@@ -58,32 +49,21 @@ export class ReportsService {
           // report 생성
           const { symptoms } = createReportDto;
 
-          const selectedSymptoms = symptoms.split(',');
+          const emergencyLevelApiResponse = await axios.get(
+            'http://localhost:5000/ai',
+            {
+              params: {
+                sentence: symptoms,
+              },
+            },
+          );
 
-          const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
-          if (invalidSymptoms.length > 0) {
-            const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-          }
+          console.log(emergencyLevelApiResponse.data);
 
-          // const emergencyLevelApiResponse = await axios.get(
-          //   'http://localhost:5000/ai',
-          //   {
-          //     params: {
-          //       sentence: symptoms,
-          //     },
-          //   },
-          // );
-
-          // console.log(emergencyLevelApiResponse.data);
-
-          const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+          const emergencyLevel = emergencyLevelApiResponse.data.emergency_level;
           createReportDto.symptom_level = emergencyLevel;
 
-          return this.reportsRepository.createReport(
-            createReportDto,
-            emergencyLevel,
-          );
+          return this.reportsRepository.createReport(createReportDto);
         } catch (error) {
           throw new HttpException(
             error.response || '증상 보고서 생성에 실패하였습니다.',
@@ -93,82 +73,6 @@ export class ReportsService {
       },
     );
     return createdReport;
-  }
-
-  // 응급도 알고리즘
-  private calculateEmergencyLevel(selectedSymptoms): number {
-    const symptomCategories = [
-      emergencySymptoms,
-      neurologicalSymptoms,
-      respiratorySymptoms,
-      circulatorySymptoms,
-      injurySymptoms,
-      otherSymptoms,
-    ];
-
-    const symptomScores: number[] = [];
-
-    selectedSymptoms.forEach((symptom) => {
-      const categoryIndex = this.getSymptomCategoryIndex(
-        symptom,
-        symptomCategories,
-      );
-      const score = this.getSymptomScore(
-        symptom,
-        symptomCategories[categoryIndex],
-      );
-      symptomScores.push(score);
-    });
-
-    const totalScore = symptomScores.reduce((total, score) => total + score, 0);
-    const emergencyLevel = this.emergencyLevelByScore(totalScore);
-
-    return emergencyLevel;
-  }
-
-  private getSymptomCategoryIndex(
-    symptom: string,
-    symptomCategories: Symptom[],
-  ): number {
-    for (let i = 0; i < symptomCategories.length; i++) {
-      if (symptomCategories[i].hasOwnProperty(symptom)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  private getSymptomScore(symptom: string, symptomCategory: Symptom): number {
-    return symptomCategory[symptom] || 0;
-  }
-
-  private emergencyLevelByScore(score: number): number {
-    if (score > 80) {
-      return 1;
-    } else if (score > 60) {
-      return 2;
-    } else if (score > 40) {
-      return 3;
-    } else if (score > 20) {
-      return 4;
-    } else {
-      return 5;
-    }
-  }
-
-  private getInvalidSymptoms(selectedSymptoms: string[]): string[] {
-    const validSymptoms = [
-      ...Object.keys(emergencySymptoms),
-      ...Object.keys(neurologicalSymptoms),
-      ...Object.keys(respiratorySymptoms),
-      ...Object.keys(circulatorySymptoms),
-      ...Object.keys(injurySymptoms),
-      ...Object.keys(otherSymptoms),
-    ];
-
-    return selectedSymptoms.filter(
-      (symptom) => !validSymptoms.includes(symptom),
-    );
   }
 
   // 증상보고서 상세 조회
@@ -211,13 +115,13 @@ export class ReportsService {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
       }
 
-      // symptoms가 변경된 경우 symptoms_level 재계산
-      if (updateReportDto.symptoms) {
-        const selectedSymptoms = updateReportDto.symptoms.split(',');
-        const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
-        updateReportDto.symptom_level = emergencyLevel;
-      }
-      return this.reportsRepository.updateReport(report_id, updateReportDto);
+      // // symptoms가 변경된 경우 symptoms_level 재계산
+      // if (updateReportDto.symptoms) {
+      //   const selectedSymptoms = updateReportDto.symptoms.split(',');
+      //   const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
+      //   updateReportDto.symptom_level = emergencyLevel;
+      // }
+      // return this.reportsRepository.updateReport(report_id, updateReportDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -338,5 +242,14 @@ export class ReportsService {
     const t: number = end - start;
     console.log(`소요시간 : ${t / 1000}초`);
     console.log(`${count}개 생성`);
+  }
+
+  async getDataCount() {
+    const count = await this.reportsRepository
+      .createQueryBuilder('reports')
+      .select('COUNT(*) AS count')
+      .getRawOne();
+    const result = parseInt(count.count).toLocaleString();
+    return result;
   }
 }

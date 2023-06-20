@@ -25,6 +25,12 @@
       }
     </style>
     <script>
+      function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+      }
+
       function sendReport() {
         event.preventDefault();
         const patient_rrn = document.querySelector('#patient_rrn').value;
@@ -54,11 +60,43 @@
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            alert('데이터가 성공적으로 저장되었습니다.');
+            const reportId = data.report_id;
+            alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+
+            getCurrentPosition()
+              .then((position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const radius = null;
+                const maxCount = null;
+
+                let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
+                if (radius) {
+                  recommendedHospitals += `&radius=${radius}`;
+                }
+                if (maxCount) {
+                  recommendedHospitals += `&max_count=${maxCount}`;
+                }
+                return fetch(recommendedHospitals)
+                  .then((response) => response.text())
+                  .then((text) => {
+                    console.log(text);
+                    alert('병원추천 페이지로 이동합니다.');
+                    window.location.href = recommendedHospitals;
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    alert('병원추천 페이지로 이동하는데 실패했습니다.');
+                  });
+              })
+              .catch((error) => {
+                console.error(error);
+                alert('위치 정보를 가져오는데 실패했습니다.');
+              });
           })
           .catch((error) => {
-            console.error(error);
-            alert('데이터 저장에 실패했습니다. 다시 시도해주세요.');
+            console.error('Error:', error);
+            alert('데이터 저장 중에 오류가 발생했습니다.');
           });
       }
 
@@ -264,7 +302,7 @@
                   <div class="control">
                     <button
                       class="button is-link is-light"
-                      onclick="refreshBrowser()"
+                      onclick="refreshBrowser();"
                     >
                       취소
                     </button>
