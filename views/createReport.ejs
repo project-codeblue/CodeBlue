@@ -67,20 +67,26 @@
               .then((position) => {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
+                const radius = null;
+                const maxCount = null;
 
-                let getLocalHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
+                let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
                 if (radius) {
-                  getLocalHospitals += `&radius=${radius}`;
+                  recommendedHospitals += `&radius=${radius}`;
                 }
                 if (maxCount) {
-                  getLocalHospitals += `&max_count=${maxCount}`;
+                  recommendedHospitals += `&max_count=${maxCount}`;
                 }
-                return fetch(getLocalHospitals)
-                  .then((response) => {
-                    return response.json();
+                return fetch(recommendedHospitals)
+                  .then((response) => response.text())
+                  .then((text) => {
+                    console.log(text);
+                    alert('병원추천 페이지로 이동합니다.');
+                    window.location.href = recommendedHospitals;
                   })
-                  .then((otherData) => {
-                    console.log(otherData);
+                  .catch((error) => {
+                    console.error(error);
+                    alert('병원추천 페이지로 이동하는데 실패했습니다.');
                   });
               })
               .catch((error) => {
@@ -287,7 +293,7 @@
                     <button
                       type="submit"
                       class="button is-link"
-                      onclick="scrollToTop(); sendReport(); getCurrentPosition();"
+                      onclick="scrollToTop(); sendReport();"
                     >
                       제출
                     </button>
