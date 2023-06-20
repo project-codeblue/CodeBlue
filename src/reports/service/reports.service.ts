@@ -59,18 +59,7 @@ export class ReportsService {
           // report 생성
           const { symptoms } = createReportDto;
 
-          const emergencyLevelApiResponse = await axios.get(
-            'http://localhost:5000/ai',
-            {
-              params: {
-                sentence: symptoms,
-              },
-            },
-          );
-
-          console.log(emergencyLevelApiResponse.data);
-
-          const emergencyLevel = emergencyLevelApiResponse.data.emergency_level;
+          const emergencyLevel = await this.getEmergencyLevel(symptoms);
           createReportDto.symptom_level = emergencyLevel;
 
           return this.reportsRepository.createReport(createReportDto);
@@ -125,13 +114,15 @@ export class ReportsService {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
       }
 
-      // // symptoms가 변경된 경우 symptoms_level 재계산
-      // if (updateReportDto.symptoms) {
-      //   const selectedSymptoms = updateReportDto.symptoms.split(',');
-      //   const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
-      //   updateReportDto.symptom_level = emergencyLevel;
-      // }
-      // return this.reportsRepository.updateReport(report_id, updateReportDto);
+      // symptoms가 변경된 경우 symptoms_level 재계산
+      if (updateReportDto.symptoms) {
+        const emergencyLevel = await this.getEmergencyLevel(
+          updateReportDto.symptoms,
+        );
+        updateReportDto.symptom_level = emergencyLevel;
+      }
+
+      return this.reportsRepository.updateReport(report_id, updateReportDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -141,6 +132,19 @@ export class ReportsService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getEmergencyLevel(symptoms: string) {
+    const emergencyLevelApiResponse = await axios.get(
+      'http://localhost:5000/ai',
+      {
+        params: {
+          sentence: symptoms,
+        },
+      },
+    );
+
+    return emergencyLevelApiResponse.data.emergency_level;
   }
 
   // 더미 데이터 생성 API (추후 제거 예정)
