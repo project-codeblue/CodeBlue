@@ -21,5 +21,11 @@ export class AppController {
     const count = await this.reportService.getDataCount();
     return { count: count };
   }
+
+  @Get('/report')
+  @Render('createReport')
+  report() {
+    return { name: 'name' };
+  }
 }
 

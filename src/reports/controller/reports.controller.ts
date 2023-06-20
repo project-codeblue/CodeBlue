@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Body, Post, Patch, Render } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Body,
+  Post,
+  Patch,
+  Render,
+} from '@nestjs/common';
 import { ReportsService } from '../service/reports.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from '../reports.entity';
