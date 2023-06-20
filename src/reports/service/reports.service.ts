@@ -11,6 +11,8 @@ import { UpdateReportDto } from '../dto/update-report.dto';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { AgeRange, BloodType } from '../reports.enum';
+import axios from 'axios';
+import { Gender } from '../../patients/patients.enum';
 
 @Injectable()
 export class ReportsService {
@@ -34,9 +36,18 @@ export class ReportsService {
             // 환자가 존재하지 않는 경우, 새로운 환자 생성
             let patientId: number;
             if (!patient) {
+              // 주민등록번호로 gender 판별
+              const gender =
+                patient_rrn[7] === '1' || patient_rrn[7] === '3'
+                  ? Gender.M
+                  : patient_rrn[7] === '2' || patient_rrn[7] === '4'
+                  ? Gender.F
+                  : null;
+
               const newPatient =
                 await this.patientsRepository.createPatientInfo({
-                  patient_rrn: patient_rrn,
+                  patient_rrn,
+                  gender,
                 });
               patientId = newPatient.patient_id;
             } else {
@@ -48,12 +59,10 @@ export class ReportsService {
           // report 생성
           const { symptoms } = createReportDto;
 
-          const emergencyLevel = 1; // emergencyLevel 작업을 나중에 할 계획이므로 우선 1으로 설정
+          const emergencyLevel = await this.getEmergencyLevel(symptoms);
+          createReportDto.symptom_level = emergencyLevel;
 
-          return this.reportsRepository.createReport(
-            createReportDto,
-            emergencyLevel,
-          );
+          return this.reportsRepository.createReport(createReportDto);
         } catch (error) {
           throw new HttpException(
             error.response || '증상 보고서 생성에 실패하였습니다.',
@@ -105,13 +114,15 @@ export class ReportsService {
         throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
       }
 
-      // // symptoms가 변경된 경우 symptoms_level 재계산
-      // if (updateReportDto.symptoms) {
-      //   const selectedSymptoms = updateReportDto.symptoms.split(',');
-      //   const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
-      //   updateReportDto.symptom_level = emergencyLevel;
-      // }
-      // return this.reportsRepository.updateReport(report_id, updateReportDto);
+      // symptoms가 변경된 경우 symptoms_level 재계산
+      if (updateReportDto.symptoms) {
+        const emergencyLevel = await this.getEmergencyLevel(
+          updateReportDto.symptoms,
+        );
+        updateReportDto.symptom_level = emergencyLevel;
+      }
+
+      return this.reportsRepository.updateReport(report_id, updateReportDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -121,6 +132,19 @@ export class ReportsService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getEmergencyLevel(symptoms: string) {
+    const emergencyLevelApiResponse = await axios.get(
+      'http://localhost:5000/ai',
+      {
+        params: {
+          sentence: symptoms,
+        },
+      },
+    );
+
+    return emergencyLevelApiResponse.data.emergency_level;
   }
 
   // 더미 데이터 생성 API (추후 제거 예정)
