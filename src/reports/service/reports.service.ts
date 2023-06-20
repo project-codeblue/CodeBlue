@@ -8,15 +8,6 @@ import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
-import {
-  Symptom,
-  circulatorySymptoms,
-  emergencySymptoms,
-  injurySymptoms,
-  neurologicalSymptoms,
-  otherSymptoms,
-  respiratorySymptoms,
-} from '../constants/symptoms';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { AgeRange, BloodType } from '../reports.enum';
@@ -57,16 +48,7 @@ export class ReportsService {
           // report 생성
           const { symptoms } = createReportDto;
 
-          const selectedSymptoms = symptoms.split(',');
-
-          const invalidSymptoms = this.getInvalidSymptoms(selectedSymptoms);
-          if (invalidSymptoms.length > 0) {
-            const error = `유효하지 않은 증상: ${invalidSymptoms.join(', ')}`;
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-          }
-
-          const emergencyLevel = this.calculateEmergencyLevel(selectedSymptoms);
-          createReportDto.symptom_level = emergencyLevel;
+          const emergencyLevel = 1; // emergencyLevel 작업을 나중에 할 계획이므로 우선 1으로 설정
 
           return this.reportsRepository.createReport(
             createReportDto,
@@ -81,82 +63,6 @@ export class ReportsService {
       },
     );
     return createdReport;
-  }
-
-  // 응급도 알고리즘
-  private calculateEmergencyLevel(selectedSymptoms): number {
-    const symptomCategories = [
-      emergencySymptoms,
-      neurologicalSymptoms,
-      respiratorySymptoms,
-      circulatorySymptoms,
-      injurySymptoms,
-      otherSymptoms,
-    ];
-
-    const symptomScores: number[] = [];
-
-    selectedSymptoms.forEach((symptom) => {
-      const categoryIndex = this.getSymptomCategoryIndex(
-        symptom,
-        symptomCategories,
-      );
-      const score = this.getSymptomScore(
-        symptom,
-        symptomCategories[categoryIndex],
-      );
-      symptomScores.push(score);
-    });
-
-    const totalScore = symptomScores.reduce((total, score) => total + score, 0);
-    const emergencyLevel = this.emergencyLevelByScore(totalScore);
-
-    return emergencyLevel;
-  }
-
-  private getSymptomCategoryIndex(
-    symptom: string,
-    symptomCategories: Symptom[],
-  ): number {
-    for (let i = 0; i < symptomCategories.length; i++) {
-      if (symptomCategories[i].hasOwnProperty(symptom)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  private getSymptomScore(symptom: string, symptomCategory: Symptom): number {
-    return symptomCategory[symptom] || 0;
-  }
-
-  private emergencyLevelByScore(score: number): number {
-    if (score > 80) {
-      return 1;
-    } else if (score > 60) {
-      return 2;
-    } else if (score > 40) {
-      return 3;
-    } else if (score > 20) {
-      return 4;
-    } else {
-      return 5;
-    }
-  }
-
-  private getInvalidSymptoms(selectedSymptoms: string[]): string[] {
-    const validSymptoms = [
-      ...Object.keys(emergencySymptoms),
-      ...Object.keys(neurologicalSymptoms),
-      ...Object.keys(respiratorySymptoms),
-      ...Object.keys(circulatorySymptoms),
-      ...Object.keys(injurySymptoms),
-      ...Object.keys(otherSymptoms),
-    ];
-
-    return selectedSymptoms.filter(
-      (symptom) => !validSymptoms.includes(symptom),
-    );
   }
 
   // 증상보고서 상세 조회
