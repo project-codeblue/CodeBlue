@@ -136,7 +136,7 @@ export class ReportsService {
 
   async getEmergencyLevel(symptoms: string) {
     const emergencyLevelApiResponse = await axios.get(
-      'http://localhost:5000/ai',
+      'http://13.125.37.99:5000/ai',
       {
         params: {
           sentence: symptoms,
