@@ -29,13 +29,11 @@
         event.preventDefault();
         const patient_rrn = document.querySelector('#patient_rrn').value;
         const age_range_form = document.querySelector('#age_range');
-        const age_range = age_range_form
-          ? age_range_form.options[age_range_form.selectedIndex].value
-          : null;
-        const blood_type_form = document.querySelector('#blood_type').value;
-        const blood_type = blood_type_form
-          ? blood_type_form.options[blood_type_form.selectedIndex].value
-          : null;
+        const age_range = age_range_form.value || null;
+        console.log(age_range_form, age_range);
+        const blood_type_form = document.querySelector('#blood_type');
+        const blood_type = blood_type_form.value || null;
+        console.log(blood_type_form, blood_type);
         const blood_pressure = document.querySelector('#blood_pressure').value;
         const symptoms = document.querySelector('#symptoms').value;
         const createReportDto = {
@@ -45,8 +43,8 @@
           blood_pressure,
           symptoms,
         };
-        console.log(createReportDto);
 
+        console.log('createReportDto', createReportDto);
         const url = '/report';
         fetch(url, {
           method: 'POST',
@@ -67,6 +65,7 @@
       }
 
       function scrollToTop() {
+        event.preventDefault();
         window.scrollTo({
           top: 0,
           behavior: 'smooth',
@@ -74,6 +73,7 @@
       }
 
       function refreshBrowser() {
+        event.preventDefault();
         window.location.reload();
       }
     </script>
@@ -155,26 +155,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- <div class="field is-horizontal">
-              <div class="field-label">
-                <label class="label">성별</label>
-              </div>
-              <div class="field-body">
-                <div class="field is-narrow">
-                  <div class="control">
-                    <label class="radio">
-                      <input type="radio" id="gender" name="gender" />
-                      F
-                    </label>
-                    <label class="radio">
-                      <input type="radio" id="gender" name="gender" />
-                      M
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div> -->
 
             <div class="field is-horizontal">
               <div class="field-label is-normal">
@@ -264,7 +244,8 @@
                     ></textarea>
                   </div>
                   <p class="help is-danger">
-                    필수입력값입니다. 환자의 증상을 최대한 상세하게 적어주세요.
+                    필수 입력값 입니다. 환자의 증상을 최대한 상세하게
+                    적어주세요.
                   </p>
                 </div>
               </div>
