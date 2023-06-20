@@ -47,8 +47,8 @@
           blood_pressure,
           symptoms,
         };
-        console.log(createReportDto);
 
+        console.log('createReportDto', createReportDto);
         const url = '/report';
         fetch(url, {
           method: 'POST',
@@ -280,7 +280,8 @@
                     ></textarea>
                   </div>
                   <p class="help is-danger">
-                    필수입력값입니다. 환자의 증상을 최대한 상세하게 적어주세요.
+                    필수 입력값 입니다. 환자의 증상을 최대한 상세하게
+                    적어주세요.
                   </p>
                 </div>
               </div>
