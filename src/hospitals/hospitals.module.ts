@@ -10,6 +10,8 @@ import { KakaoMapService } from '../commons/providers/kakao-map.service';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
@@ -20,8 +22,8 @@ import { redisStore } from 'cache-manager-redis-store';
       name: 'redis-cache',
       useFactory: async () => ({
         store: redisStore,
-        host: 'localhost',
-        port: 6379,
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
         ttl: 60,
       }),
     }),
