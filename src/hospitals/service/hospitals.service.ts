@@ -138,7 +138,6 @@ export class HospitalsService {
             const seconds = Math.floor(duration % 60);
 
             const obj = {
-              ...report,
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
@@ -204,7 +203,14 @@ export class HospitalsService {
               return result;
             }),
           );
-          results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
+
+          // 병원을 선택한 경우 선택한 병원정보 반환
+          const selectedHospital = report.hospital_id
+            ? await this.hospitalsRepository.findHospital(report.hospital_id)
+            : null;
+          results.unshift(selectedHospital); // 사용자가 선택한 병원 정보 - index 2번 저장
+          results.unshift(report); // 증상보고서 내용 - index 1번 저장
+          results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline - index 0번 저장
           // const end: any = new Date();
           // const t = end - start;
           // console.log(`응답 시간 : ${t}ms`);
