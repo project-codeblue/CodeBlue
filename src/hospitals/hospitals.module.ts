@@ -32,17 +32,6 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
       inject: [redisConfig.KEY],
     }),
     ConfigModule.forFeature(redisConfig),
-    // CacheModule.register({
-    //   lagacyMode: true,
-    //   isGlobal: true,
-    //   name: 'redis-cache',
-    //   useFactory: async () => ({
-    //     store: redisStore,
-    //     host: process.env.REDIS_HOST,
-    //     port: process.env.REDIS_PORT,
-    //     ttl: 60,
-    //   }),
-    // }),
   ],
   controllers: [HospitalsController],
   providers: [
