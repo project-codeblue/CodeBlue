@@ -12,8 +12,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import redisConfig from '../../config/redis.config';
 import { ConfigModule, ConfigType } from '@nestjs/config';
-// import * as dotenv from 'dotenv';
-// dotenv.config();
 
 @Module({
   imports: [
@@ -27,22 +25,13 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
         store: redisStore,
         host: config.host,
         port: config.port,
+        username: config.username,
+        password: config.password,
         ttl: config.ttl,
       }),
       inject: [redisConfig.KEY],
     }),
     ConfigModule.forFeature(redisConfig),
-    // CacheModule.register({
-    //   lagacyMode: true,
-    //   isGlobal: true,
-    //   name: 'redis-cache',
-    //   useFactory: async () => ({
-    //     store: redisStore,
-    //     host: process.env.REDIS_HOST,
-    //     port: process.env.REDIS_PORT,
-    //     ttl: 60,
-    //   }),
-    // }),
   ],
   controllers: [HospitalsController],
   providers: [

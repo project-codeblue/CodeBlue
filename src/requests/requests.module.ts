@@ -10,8 +10,7 @@ import { createBullBoard } from '@bull-board/api';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { Queue } from 'bull';
-import { ConfigModule, ConfigType } from '@nestjs/config';
-import redisConfig from '../../config/redis.config';
+import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
@@ -25,6 +24,8 @@ import { ConfigService } from '@nestjs/config';
           maxRetriesPerRequest: 20,
           host: configService.get('redis.host'),
           port: configService.get('redis.port'),
+          username: configService.get('redis.username'),
+          password: configService.get('redis.password'),
         },
       }),
       inject: [ConfigService],
