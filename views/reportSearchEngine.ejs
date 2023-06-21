@@ -4,7 +4,19 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CodeBlue - 증상 보고서 검색 페이지</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="./image/codeblue-favicon.png"/> 
+    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png"/>
+
+    <title>CodeBLUE - 증상 보고서 검색 페이지</title>
+
+    <!-- Meta Tag -->
+    <meta property="og:url" content="https://codeblue.site">
+    <meta property="og:title" content="CodeBLUE">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./image/codeblue.png">
+    <meta property="og:description" content="CodeBLUE - 증상 보고서 검색 페이지">
 
     <!-- css -->
     <link
@@ -93,7 +105,7 @@
           <p class="title">증상보고서 검색 엔진</p>
           <p class="subtitle">
             <br />
-            현재 200만 개의 누적 증상보고서가 있습니다.
+            현재 <%= count %>개의 누적 증상보고서가 있습니다.
             <br />
             보고서 생성 날짜, 증상, 중증도 레벨, 이송 병원 지역, 환자 성명을
             통해 검색해보세요.
@@ -101,14 +113,15 @@
           <form action="./request/search" method="GET">
             <div class="mb-3 mt-3">
               <div class="search">
-                <label for="fromDate" class="form-label mx-5 my-6">
+                <label for="fromDate" class="form-label mx-5">
                   시작 일자<br />
+                  <% const today = new Date().toISOString().split('T')[0]; %>
                   <input
                     type="date"
                     id="fromDate"
                     name="fromDate"
                     min="2010-01-01"
-                    max="2099-12-31"
+                    max=<%= today %>
                     style="
                       font-family: 'Noto Sans KR', sans-serif;
                       margin-bottom: 10px;
@@ -122,7 +135,7 @@
                     id="toDate"
                     name="toDate"
                     min="2010-01-01"
-                    max="2099-12-31"
+                    max=<%= today %>
                     style="
                       font-family: 'Noto Sans KR', sans-serif;
                       margin-bottom: 10px;
@@ -146,6 +159,16 @@
                     <option>4</option>
                     <option>5</option>
                   </select>
+                </label>
+                <label for="symptoms" class="form-label m-5">
+                  <input
+                    class="input form-control"
+                    type="text"
+                    id="symptoms"
+                    placeholder="증상명"
+                    name="symptoms"
+                    style="font-family: 'Noto Sans KR', sans-serif"
+                  />
                 </label>
                 <label for="site" class="form-label select m-5 is-hovered">
                   <select

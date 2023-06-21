@@ -9,17 +9,23 @@ import { Crawling } from '../commons/middlewares/crawling';
 import { KakaoMapService } from '../commons/providers/kakao-map.service';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-ioredis';
+import { redisStore } from 'cache-manager-redis-store';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Hospitals]),
     CacheModule.register({
+      lagacyMode: true,
+      isGlobal: true,
       name: 'redis-cache',
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-      ttl: 60,
+      useFactory: async () => ({
+        store: redisStore,
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        ttl: 60,
+      }),
     }),
   ],
   controllers: [HospitalsController],
