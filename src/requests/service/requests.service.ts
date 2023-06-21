@@ -35,8 +35,8 @@ export class RequestsService {
     try {
       const query = this.reportsRepository
         .createQueryBuilder('reports')
-        .leftJoin('reports.patient', 'patient')
-        .leftJoin('reports.hospital', 'hospital')
+        .leftJoinAndSelect('reports.patient', 'patient')
+        .leftJoinAndSelect('reports.hospital', 'hospital')
         .select([
           'reports.report_id',
           'reports.symptom_level',
@@ -47,11 +47,21 @@ export class RequestsService {
           'hospital.name',
           'hospital.phone',
           'hospital.emogList',
+          'hospital.address',
         ])
         .where('1 = 1')
         .andWhere('is_sent = 1')
-        .orderBy('reports_createdAt', 'ASC')
-        .limit(100);
+        .orderBy('reports_createdAt', 'ASC');
+      // .addSelect('reports.symptoms', 'index_symptoms')
+      // .addSelect('reports.createdAt', 'index_createdAt')
+      // .addSelect('patients.name', 'index_name')
+      // .addSelect('hospitals.address', 'index_site');
+      // .useIndex('index_symptoms')
+      // .useIndex('index_symptoms_level')
+      // .useIndex('index_age_range')
+      // .useIndex('index_createdAt')
+      // .useIndex('index_name')
+      // .useIndex('index_site');
 
       if (queries['fromDate'] && queries['toDate']) {
         // URL 쿼리에 fromDate & toDate가 존재하면 실행

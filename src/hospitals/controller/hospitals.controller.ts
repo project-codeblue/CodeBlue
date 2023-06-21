@@ -23,6 +23,7 @@ export class HospitalsController {
       report_id,
       queries,
     );
+    console.log(hospitals_data);
     return { hospitals_data };
   }
 

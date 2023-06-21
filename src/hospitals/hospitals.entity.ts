@@ -5,6 +5,7 @@ import {
   Entity,
   CreateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { Reports } from '../reports/reports.entity';
 
@@ -17,6 +18,7 @@ export class Hospitals extends BaseEntity {
   name: string;
 
   @Column({ type: 'varchar', nullable: false })
+  @Index()
   address: string;
 
   @Column({ type: 'varchar', nullable: false })
