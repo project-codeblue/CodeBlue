@@ -7,12 +7,14 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { BloodType, AgeRange } from './reports.enum';
 import { Hospitals } from '../hospitals/hospitals.entity';
 import { Patients } from '../patients/patients.entity';
 
 @Entity()
+@Index(['createdAt', 'symptoms', 'symptom_level', 'age_range'])
 export class Reports extends BaseEntity {
   @PrimaryGeneratedColumn()
   report_id: number;
