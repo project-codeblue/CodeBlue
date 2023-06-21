@@ -15,7 +15,7 @@ config:
 
 scenarios:
   - flow:
-    - log: "사용자가 증상 보고서를 입력 후 병원 추천"
+    - log: "사용자가 증상 보고서를 입력 후 병원 추천 조회"
     - post:
         url: "http://localhost:3000/report"
         json:

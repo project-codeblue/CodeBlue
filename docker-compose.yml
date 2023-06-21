@@ -1,14 +1,5 @@
 version: '3.1'
 services:  
-  redis-server:
-    image: redis
-    command: redis-server --port 6379
-    container_name: redis-server
-    hostname: redis
-    ports:
-      - 6379:6379
-    restart: unless-stopped
-  
   codeblue:
     build:
       context: ./
@@ -19,5 +10,5 @@ services:
       - ./src:/src
       - ./node_modules
     restart: unless-stopped
-    depends_on:
-      - redis-server
+    extra_hosts:
+      - host.docker.internal:host-gateway

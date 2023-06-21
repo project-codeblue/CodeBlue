@@ -1,14 +1,25 @@
 config:
-  target: "http://localhost:3000"
+  target: "https://codeblue.site/"
   phases:
+    # - duration: 1
+    #   arrivalRate: 1
+    # - pause: 10
     - duration: 60
       arrivalRate: 100
+    - pause: 60
+  payload:
+    path: "hospital-recommend-repeat.csv"
+    skipHeader: false
+    delimiter: ","
+    loadAll: true
+    fields:
+      - "report_id"
 
 scenarios:
   - flow:
-    - log: "사용자가 동일한 위치 환경에서 반복적인 병원 추천 실행"
+    - log: "사용자가 동일한 위치 환경에서 반복적인 병원 추천 조회 실행"
     - get:
-        url: "http://localhost:3000/hospital/1"
+        url: "https://codeblue.site/hospital/{{report_id}}"
         qs:
           latitude: 37.1
           longitude: 127.1

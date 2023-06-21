@@ -1,25 +1,26 @@
 config:
-  target: "http://localhost:3000"
+  target: "https://codeblue.site/"
   phases:
     - duration: 60
-      arrivalRate: 100
+      arrivalRate: 500
 
 scenarios:
   - flow:
     - log: "사용자가 증상 보고서 검색"
     - get:
-        url: "http://localhost:3000/request/search"
+        url: "https://codeblue.site/request/search"
         qs:
           fromDate: "2023-06-01"
-          toDate: "2023-06-30"
-          symptoms: "저체온증"
+          toDate: "2023-06-18"
           symptom_level: 1
-          site: "강원도"
-          name: "홍길동"
-          age_range: "성인"
+          symptoms: "저체온증"
+          age_range: "노년"
+          site: "서울"
+          name: "원우재"
     - get: 
-        url: "http://localhost:3000/request/search"
+        url: "https://codeblue.site/request/search"
         qs:
           fromDate: "2023-06-01"
           symptom_level: 3
-          site: "강원도"
+          age_range: "성인"
+          site: "서울"

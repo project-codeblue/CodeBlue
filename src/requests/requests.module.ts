@@ -10,16 +10,24 @@ import { createBullBoard } from '@bull-board/api';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { Queue } from 'bull';
+import { ConfigModule, ConfigType } from '@nestjs/config';
+import redisConfig from '../../config/redis.config';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ReportsModule,
     HospitalsModule,
-    BullModule.forRoot('bullqueue-config', {
-      redis: {
-        host: 'localhost', // 일단 localhost로 설정 -> 후에 docker-compose로 변경
-        port: 6379,
-      },
+    BullModule.forRootAsync('bullqueue-config', {
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          maxRetriesPerRequest: 20,
+          host: configService.get('redis.host'),
+          port: configService.get('redis.port'),
+        },
+      }),
+      inject: [ConfigService],
     }), // task queue (BullQueue)를 위해 import
     BullModule.registerQueue({
       configKey: 'bullqueue-config',
