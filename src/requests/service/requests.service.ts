@@ -234,7 +234,7 @@ export class RequestsService {
         priority: this.getPriority(report),
       }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
     );
-    // console.log('job: ', job);
+    console.log('job: ', job);
     console.log('3. waitFinish() 호출');
     // 대기열 큐에 job을 넣은 후, service 내에서 waitFinish() 함수를 호출한다
     return this.waitFinish(eventName, 2, hospital); // 2 = time
@@ -279,7 +279,9 @@ export class RequestsService {
       async () => {
         console.log('*2 sendRequest 진입');
         try {
-          const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+          const hospital = await this.hospitalsRepository.findHospital(
+            hospital_id,
+          );
           const available_beds = hospital.available_beds;
           if (available_beds === 0) {
             throw new HttpException(
@@ -297,7 +299,10 @@ export class RequestsService {
           }
 
           // 증상 보고서에 hospital_id 추가
-          await this.reportsRepository.addTargetHospital(report_id, hospital_id);
+          await this.reportsRepository.addTargetHospital(
+            report_id,
+            hospital_id,
+          );
 
           // 해당 병원의 available_beds를 1 감소
           await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
