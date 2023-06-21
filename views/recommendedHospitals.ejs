@@ -87,18 +87,7 @@
         })
         .then((data) => {
           console.log(data);
-          const notification = document.querySelector('#notification');
-          notification.style.display = 'block';
-          if (data.success === 'true') {
-            notification.innerHTML = `
-              <strong>${data.hospital.name}</strong>에 환자 이송 신청이 접수되었습니다. <br />
-              환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
-              <strong>병원 주소</strong>: ${data.hospital.address} <br />
-              <strong>병원 전화번호</strong>: ${data.hospital.phone} <br />
-            `;
-          }
-          const withdrawButton = document.querySelector('.withdraw');
-          withdrawButton.style.display = 'block';
+          
         })
         .catch((error) => {
           console.error(error);
@@ -264,21 +253,6 @@
               <br />
             </div>
             <% } %>
-            <button
-              class="withdraw button is-link is-light"
-              onclick="scrollToTop(); unsendRequest(`<%=hospitals_data[1].report_id%>`);"
-              style="display: none"
-            >
-              병원 이송 신청 철회
-            </button>
-            <div
-              class="notification is-danger is-light mt-3"
-              id="notification"
-              style="display: none"
-            >
-              이미 병원에 이송 신청이 접수되었습니다. <br />
-              다른 병원에 신청을 하시려면 이전 신청을 철회해주세요.
-            </div>
           </div>
         </div>
         <div class="box">

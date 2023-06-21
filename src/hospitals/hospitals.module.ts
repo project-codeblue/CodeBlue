@@ -12,8 +12,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import redisConfig from '../../config/redis.config';
 import { ConfigModule, ConfigType } from '@nestjs/config';
-// import * as dotenv from 'dotenv';
-// dotenv.config();
 
 @Module({
   imports: [
@@ -27,6 +25,8 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
         store: redisStore,
         host: config.host,
         port: config.port,
+        username: config.username,
+        password: config.password,
         ttl: config.ttl,
       }),
       inject: [redisConfig.KEY],

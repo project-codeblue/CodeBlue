@@ -24,6 +24,8 @@ import { ConfigService } from '@nestjs/config';
           maxRetriesPerRequest: 20,
           host: configService.get('redis.host'),
           port: configService.get('redis.port'),
+          username: configService.get('redis.username'),
+          password: configService.get('redis.password'),
         },
       }),
       inject: [ConfigService],
