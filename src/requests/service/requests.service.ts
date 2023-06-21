@@ -244,7 +244,7 @@ export class RequestsService {
         priority: this.getPriority(report),
       }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
     );
-    // console.log('job: ', job);
+    console.log('job: ', job);
     console.log('3. waitFinish() 호출');
     // 대기열 큐에 job을 넣은 후, service 내에서 waitFinish() 함수를 호출한다
     return this.waitFinish(eventName, 2, hospital); // 2 = time

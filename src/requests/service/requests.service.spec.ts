@@ -5,7 +5,6 @@ import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
 import { Hospitals } from '../../hospitals/hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
-import { Elk } from '../../commons/middlewares/elk';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Queue } from 'bull';
 
@@ -13,7 +12,6 @@ describe('RequestsService Unit Testing', () => {
   let requestsService: RequestsService;
   let hospitalsRepository: HospitalsRepository;
   let reportsRepository: ReportsRepository;
-  let elk: Elk;
   let eventEmitter: EventEmitter2;
   let entityManager: EntityManager;
   let requestQueue: Queue;
@@ -35,17 +33,12 @@ describe('RequestsService Unit Testing', () => {
       createQueryBuilder: jest.fn(),
       leftJoinAndSelect: jest.fn(),
     };
-    const mockElk = {
-      allSearch: jest.fn(),
-      search: jest.fn(),
-    };
     const mockTransaction = {
       transaction: jest.fn().mockImplementation((isolationLevel, callback) => {
         // transaction 메소드에 대한 Mock 구현을 제공합니다.
         return callback(); // 테스트 시에는 콜백 함수를 실행합니다.
       }),
     };
-    
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -62,17 +55,12 @@ describe('RequestsService Unit Testing', () => {
           provide: EntityManager,
           useValue: mockTransaction,
         },
-        {
-          provide: Elk,
-          useValue: mockElk,
-        },
       ],
     }).compile();
 
     requestsService = moduleRef.get(RequestsService);
     hospitalsRepository = moduleRef.get(HospitalsRepository);
     reportsRepository = moduleRef.get(ReportsRepository);
-    elk = moduleRef.get(Elk);
     eventEmitter = moduleRef.get(EventEmitter2);
     entityManager = moduleRef.get(EntityManager);
   });
