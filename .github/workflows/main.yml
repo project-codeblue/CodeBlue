@@ -4,8 +4,8 @@ name: CodeBLUE-CI-CD
 
 # main.yml에서 사용할 환경변수
 env:
-  DOCKER_IMAGE: ghcr.io/siwon-kim/vog-nest
-  DOCKER_CONTAINER: vog-nest-container
+  DOCKER_IMAGE: ghcr.io/siwon-kim/codeblue-image
+  DOCKER_CONTAINER: codeblue-container
 
 # 이벤트
 # main 브랜치에 push나 pull request가 일어난우경우
@@ -40,6 +40,7 @@ jobs:
           echo "RDS_PASSWORD=${{ secrets.RDS_PASSWORD }}" >> .env
           echo "RDS_PORT=${{ secrets.RDS_PORT }}" >> .env
           echo "RDS_USERNAME=${{ secrets.RDS_USERNAME }}" >> .env
+          echo "KAKAOMAP_REST_API_KEY=${{ secrets.KAKAOMAP_REST_API_KEY }}" >> .env
       - name: Install dependencies
         run: npm install
       - run: npm run test
@@ -74,7 +75,7 @@ jobs:
     # deploy가 시작되려면 build를 완료해야함
     needs: build
     # ec2에 설치한 Runner로 job 실행
-    runs-on: [self-hosted, label-vog]
+    runs-on: [self-hosted, label-codeblue]
     # Github container registry 로그인
     steps:
       - name: Login to ghcr
@@ -98,5 +99,6 @@ jobs:
           echo "RDS_PASSWORD=${{ secrets.RDS_PASSWORD }}" >> .env
           echo "RDS_PORT=${{ secrets.RDS_PORT }}" >> .env
           echo "RDS_USERNAME=${{ secrets.RDS_USERNAME }}" >> .env
+          echo "KAKAOMAP_REST_API_KEY=${{ secrets.KAKAOMAP_REST_API_KEY }}" >> .env
           docker stop ${{ env.DOCKER_CONTAINER }} && docker rm ${{ env.DOCKER_CONTAINER }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
           docker run --env-file ./.env -d -p 80:3000 --name ${{ env.DOCKER_CONTAINER }} --restart always ${{ env.DOCKER_IMAGE }}:latest
