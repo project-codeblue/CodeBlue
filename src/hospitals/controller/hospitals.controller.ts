@@ -8,7 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { HospitalsService } from '../service/hospitals.service';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheInterceptor } from '../../commons/interceptors/cache.interceptor';
 
 @Controller('hospital')
 @UseInterceptors(CacheInterceptor)
@@ -27,7 +27,6 @@ export class HospitalsController {
       report_id,
       queries,
     );
-    console.log(hospitals_data);
     return { hospitals_data };
   }
 

@@ -31,7 +31,6 @@ export class CacheInterceptor implements NestInterceptor {
         return of(cachedData);
       }
 
-      console.log('cacheManager:', this.cacheManager);
       // 캐시된 데이터가 없는 경우 요청 처리
       return next.handle().pipe(
         tap((data) => {
@@ -43,11 +42,12 @@ export class CacheInterceptor implements NestInterceptor {
     }
   }
 
-  private generateCacheKey(request: Request): string {
+  private generateCacheKey(request): string {
     // 요청 URL과 쿼리 파라미터를 기반으로 고유한 캐시 키 생성
-    const url = request.url;
-    const queryParams = JSON.stringify(url);
-    return `${queryParams}`;
+    const reportId = request.params.report_id;
+    const radius = request.query.radius;
+    const maxCount = request.query.max_count;
+    return `${reportId}:${radius}:${maxCount}`;
   }
 
   private isRequestGetRecommendedHospital(context: ExecutionContext): boolean {
