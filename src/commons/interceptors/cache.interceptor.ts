@@ -46,9 +46,7 @@ export class CacheInterceptor implements NestInterceptor {
   private generateCacheKey(request: Request): string {
     // 요청 URL과 쿼리 파라미터를 기반으로 고유한 캐시 키 생성
     const url = request.url;
-    console.log('url:', url);
     const queryParams = JSON.stringify(url);
-    console.log('queryParams:', queryParams);
     return `${queryParams}`;
   }
 
