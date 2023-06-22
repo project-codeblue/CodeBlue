@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { RequestsController } from './controller/requests.controller';
 import { RequestsService } from './service/requests.service';
 import { ReportsModule } from '../reports/reports.module';
@@ -10,26 +10,15 @@ import { createBullBoard } from '@bull-board/api';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { Queue } from 'bull';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigService } from '@nestjs/config';
+import { BullConfigProvider } from '../commons/providers/bull-config.provider';
 
 @Module({
   imports: [
     ReportsModule,
     HospitalsModule,
     BullModule.forRootAsync('bullqueue-config', {
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        redis: {
-          maxRetriesPerRequest: 20,
-          host: configService.get('redis.host'),
-          port: configService.get('redis.port'),
-          // username: configService.get('redis.username'),
-          // password: configService.get('redis.password'),
-        },
-      }),
-      inject: [ConfigService],
-    }), // task queue (BullQueue)를 위해 import
+      useClass: BullConfigProvider,
+    }),
     BullModule.registerQueue({
       configKey: 'bullqueue-config',
       name: 'requestQueue',
@@ -41,7 +30,7 @@ import { ConfigService } from '@nestjs/config';
 export class RequestsModule {
   constructor(@InjectQueue('requestQueue') private requestQueue: Queue) {}
 
-  configure(consumer) {
+  configure(consumer: MiddlewareConsumer) {
     const serverAdapter = new ExpressAdapter();
     serverAdapter.setBasePath('/queues-board');
 

@@ -9,19 +9,6 @@ export class KakaoMapService {
     @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
   ) {}
 
-  async convertCoordinatesToRegion(
-    latitude: number,
-    longitude: number,
-  ): Promise<string> {
-    const url = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${longitude}&y=${latitude}&input_coord=WGS84`;
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `KakaoAK ${this.config.kakaoApiKey}`,
-      },
-    });
-    return response.data.documents[0].region_1depth_name;
-  }
-
   async getDrivingResult(
     startLat: number,
     startLng: number,

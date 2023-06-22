@@ -4,7 +4,7 @@ import { ReportsService } from './service/reports.service';
 import { ReportsRepository } from './reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reports } from './reports.entity';
-import { KakaoMapService } from '../commons/providers/kakao-map.service';
+import { KakaoMapService } from '../commons/providers/kakao-map.provider';
 import { PatientsRepository } from '../patients/patients.repository';
 
 @Module({
