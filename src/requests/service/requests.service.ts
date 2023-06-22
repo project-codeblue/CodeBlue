@@ -41,7 +41,7 @@ export class RequestsService {
           'reports.report_id',
           'reports.symptom_level',
           'reports.symptoms',
-          'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
+          'reports.createdAt',
           'patient.name',
           'reports.age_range',
           'hospital.name',
@@ -226,6 +226,7 @@ export class RequestsService {
     if (!report) {
       throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
     }
+
     console.log('1. requestQueue에 job 추가');
     // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
     await this.requestQueue.add(
