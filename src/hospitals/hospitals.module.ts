@@ -28,10 +28,10 @@ import { RedisConfigProvider } from 'src/commons/providers/redis-config.provider
     Crawling,
     KakaoMapService,
     MedicalOpenAPI,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CacheInterceptor,
+    // },
   ],
   exports: [HospitalsService, HospitalsRepository],
 })
