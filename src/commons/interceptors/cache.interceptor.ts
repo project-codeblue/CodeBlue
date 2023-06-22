@@ -12,7 +12,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
-  protected allowedMethods = ['GET'];
+  protected cacheMethods = ['GET'];
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
   async intercept(
@@ -20,7 +20,7 @@ export class CacheInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     // 추천 병원 조회 GET 요청인 경우에만 캐시 적용
-    if (this.isRequestGetRecommendedHospital(context)) {
+    if (this.isRequestGet(context)) {
       const request = context.switchToHttp().getRequest();
       const cacheKey = this.generateCacheKey(request);
       console.log('cacheKey:', cacheKey);
@@ -36,7 +36,7 @@ export class CacheInterceptor implements NestInterceptor {
         tap((data) => {
           // 데이터를 캐시에 저장
           console.log('캐시에 데이터를 저장합니다.');
-          this.cacheManager.set(cacheKey, data, 60000);
+          this.cacheManager.set(cacheKey, data);
         }),
       );
     }
@@ -50,11 +50,8 @@ export class CacheInterceptor implements NestInterceptor {
     return `${reportId}:${radius}:${maxCount}`;
   }
 
-  private isRequestGetRecommendedHospital(context: ExecutionContext): boolean {
+  private isRequestGet(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
-    const url = req.url;
-    return (
-      this.allowedMethods.includes(req.method) && url.startsWith('/hospital/')
-    );
+    return this.cacheMethods.includes(req.method);
   }
 }

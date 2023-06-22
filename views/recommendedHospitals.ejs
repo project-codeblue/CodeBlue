@@ -89,9 +89,13 @@
         })
         .then((data) => {
           console.log(data);
-          window.location.reload();
-          const errorMessage = document.querySelector('#errorMessage');
-          errorMessage.style.display = 'block';
+          if (data.report_id === report_id) {
+            window.location.reload();
+          }
+          if (data.statusCode === 400) {
+            const errorMessage = document.querySelector('#errorMessage');
+            errorMessage.style.display = 'block';
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -110,8 +114,6 @@
         .then((data) => {
           console.log(data);
           window.location.reload();
-          const errorMessage = document.querySelector('#errorMessage');
-          errorMessage.style.display = 'none';
         })
         .catch((error) => {
           console.error(error);
@@ -147,7 +149,7 @@
           const longitude = position.coords.longitude;
 
           const recommendedHospitalsUrl = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=${radius}&max_count=${max_count}`;
-          
+
           // 페이지 다시 로드
           window.location.href = recommendedHospitalsUrl;
         })
