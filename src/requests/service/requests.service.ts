@@ -216,33 +216,18 @@ export class RequestsService {
 
   // 동시성 제어를 위한 메서드
   async addToRequestQueue(report_id: number, hospital_id: number) {
-    // queue에 넣기 전 report_id와 hospital_id validation
-    const hospital = await this.hospitalsRepository.findHospital(hospital_id);
-    if (!hospital) {
-      throw new NotFoundException('병원이 존재하지 않습니다.');
-    }
-
-    const report = await this.reportsRepository.findReport(report_id);
-    if (!report) {
-      throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-    }
-    console.log('1. requestQueue에 job 추가');
-    // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
-    await this.requestQueue.add(
-      'addRequestQueue',
-      { report_id, hospital_id },
-      {
-        removeOnComplete: true,
-        removeOnFail: true,
-        priority: this.getPriority(report),
-      }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
-    );
-  }
-
-  async sendRequest(report_id: number, hospital_id: number) {
     try {
-      console.log('4. sendRequest 진입');
+      // queue에 넣기 전 report_id와 hospital_id validation
       const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+      if (!hospital) {
+        throw new NotFoundException('병원이 존재하지 않습니다.');
+      }
+
+      const report = await this.reportsRepository.findReport(report_id);
+      if (!report) {
+        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+      }
+
       const available_beds = hospital.available_beds;
       if (available_beds === 0) {
         throw new HttpException(
@@ -251,7 +236,6 @@ export class RequestsService {
         );
       }
 
-      const report = await this.reportsRepository.findReport(report_id);
       if (report.is_sent) {
         throw new HttpException(
           '이미 전송된 증상 보고서입니다.',
@@ -259,14 +243,17 @@ export class RequestsService {
         );
       }
 
-      // 증상 보고서에 hospital_id 추가
-      await this.reportsRepository.addTargetHospital(report_id, hospital_id);
-
-      // 해당 병원의 available_beds를 1 감소
-      await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
-
-      // 해당 report의 is_sent를 true로 변경
-      await this.reportsRepository.updateReportBeingSent(report_id);
+      console.log('1. requestQueue에 job 추가');
+      // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
+      await this.requestQueue.add(
+        'addRequestQueue',
+        { report_id, hospital_id },
+        {
+          removeOnComplete: true,
+          removeOnFail: true,
+          priority: this.getPriority(report),
+        }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
+      );
 
       return await this.reportsRepository.getReportwithPatientInfo(report_id);
     } catch (error) {
@@ -278,6 +265,19 @@ export class RequestsService {
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async sendRequest(report_id: number, hospital_id: number) {
+    console.log('4. sendRequest 진입');
+
+    // 증상 보고서에 hospital_id 추가
+    await this.reportsRepository.addTargetHospital(report_id, hospital_id);
+
+    // 해당 병원의 available_beds를 1 감소
+    await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
+
+    // 해당 report의 is_sent를 true로 변경
+    await this.reportsRepository.updateReportBeingSent(report_id);
   }
 
   async withdrawRequest(report_id: number) {
