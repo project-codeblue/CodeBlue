@@ -27,6 +27,16 @@ export class HospitalsController {
     return { hospitals_data };
   }
 
+  @Get('/inquery/nearbyHospitals')
+  @Render('nearbyHospitals')
+  async getNearbyHospitals(
+    @Query() queries: object,
+  ): Promise<object> {
+    this.logger.verbose('Getting Nearby Hospitals');
+    const hospitals_data = await this.hospitalsService.getNearbyHospitals(queries);
+    return { hospitals_data };
+  }
+
   @Get('/crawl/naver')
   getSymptomCrawl() {
     return this.hospitalsService.getSymptomCrawl();
