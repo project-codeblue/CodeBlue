@@ -77,16 +77,9 @@
               .then((position) => {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
-                const radius = null;
-                const maxCount = null;
 
                 let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
-                if (radius) {
-                  recommendedHospitals += `&radius=${radius}`;
-                }
-                if (maxCount) {
-                  recommendedHospitals += `&max_count=${maxCount}`;
-                }
+
                 return fetch(recommendedHospitals)
                   .then((response) => response.text())
                   .then((text) => {
@@ -108,14 +101,6 @@
             console.error('Error:', error);
             alert('데이터 저장 중에 오류가 발생했습니다.');
           });
-      }
-
-      function scrollToTop() {
-        event.preventDefault();
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
       }
 
       function refreshBrowser() {
@@ -310,7 +295,7 @@
                     <button
                       type="submit"
                       class="button is-link"
-                      onclick="scrollToTop(); sendReport();"
+                      onclick="sendReport();"
                     >
                       제출
                     </button>
