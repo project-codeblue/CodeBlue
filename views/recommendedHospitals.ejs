@@ -9,14 +9,17 @@
     <link rel="icon" href="./image/codeblue-favicon.png" />
     <link rel="apple-touch-icon" href="./image/codeblue-favicon.png" />
 
-    <title>CodeBLUE - 위치 기반 추천 응급실 조회 페이지</title>
+    <title>CodeBlue - 위치 기반 추천 응급실 조회 페이지</title>
 
     <!-- Meta Tag -->
     <meta property="og:url" content="https://codeblue.site" />
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="./image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"/>
+    <meta
+      property="og:description"
+      content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"
+    />
 
     <!-- css -->
     <link
@@ -87,7 +90,9 @@
         })
         .then((data) => {
           console.log(data);
-          
+          window.location.reload();
+          const errorMessage = document.querySelector('#errorMessage');
+          errorMessage.style.display = 'block';
         })
         .catch((error) => {
           console.error(error);
@@ -105,8 +110,9 @@
         })
         .then((data) => {
           console.log(data);
-          const notification = document.querySelector('.notification');
-          notification.style.display = 'none';
+          window.location.reload();
+          const errorMessage = document.querySelector('#errorMessage');
+          errorMessage.style.display = 'none';
         })
         .catch((error) => {
           console.error(error);
@@ -132,11 +138,10 @@
       var params = new URLSearchParams(window.location.search);
       const radius = document.querySelector('#radius').value;
       const max_count = document.querySelector('#max_count').value;
-      console.log(radius, max_count);
       params.set('radius', radius);
       params.set('max_count', max_count);
       var updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
-      console.log(updatedUrl);
+
       // 페이지 다시 로드
       window.location.href = updatedUrl;
     }
@@ -190,6 +195,13 @@
         </div>
       </div>
     </nav>
+    <button
+      id="fixedButton"
+      class="button has-background-info-dark has-text-white-bis"
+      onclick="refreshBrowser()"
+    >
+      새로고침
+    </button>
     <div class="container is-max-widescreen">
       <div class="content hospitals_block" style="margin-top: 30px">
         <div>
@@ -216,13 +228,6 @@
             </button>
           </div>
         </div>
-        <button
-          id="fixedButton"
-          class="button has-background-info-dark has-text-white-bis"
-          onclick="refreshBrowser()"
-        >
-          새로고침
-        </button>
         <div class="card">
           <div class="card-content">
             <div class="content">
@@ -251,6 +256,14 @@
               <strong>병원 주소</strong>: <%= hospitals_data[2].address%> <br />
               <strong>병원 전화번호</strong>: <%= hospitals_data[2].phone%>
               <br />
+            </div>
+            <div
+              class="notification is-danger is-light mt-3"
+              id="errorMessage"
+              style="display: none"
+            >
+              이미 병원에 이송 신청이 접수되었습니다. <br />
+              다른 병원에 신청을 하시려면 이전 신청을 철회해주세요.
             </div>
             <% } %>
           </div>
