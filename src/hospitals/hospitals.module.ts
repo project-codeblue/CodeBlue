@@ -6,32 +6,19 @@ import { ReportsRepository } from '../reports/reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hospitals } from './hospitals.entity';
 import { Crawling } from '../commons/middlewares/crawling';
-import { KakaoMapService } from '../commons/providers/kakao-map.service';
+import { KakaoMapService } from '../commons/providers/kakao-map.provider';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-store';
-import redisConfig from '../../config/redis.config';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheInterceptor } from '../commons/interceptors/cache.interceptor';
+import { RedisConfigProvider } from 'src/commons/providers/redis-config.provider';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Hospitals]),
-    CacheModule.register({
-      imports: [ConfigModule],
-      useFactory: async (config: ConfigType<typeof redisConfig>) => ({
-        lagacyMode: true,
-        isGlobal: true,
-        name: 'redis-cache',
-        store: redisStore,
-        host: config.host,
-        port: config.port,
-        // username: config.username,
-        // password: config.password,
-        ttl: config.ttl,
-      }),
-      inject: [redisConfig.KEY],
+    CacheModule.registerAsync({
+      useClass: RedisConfigProvider,
     }),
-    ConfigModule.forFeature(redisConfig),
   ],
   controllers: [HospitalsController],
   providers: [
@@ -41,6 +28,10 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
     Crawling,
     KakaoMapService,
     MedicalOpenAPI,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
   ],
   exports: [HospitalsService, HospitalsRepository],
 })
