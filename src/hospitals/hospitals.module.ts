@@ -9,8 +9,6 @@ import { Crawling } from '../commons/middlewares/crawling';
 import { KakaoMapService } from '../commons/providers/kakao-map.provider';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 import { CacheModule } from '@nestjs/cache-manager';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CacheInterceptor } from '../commons/interceptors/cache.interceptor';
 import { RedisConfigProvider } from 'src/commons/providers/redis-config.provider';
 
 @Module({
@@ -28,10 +26,6 @@ import { RedisConfigProvider } from 'src/commons/providers/redis-config.provider
     Crawling,
     KakaoMapService,
     MedicalOpenAPI,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
   ],
   exports: [HospitalsService, HospitalsRepository],
 })
