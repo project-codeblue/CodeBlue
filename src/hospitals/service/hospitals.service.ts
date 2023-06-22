@@ -38,14 +38,13 @@ export class HospitalsService {
       'READ COMMITTED',
       async () => {
         try {
-          //사용자 위치
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException(
               `해당 아이디: ${report_id}는 존재하지 않습니다.`,
             );
           }
-          //parseFloat = 문자열을 부동 소수점 숫자로 변환
+          // parseFloat = 문자열을 부동 소수점 숫자로 변환
           const startLat = parseFloat(queries['latitude']);
           const startLng = parseFloat(queries['longitude']);
 
@@ -74,7 +73,7 @@ export class HospitalsService {
             throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
           }
 
-          hospitals = Object.entries(dataSource); //배열로 반환
+          hospitals = Object.entries(dataSource); // 배열로 반환
 
           if (max_count < hospitals.length) {
             hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
@@ -225,5 +224,48 @@ export class HospitalsService {
       surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
       ward: ward ? ward[1] : '정보없음',
     };
+  }
+
+  async getNearbyHospitals(queries: object): Promise<Object> {
+    // parseFloat = 문자열을 부동 소수점 숫자로 변환
+    const startLat = parseFloat(queries['latitude']);
+    const startLng = parseFloat(queries['longitude']);
+
+    let dataSource = [];
+    let hospitals = [];
+
+    const radius = 10 * 1000; // radius in meters
+
+    if (startLat && startLng) {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        startLat,
+        startLng,
+        radius,
+      );
+    } else {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        37.56615,
+        126.97814,
+        radius,
+      );
+    }
+
+    if (dataSource.length === 0) {
+      throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
+    }
+
+    hospitals = Object.entries(dataSource); // 배열로 반환
+
+    const datas = hospitals.map((data) => {
+      const obj = {
+        name: data[1]['name'],
+        address: data[1]['address'],
+        phone: data[1]['phone'],
+        distance: `${(data[1]['distance'] / 1000).toFixed(1)}km`,
+      };
+      return obj;
+    });
+
+    return datas;
   }
 }
