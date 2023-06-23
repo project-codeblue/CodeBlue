@@ -89,7 +89,7 @@
         })
         .then((data) => {
           console.log(data);
-          if (data.report_id === report_id) {
+          if (data.hospital) {
             window.location.reload();
           }
           if (data.statusCode === 400) {
