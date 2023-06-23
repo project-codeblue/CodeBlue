@@ -19,7 +19,7 @@ export class AppController {
   search() {
   }
 
-  @Get('/report')
+  @Get('/symptom-report')
   @Render('createReport')
   report() {
   }

@@ -16,7 +16,10 @@
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="../../image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE - 증상 보고서 상세 페이지" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 증상 보고서 상세 페이지"
+    />
 
     <link
       rel="stylesheet"
@@ -48,6 +51,19 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
+      }
+
+      table {
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      td {
+        padding: 10px;
+      }
+
+      .container {
+        margin: 50px 185px 50px 185px;
       }
     </style>
   </head>
@@ -85,12 +101,14 @@
       </div>
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="/report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/nearby/site"> 가까운 병원 조회 </a>
+              <a class="navbar-item" href="/hospital/nearby/site">
+                가까운 병원 조회
+              </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
@@ -111,34 +129,51 @@
           돌아가기
         </button>
         <div class="box">
+          <% if (reportDetails.patient_rrn) { %>
           <div class="box has-background-light">
-            <% if (reportDetails.patient_rrn) { %>
             <h3>환자 정보</h3>
-            <div style="margin-left: 20px">
-              <p><strong>이름 </strong><%=reportDetails.patient_name%></p>
-              <p><strong>성별 </strong><%=reportDetails.gender%></p>
-              <p>
-                <strong>주민등록번호 </strong><%=reportDetails.patient_rrn%>
-              </p>
-            </div>
-            <% } %>
+            <table>
+              <tbody>
+                <tr>
+                  <td><strong>이름</strong></td>
+                  <td><%=reportDetails.patient_name%></td>
+                </tr>
+                <tr>
+                  <td><strong>성별</strong></td>
+                  <% let gender; %> <% if(reportDetails.gender === 'M') { gender
+                  = '남성' } else { gender = '여성'} %>
+                  <td><%=gender %></td>
+                </tr>
+                <tr>
+                  <td><strong>주민등록번호</strong></td>
+                  <% let hidden_rnn =
+                  reportDetails.patient_rrn.replace(/(\d{6})$/, '******');%>
+                  <td><%=hidden_rnn%></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <% } %>
           <div class="box has-background-light">
-            <% if (reportDetails.patient_rrn) { %>
             <h3>증상 상세 정보</h3>
-            <div style="margin-left: 20px">
-              <p>
-                <strong>중증도 등급 </strong><%=reportDetails.symptom_level%>
-              </p>
-              <p><strong>연령대 </strong><%=reportDetails.age_range%></p>
-              <p><strong>혈압 </strong><%=reportDetails.blood_pressure%></p>
-              <p><strong>세부 증상 </strong></p>
-            </div>
-            <div style="margin-left: 20px; margin-top: 5px">
-              <blockquote style="background-color: rgb(182, 204, 224)">
-                <%=reportDetails.symptoms%>
-              </blockquote>
-              <ul>
+            <table>
+              <tbody>
+                <tr>
+                  <td><strong>중증도 등급</strong></td>
+                  <td class="has-text-danger"><%=reportDetails.symptom_level%></td>
+                </tr>
+                <tr>
+                  <td><strong>연령대</strong></td>
+                  <td><%=reportDetails.age_range%></td>
+                </tr>
+                <tr>
+                  <td><strong>혈압</strong></td>
+                  <td><%=reportDetails.blood_pressure%></td>
+                </tr>
+                <tr>
+                  <td><strong>세부 증상</strong></td>
+                  <td class="has-text-link"><%=reportDetails.symptoms%></td>
+                </tr>
                 <% const originalDate = reportDetails.createdAt; %> <% const
                 year = originalDate.getFullYear(); %> <% const month =
                 originalDate.getMonth() + 1; %> <% const date =
@@ -151,21 +186,24 @@
                 updateDate.getDate(); %> <% const updatedHours =
                 updateDate.getHours(); %> <% const updatedMinutes =
                 updateDate.getMinutes(); %>
-              </ul>
-            </div>
-            <div style="margin-left: 20px">
-              <p>
-                <strong>작성 날짜 </strong> <%= `${year}년 ${month}월 ${date}일
-                ${hours}시 ${minutes}분` %>
-              </p>
-              <p>
-                <strong>최종 수정 날짜 </strong><%= `${updatedYear}년
-                ${updatedMonth}월 ${updatedDate}일 ${updatedHours}시
-                ${updatedMinutes}분` %>
-              </p>
-            </div>
-            <% } %>
+                <tr>
+                  <td><strong>작성 날짜</strong></td>
+                  <td>
+                    <%= `${year}년 ${month}월 ${date}일 ${hours}시 ${minutes}분`
+                    %>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>최종 수정 날짜</strong></td>
+                  <td>
+                    <%= `${updatedYear}년 ${updatedMonth}월 ${updatedDate}일
+                    ${updatedHours}시 ${updatedMinutes}분` %>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+
           <div class="box has-background-light">
             <h3>이송 병원 정보</h3>
             <table>
@@ -187,19 +225,19 @@
           </div>
         </div>
       </div>
-      <footer class="footer">
-        <div class="content has-text-centered">
-          <p>
-            <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source
-            code is licensed
-            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
-            The website content is licensed
-            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-              >CC BY NC SA 4.0</a
-            >.
-          </p>
-        </div>
-      </footer>
     </div>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source
+          code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          The website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

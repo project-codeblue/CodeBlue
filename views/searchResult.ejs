@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="../../image/codeblue-favicon.png" /> 
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
     <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
 
     <title>CodeBLUE - 증상 보고서 검색 결과 페이지</title>
@@ -16,7 +16,10 @@
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="../../image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE - 증상 보고서 검색 결과 페이지" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 증상 보고서 검색 결과 페이지"
+    />
 
     <link
       rel="stylesheet"
@@ -36,7 +39,20 @@
       }
 
       .container {
-        margin: 50px 205px 50px 205px;
+        margin: 50px 235px 50px 235px;
+      }
+
+      .box {
+        padding: 35px;
+      }
+
+      table {
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      td {
+        padding: 10px;
       }
     </style>
 
@@ -78,12 +94,14 @@
 
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="/report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/nearby/site"> 가까운 병원 조회 </a>
+              <a class="navbar-item" href="/hospital/nearby/site">
+                가까운 병원 조회
+              </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
@@ -99,41 +117,50 @@
         <div class="box">
           <% for (let i = 0; i < searchedData.length; i++) { %>
           <div class="box has-background-light">
-            <% if (searchedData[i].patient_name) { %>
-            <div>
-              <strong>환자 성명:</strong> <%=searchedData[i].patient_name %>
-            </div>
-            <% } %>
-            <div>
-              <strong>환자 연령대:</strong>
-              <%=searchedData[i].reports_age_range%>
-            </div>
-            <br />
-            <div>
-              <strong>이송 병원:</strong> <%=searchedData[i].hospital_name %>
-            </div>
-            <div>
-              <strong>중증도:</strong> <%=searchedData[i].reports_symptom_level
-              %>
-            </div>
-            <div>
-              <strong>증상:</strong> <%=searchedData[i].reports_symptoms %>
-            </div>
-            <br />
-            <% const originalDate = searchedData[i].reports_createdAt; %> <%
-            const year = originalDate.getFullYear(); %> <% const month =
-            originalDate.getMonth() + 1; %> <% const date =
-            originalDate.getDate(); %> <% const hours = originalDate.getHours();
-            %> <% const minutes = originalDate.getMinutes(); %>
-            <div>
-              <strong>생성 일자:</strong> <%= `${year}년 ${month}월 ${date}일
-              ${hours}시 ${minutes}분` %>
-              <a
-                href="/report/<%=searchedData[i].reports_report_id %>"
-                class="button is-info"
-                >상세 보기</a
-              >
-            </div>
+            <table>
+              <tbody>
+                <% if (searchedData[i].patient_name) { %>
+                <tr>
+                  <td><strong>환자 성명</strong></td>
+                  <td><%=searchedData[i].patient_name %></td>
+                </tr>
+                <% } %>
+                <tr>
+                  <td><strong>환자 연령대</strong></td>
+                  <td><%=searchedData[i].reports_age_range%></td>
+                </tr>
+                <tr>
+                  <td><strong>이송 병원</strong></td>
+                  <td><%=searchedData[i].hospital_name %></td>
+                </tr>
+                <tr>
+                  <td><strong>중증도</strong></td>
+                  <td><%=searchedData[i].reports_symptom_level %></td>
+                </tr>
+                <tr>
+                  <td><strong>증상</strong></td>
+                  <td><%=searchedData[i].reports_symptoms %></td>
+                </tr>
+                <% const originalDate = searchedData[i].reports_createdAt; %> <%
+                const year = originalDate.getFullYear(); %> <% const month =
+                originalDate.getMonth() + 1; %> <% const date =
+                originalDate.getDate(); %> <% const hours =
+                originalDate.getHours(); %> <% const minutes =
+                originalDate.getMinutes(); %>
+                <tr>
+                  <td><strong>생성 일자</strong></td>
+                  <td>
+                    <%= `${year}년 ${month}월 ${date}일 ${hours}시 ${minutes}분`
+                    %>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <a
+              href="/report/<%=searchedData[i].reports_report_id %>"
+              class="button is-info"
+              >상세 보기</a
+            >
           </div>
           <% } %>
         </div>

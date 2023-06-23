@@ -26,19 +26,18 @@ export class RequestsService {
   ) {}
 
   async getAllRequests(): Promise<Reports[]> {
-    // is_sent === true인 증상 보고서만 가져옴
     return await this.reportsRepository.getAllRequests();
   }
 
   // 검색 키워드: 날짜, 증상, 증상도, 이름, 지역
   async getSearchRequests(queries: object): Promise<Reports[]> {
-    //병훈님 의견 : 테이블 3개 공간인덱스 컬럼하나에
     try {
       const query = this.reportsRepository
         .createQueryBuilder('reports')
         .leftJoinAndSelect('reports.hospital', 'hospital')
         .leftJoinAndSelect('reports.patient', 'patient')
         .select([
+          'reports.report_id',
           'reports.symptoms',
           'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
           'reports.symptom_level',
@@ -50,6 +49,7 @@ export class RequestsService {
           'hospital.address',
         ])
         .where('reports.hospital_id > 0');
+      //is_sent = 1과 동일한 조건이지만 검색범위는 더 좁게
 
       //----------------------------[Data]----------------------------------//
       switch (true) {
@@ -221,7 +221,7 @@ export class RequestsService {
 
     console.log('2. requestQueue에 job 추가');
     // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
-    const job = await this.requestQueue.add(
+    await this.requestQueue.add(
       'addRequestQueue',
       { report_id, hospital_id, eventName },
       {
@@ -272,9 +272,7 @@ export class RequestsService {
   async sendRequest(report_id: number, hospital_id: number, eventName: string) {
     console.log('*2 sendRequest 진입');
     try {
-      const hospital = await this.hospitalsRepository.findHospital(
-        hospital_id,
-      );
+      const hospital = await this.hospitalsRepository.findHospital(hospital_id);
       const available_beds = hospital.available_beds;
       if (available_beds === 0) {
         throw new HttpException(
@@ -292,10 +290,7 @@ export class RequestsService {
       }
 
       // 증상 보고서에 hospital_id 추가
-      await this.reportsRepository.addTargetHospital(
-        report_id,
-        hospital_id,
-      );
+      await this.reportsRepository.addTargetHospital(report_id, hospital_id);
 
       // 해당 병원의 available_beds를 1 감소
       await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
