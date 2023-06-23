@@ -41,7 +41,7 @@ export class RequestsService {
           'reports.report_id',
           'reports.symptom_level',
           'reports.symptoms',
-          'reports.createdAt',
+          'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
           'patient.name',
           'reports.age_range',
           'hospital.name',
@@ -215,19 +215,80 @@ export class RequestsService {
   }
 
   // 동시성 제어를 위한 메서드
-  async addToRequestQueue(report_id: number, hospital_id: number) {
+  async addRequestQueue(report_id: number, hospital_id: number) {
+    // queue에 넣기 전 report_id와 hospital_id validation
+    const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+    if (!hospital) {
+      throw new NotFoundException('병원이 존재하지 않습니다.');
+    }
+
+    const report = await this.reportsRepository.findReport(report_id);
+    if (!report) {
+      throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+    }
+
+    // 각 이송 신청에 대한 unique한 eventName을 생성해준다
+    const eventName = `Request-${report_id}-${
+      Math.floor(Math.random() * 89999) + 1
+    }`;
+    console.log('1. eventName: ', eventName);
+
+    console.log('2. requestQueue에 job 추가');
+    // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
+    const job = await this.requestQueue.add(
+      'addRequestQueue',
+      { report_id, hospital_id, eventName },
+      {
+        removeOnComplete: true,
+        removeOnFail: true,
+        priority: this.getPriority(report),
+      }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
+    );
+    // console.log('job: ', job);
+    console.log('3. waitFinish() 호출');
+    // 대기열 큐에 job을 넣은 후, service 내에서 waitFinish() 함수를 호출한다
+    return this.waitFinish(eventName, 2, hospital); // 2 = time
+  }
+
+  async waitFinish(eventName: string, time: number, hospital: object) {
+    console.log('4. waitFinish() 진입');
+    return new Promise((resolve, reject) => {
+      console.log('5. Promise 진입');
+      // wait으로 들어와 2초짜리 setTimeout() 함수가 설정된다
+      const wait = setTimeout(() => {
+        console.log('** setTimeout() 진입');
+        this.eventEmitter.removeAllListeners(eventName);
+        resolve({
+          message: '다시 시도해주세요.',
+        });
+      }, time * 1000);
+
+      // wait과 동시에 this.eventEmitter에 전달받은 eventName에 대해 콜백함수로 세팅된다
+      const listenFn = ({
+        success,
+        exception,
+      }: {
+        success: boolean;
+        exception?: HttpException;
+      }) => {
+        console.log('7. listenFn 진입');
+        clearTimeout(wait);
+        this.eventEmitter.removeAllListeners(eventName);
+        success ? resolve({ hospital }) : reject(exception);
+      };
+      console.log('6. this.eventEmitter.addListener 세팅');
+      // sendRequest()에서 전해준 이벤트가 성공이든 실패든,
+      // 기다리고 있던 waitFinish()의 이벤트 리스너가 이벤트를 전달받아, 클라이언트에 응답을 보낼 수 있다
+      this.eventEmitter.addListener(eventName, listenFn); // requests.consumer.ts로 이동
+    });
+  }
+
+  async sendRequest(report_id: number, hospital_id: number, eventName: string) {
+    console.log('*2 sendRequest 진입');
     try {
-      // queue에 넣기 전 report_id와 hospital_id validation
-      const hospital = await this.hospitalsRepository.findHospital(hospital_id);
-      if (!hospital) {
-        throw new NotFoundException('병원이 존재하지 않습니다.');
-      }
-
-      const report = await this.reportsRepository.findReport(report_id);
-      if (!report) {
-        throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-      }
-
+      const hospital = await this.hospitalsRepository.findHospital(
+        hospital_id,
+      );
       const available_beds = hospital.available_beds;
       if (available_beds === 0) {
         throw new HttpException(
@@ -236,6 +297,7 @@ export class RequestsService {
         );
       }
 
+      const report = await this.reportsRepository.findReport(report_id);
       if (report.is_sent) {
         throw new HttpException(
           '이미 전송된 증상 보고서입니다.',
@@ -243,41 +305,28 @@ export class RequestsService {
         );
       }
 
-      console.log('1. requestQueue에 job 추가');
-      // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
-      await this.requestQueue.add(
-        'addRequestQueue',
-        { report_id, hospital_id },
-        {
-          removeOnComplete: true,
-          removeOnFail: true,
-          priority: this.getPriority(report),
-        }, // 이후 대기열에서 Job을 처리할 때 처리했음에도 그대로 Redis에 쌓여있는걸 방지하기 위함
+      // 증상 보고서에 hospital_id 추가
+      await this.reportsRepository.addTargetHospital(
+        report_id,
+        hospital_id,
       );
 
-      return await this.reportsRepository.getReportwithPatientInfo(report_id);
+      // 해당 병원의 available_beds를 1 감소
+      await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
+
+      // 해당 report의 is_sent를 true로 변경
+      await this.reportsRepository.updateReportBeingSent(report_id);
+
+      return this.eventEmitter.emit(eventName, { success: true });
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new HttpException(
-        error.response || '환자 이송 신청에 실패하였습니다.',
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      return this.eventEmitter.emit(eventName, {
+        success: false,
+        exception: error,
+      });
     }
-  }
-
-  async sendRequest(report_id: number, hospital_id: number) {
-    console.log('4. sendRequest 진입');
-
-    // 증상 보고서에 hospital_id 추가
-    await this.reportsRepository.addTargetHospital(report_id, hospital_id);
-
-    // 해당 병원의 available_beds를 1 감소
-    await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
-
-    // 해당 report의 is_sent를 true로 변경
-    await this.reportsRepository.updateReportBeingSent(report_id);
   }
 
   async withdrawRequest(report_id: number) {
