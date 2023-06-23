@@ -1,11 +1,11 @@
 config:
-  target: "https://codeblue.site/"
+  target: "http://localhost:3000"
   phases:
-    - duration: 60
+    - duration: 30
       arrivalRate: 5
     # - pause: 120
   payload:
-    path: "patient-request-02.csv"
+    path: "patient-request-01.csv"
     order: sequence
     loadAll: true
     # delimiter: ","
@@ -18,4 +18,4 @@ scenarios:
   - flow:
     - log: "사용자가 환자 이송 신청"
     - post:
-        url: "https://codeblue.site/request/{{report_id}}/{{hospital_id}}"
+        url: "http://localhost:3000/request/{{report_id}}/{{hospital_id}}"

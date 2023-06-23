@@ -6,12 +6,15 @@ import {
   Param,
   Query,
   Render,
+  UseInterceptors,
 } from '@nestjs/common';
 import { RequestsService } from '../service/requests.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from 'src/reports/reports.entity';
+import { ClearCacheInterceptor } from 'src/commons/interceptors/clear-cache.interceptor';
 
 @Controller('request')
+@UseInterceptors(ClearCacheInterceptor)
 export class RequestsController {
   private logger = new Logger('RequestsController');
   constructor(private requestsService: RequestsService) {}
@@ -28,7 +31,7 @@ export class RequestsController {
     @Param('hospital_id') hospital_id: number,
   ) {
     this.logger.verbose('환자 이송 신청 POST API');
-    // client는 환자 이송 신청 비지니스 로직이 담긴 sendRequest()를 호출하지 않고, 먼저 addRequestQueue()를 호출한다.
+    // client는 환자 이송 신청 비지니스 로직이 담긴 sendRequest()를 호출하지 않고, 먼저 addToRequestQueue()를 호출한다.
     return this.requestsService.addRequestQueue(report_id, hospital_id);
   }
 

@@ -8,13 +8,11 @@ import {
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
-import { KakaoMapService } from '../../commons/providers/kakao-map.service';
+import { KakaoMapService } from '../../commons/providers/kakao-map.provider';
 import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { InjectEntityManager } from '@nestjs/typeorm'; //transaction사용을 위한 모듈 임포트
 import { EntityManager } from 'typeorm'; //transaction사용을 위한 모듈 임포트
-import { Cache } from 'cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class HospitalsService {
@@ -25,31 +23,10 @@ export class HospitalsService {
     private kakaoMapService: KakaoMapService,
     private openAPI: MedicalOpenAPI,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async getHospitals(): Promise<Hospitals[]> {
     return this.hospitalsRepository.getHospitals();
-  }
-
-  // 지역 병상 데이터 조회 (string[], 메디서비스 기반)
-  async getLocalHospitals(site: string): Promise<string[]> {
-    /*
-      지역 옵션 선택
-      매개변수 site에 아래 지역 중 하나가 들어옵니다.
-      서울특별시 / 경기도 / 강원도 / 광주광역시 / 대구광역시
-      대전광역시 / 부산광역시 / 울산광역시 / 인천광역시 / 경상남도
-      경상북도 / 세종특별자치시 / 전라남도 / 전라북도 / 제주특별자치도
-      충청남도 / 충청북도
-    */
-    const results = await this.crawling.getLocalHospitaldata(site);
-    return results;
-  }
-
-  // 전국 병상 데이터 조회 (JSON, 공공데이터 API 기반)
-  async getNationHospitals(): Promise<JSON> {
-    const results = await this.openAPI.getMedicalData();
-    return results;
   }
 
   // 병원 추천 및 병상 조회 (종합상황판 기반)
@@ -57,31 +34,17 @@ export class HospitalsService {
     report_id: number,
     queries: object,
   ): Promise<any> {
-    // const start: any = new Date();
     const getHospitals = await this.entityManager.transaction(
       'READ COMMITTED',
       async () => {
         try {
-          // redis cache로 캐싱되어 있는 report_id인지 먼저 확인
-          const cachedResult: string = await this.cacheManager.get(
-            `cache:${report_id.toString()}:${queries['radius']}:${
-              queries['max_count']
-            }`,
-          );
-          // 캐싱되어 있으면 바로 return
-          if (cachedResult) {
-            console.log('캐싱된 데이터를 사용합니다.');
-            return JSON.parse(cachedResult);
-          }
-
-          //사용자 위치
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException(
               `해당 아이디: ${report_id}는 존재하지 않습니다.`,
             );
           }
-          //parseFloat = 문자열을 부동 소수점 숫자로 변환
+          // parseFloat = 문자열을 부동 소수점 숫자로 변환
           const startLat = parseFloat(queries['latitude']);
           const startLng = parseFloat(queries['longitude']);
 
@@ -110,7 +73,7 @@ export class HospitalsService {
             throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
           }
 
-          hospitals = Object.entries(dataSource); //배열로 반환
+          hospitals = Object.entries(dataSource); // 배열로 반환
 
           if (max_count < hospitals.length) {
             hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
@@ -138,7 +101,6 @@ export class HospitalsService {
             const seconds = Math.floor(duration % 60);
 
             const obj = {
-              ...report,
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
@@ -204,20 +166,14 @@ export class HospitalsService {
               return result;
             }),
           );
-          results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline
-          // const end: any = new Date();
-          // const t = end - start;
-          // console.log(`응답 시간 : ${t}ms`);
 
-          // redis cache에 저장
-          await this.cacheManager.set(
-            `cache:${report_id.toString()}:${queries['radius']}:${
-              queries['max_count']
-            }`,
-            JSON.stringify(results),
-            60 * 1000, // ms
-          );
-          console.log('redis cache에 저장');
+          // 병원을 선택한 경우 선택한 병원정보 반환
+          const selectedHospital = report.hospital_id
+            ? await this.hospitalsRepository.findHospital(report.hospital_id)
+            : null;
+          results.unshift(selectedHospital); // 사용자가 선택한 병원 정보 - index 2번 저장
+          results.unshift(report); // 증상보고서 내용 - index 1번 저장
+          results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline - index 0번 저장
 
           return results;
         } catch (error) {
@@ -256,10 +212,6 @@ export class HospitalsService {
     return rating;
   }
 
-  async getSymptomCrawl() {
-    const data = await this.crawling.symptomCrawl();
-  }
-
   async parseHospitalData(data: string) {
     const emergencyRoomRegex = /응급실:\s*(\d+(?:\s\/\s\d+)?)/;
     const surgeryRoomRegex = /수술실:\s*(\d+(?:\s\/\s\d+)?)/;
@@ -272,5 +224,48 @@ export class HospitalsService {
       surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
       ward: ward ? ward[1] : '정보없음',
     };
+  }
+
+  async getNearbyHospitals(queries: object): Promise<object> {
+    // parseFloat = 문자열을 부동 소수점 숫자로 변환
+    const startLat = parseFloat(queries['latitude']);
+    const startLng = parseFloat(queries['longitude']);
+
+    let dataSource = [];
+    let hospitals = [];
+
+    const radius = 10 * 1000; // radius in meters
+
+    if (startLat && startLng) {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        startLat,
+        startLng,
+        radius,
+      );
+    } else {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        37.56615,
+        126.97814,
+        radius,
+      );
+    }
+
+    if (dataSource.length === 0) {
+      throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
+    }
+
+    hospitals = Object.entries(dataSource); // 배열로 반환
+
+    const datas = hospitals.map((data) => {
+      const obj = {
+        name: data[1]['name'],
+        address: data[1]['address'],
+        phone: data[1]['phone'],
+        distance: `${(data[1]['distance'] / 1000).toFixed(1)}km`,
+      };
+      return obj;
+    });
+
+    return datas;
   }
 }

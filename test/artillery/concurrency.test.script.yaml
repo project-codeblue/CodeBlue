@@ -1,8 +1,8 @@
 config:
   target: "http://localhost:3000"
   phases:
-    - arrivalRate: 60
-      duration: 10
+    - arrivalRate: 30
+      duration: 1
   payload:
     path: "concurrency.test.script.csv"
     order: random

@@ -6,19 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="./image/codeblue-favicon.png" />
-    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png" />
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
 
-    <title>CodeBLUE - 위치 기반 추천 응급실 조회 페이지</title>
+    <title>CodeBlue - 위치 기반 추천 응급실 조회 페이지</title>
 
     <!-- Meta Tag -->
     <meta property="og:url" content="https://codeblue.site" />
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="./image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"/>
+    <meta property="og:image" content="../../image/codeblue.png" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"
+    />
 
-    <!-- css -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
@@ -64,7 +66,6 @@
 
       .input {
         margin: 10px 10px 10px 0px;
-
       }
     </style>
 
@@ -88,16 +89,13 @@
         })
         .then((data) => {
           console.log(data);
-          const notification = document.querySelector('.notification');
-          notification.style.display = 'block';
-          notification.innerHTML = `
-            <strong>${data.hospital.name}</strong>에 환자 이송 신청이 접수되었습니다. <br />
-            환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
-            <strong>병원 주소</strong>: ${data.hospital.address} <br />
-            <strong>병원 전화번호</strong>: ${data.hospital.phone} <br />
-          `;
-          const withdrawButton = document.querySelector('.withdraw');
-          withdrawButton.style.display = 'block';
+          if (data.hospital) {
+            window.location.reload();
+          }
+          if (data.statusCode === 400) {
+            const errorMessage = document.querySelector('#errorMessage');
+            errorMessage.style.display = 'block';
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -115,8 +113,7 @@
         })
         .then((data) => {
           console.log(data);
-          const notification = document.querySelector('.notification');
-          notification.style.display = 'none';
+          window.location.reload();
         })
         .catch((error) => {
           console.error(error);
@@ -130,23 +127,50 @@
       });
     }
 
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    }
+
     function refreshBrowser() {
-      window.location.reload();
+      // 현재 url에서 report_id 가져오기
+      const currentUrl = window.location.href;
+      const reportId = currentUrl.split('/')[4].split('?')[0];
+      // URL에 max_count & radius 쿼리 스트링 추가하기
+      const params = new URLSearchParams(window.location.search);
+      const radius = params.get('radius');
+      const max_count = params.get('max_count');
+
+      // 새로운 위치 좌표 반영
+      getCurrentPosition()
+        .then((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          const recommendedHospitalsUrl = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=${radius}&max_count=${max_count}`;
+
+          // 페이지 다시 로드
+          window.location.href = recommendedHospitalsUrl;
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('위치 정보를 가져오는데 실패했습니다.');
+        });
     }
 
     function addQueryString(position) {
       // 현재 URL 가져오기
-      var currentUrl = window.location.href;
+      const currentUrl = window.location.href;
 
       // URL에 쿼리 스트링 추가하기
-      var params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(window.location.search);
       const radius = document.querySelector('#radius').value;
       const max_count = document.querySelector('#max_count').value;
-      console.log(radius, max_count);
       params.set('radius', radius);
       params.set('max_count', max_count);
-      var updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
-      console.log(updatedUrl);
+      const updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
+
       // 페이지 다시 로드
       window.location.href = updatedUrl;
     }
@@ -160,12 +184,11 @@
     >
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <!-- <img
-            src="https://user-images.githubusercontent.com/76824986/246324142-743e6431-3870-4c20-8123-16e11f8582cb.jpg"
-            width="40"
+          <img
+            src="../../image/onlytext-cutout.png"
+            width="120"
             height="auto"
-          /> -->
-          CodeBLUE
+          />
         </a>
         <a
           role="button"
@@ -179,18 +202,16 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item"> 증상보고서 입력 </a>
-
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
-
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
-
             <div class="navbar-dropdown">
-              <a class="navbar-item"> 가까운 응급실 조회 </a>
+              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals">
+                가까운 병원 조회
+              </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
@@ -200,6 +221,13 @@
         </div>
       </div>
     </nav>
+    <button
+      id="fixedButton"
+      class="button has-background-info-dark has-text-white-bis"
+      onclick="refreshBrowser()"
+    >
+      새로고침
+    </button>
     <div class="container is-max-widescreen">
       <div class="content hospitals_block" style="margin-top: 30px">
         <div>
@@ -221,25 +249,24 @@
               style="font-family: 'Noto Sans KR', sans-serif"
               placeholder="추천 병원 최대 개수 (숫자 입력)"
             />
-            <button class="button is-info" onclick="addQueryString()">검색</button>
+            <button class="button is-info" onclick="addQueryString()">
+              검색
+            </button>
           </div>
         </div>
-        <button
-          id="fixedButton"
-          class="button has-background-info-dark has-text-white-bis"
-          onclick="refreshBrowser()"
-        >
-          새로고침
-        </button>
         <div class="card">
           <div class="card-content">
             <div class="content">
               <h5>환자 증상 정보</h5>
-              <div class="has-text-link has-text-weight-bold">
+
+              <div class="has-text-danger has-text-weight-bold">
                 환자의 중증도 등급: <%=hospitals_data[1].symptom_level%>
               </div>
+              <% if (hospitals_data[1].blood_pressure) { %>
               <div>환자의 혈압: <%=hospitals_data[1].blood_pressure%></div>
+              <% } %> <% if (hospitals_data[1].blood_type) { %>
               <div>환자의 혈액형: <%=hospitals_data[1].blood_type%></div>
+              <% } %>
             </div>
             <% if (hospitals_data[1].is_sent) { %>
             <button
@@ -248,18 +275,27 @@
             >
               병원 이송 신청 철회
             </button>
-            <% } %>
+            <div class="notification is-warning is-light mt-3">
+              <strong><%= hospitals_data[2].name%></strong>에 환자 이송 신청이
+              접수되었습니다. <br />
+              환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
+              <strong>병원 주소</strong>: <%= hospitals_data[2].address%> <br />
+              <strong>병원 전화번호</strong>: <%= hospitals_data[2].phone%>
+              <br />
+            </div>
             <div
               class="notification is-danger is-light mt-3"
+              id="errorMessage"
               style="display: none"
             >
               이미 병원에 이송 신청이 접수되었습니다. <br />
               다른 병원에 신청을 하시려면 이전 신청을 철회해주세요.
             </div>
+            <% } %>
           </div>
         </div>
         <div class="box">
-          <% for (let i = 1; i < hospitals_data.length; i++) { %>
+          <% for (let i = 3; i < hospitals_data.length; i++) { %>
           <div class="box has-background-light">
             <div class="hospital_title">
               <h3><%=hospitals_data[i].name %></h3>

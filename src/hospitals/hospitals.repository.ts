@@ -63,7 +63,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
   ) {
     return await this.query(
       `
-        SELECT hospital_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+        SELECT hospital_id, name, address, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
         point) as 'distance'
         FROM hospitals
         WHERE ST_Distance_Sphere(POINT(${startLng}, ${startLat}), point) < (${radius})
@@ -75,7 +75,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
   async getHospitalsWithoutRadius(startLng: number, startLat: number) {
     return await this.query(
       `
-          SELECT hospital_id, name, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
+          SELECT hospital_id, name, address, phone, available_beds, latitude, longitude, emogList, ST_Distance_Sphere(Point(${startLng}, ${startLat}),
           point) as 'distance'
           FROM hospitals
           order by distance;

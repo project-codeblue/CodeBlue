@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="./image/codeblue-favicon.png"/> 
-    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png"/>
+    <link rel="icon" href="../../image/codeblue-favicon.png"/> 
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png"/>
 
     <title>CodeBLUE - 증상 보고서 검색 페이지</title>
 
@@ -15,10 +15,9 @@
     <meta property="og:url" content="https://codeblue.site">
     <meta property="og:title" content="CodeBLUE">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="./image/codeblue.png">
+    <meta property="og:image" content="../../image/codeblue.png">
     <meta property="og:description" content="CodeBLUE - 증상 보고서 검색 페이지">
 
-    <!-- css -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
@@ -61,7 +60,7 @@
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
           <img
-            src="https://user-images.githubusercontent.com/76824986/246389195-f678674a-4c4e-46cf-a97c-4ad6f9cc95d9.png"
+            src="./image/onlytext-cutout.png"
             width="120"
             height="auto"
           />
@@ -78,18 +77,14 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item"> 증상보고서 입력 </a>
-
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
-
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
-
             <div class="navbar-dropdown">
-              <a class="navbar-item"> 가까운 응급실 조회 </a>
+              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals"> 가까운 병원 조회 </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
@@ -101,11 +96,11 @@
     </nav>
     <div class="container">
       <section class="hero has-background-link-light m-6">
-        <div class="hero-body my-6" style="text-align: center; padding: 20px">
+        <div class="hero-body my-6" style="text-align: center;">
           <p class="title">증상보고서 검색 엔진</p>
           <p class="subtitle">
             <br />
-            현재 <%= count %>개의 누적 증상보고서가 있습니다.
+            현재 2,221,467개의 누적 증상보고서가 있습니다.
             <br />
             보고서 생성 날짜, 증상, 중증도 레벨, 이송 병원 지역, 환자 성명을
             통해 검색해보세요.
@@ -167,7 +162,7 @@
                     id="symptoms"
                     placeholder="증상명"
                     name="symptoms"
-                    style="font-family: 'Noto Sans KR', sans-serif"
+                    style="font-family: 'Noto Sans KR', sans-serif; width: 130px;"
                   />
                 </label>
                 <label for="site" class="form-label select m-5 is-hovered">
@@ -219,7 +214,7 @@
                     id="name"
                     placeholder="환자 성명"
                     name="name"
-                    style="font-family: 'Noto Sans KR', sans-serif"
+                    style="font-family: 'Noto Sans KR', sans-serif; width: 130px;"
                   />
                 </label>
               </div>

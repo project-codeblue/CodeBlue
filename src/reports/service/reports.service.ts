@@ -3,6 +3,7 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { ReportsRepository } from '../reports.repository';
 import { PatientsRepository } from '../../patients/patients.repository';
@@ -13,6 +14,8 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { AgeRange, BloodType } from '../reports.enum';
 import axios from 'axios';
 import { Gender } from '../../patients/patients.enum';
+import appConfig from 'config/app.config';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class ReportsService {
@@ -20,6 +23,7 @@ export class ReportsService {
     private readonly reportsRepository: ReportsRepository,
     private readonly patientsRepository: PatientsRepository,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
+    @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
   ) {}
 
   async createReport(createReportDto: CreateReportDto, patient_rrn: string) {
@@ -135,14 +139,11 @@ export class ReportsService {
   }
 
   async getEmergencyLevel(symptoms: string) {
-    const emergencyLevelApiResponse = await axios.get(
-      'http://13.125.37.99:5000/ai',
-      {
-        params: {
-          sentence: symptoms,
-        },
+    const emergencyLevelApiResponse = await axios.get(this.config.aiServerUrl, {
+      params: {
+        sentence: symptoms,
       },
-    );
+    });
 
     return emergencyLevelApiResponse.data.emergency_level;
   }
