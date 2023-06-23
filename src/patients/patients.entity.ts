@@ -5,7 +5,6 @@ import {
   Entity,
   CreateDateColumn,
   OneToMany,
-  Index,
 } from 'typeorm';
 import { Gender } from './patients.enum';
 import { Reports } from '../reports/reports.entity';
@@ -19,7 +18,6 @@ export class Patients extends BaseEntity {
   patient_rrn: string;
 
   @Column({ type: 'varchar', nullable: true })
-  @Index()
   name: string;
 
   @Column({ nullable: true })

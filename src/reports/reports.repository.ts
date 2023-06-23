@@ -22,6 +22,7 @@ export class ReportsRepository extends Repository<Reports> {
   async getReportwithPatientInfo(report_id: number): Promise<Reports> {
     const report = await this.query(
       `
+          EXPLAIN
           SELECT
             r.report_id,
             r.symptom_level,
@@ -46,6 +47,7 @@ export class ReportsRepository extends Repository<Reports> {
   async getReportwithHospitalInfo(report_id: number): Promise<any> {
     const result = await this.query(
       `
+          EXPLAIN 
           SELECT
             r.report_id,
             r.symptom_level,
@@ -70,6 +72,7 @@ export class ReportsRepository extends Repository<Reports> {
   async getReportwithPatientAndHospitalInfo(report_id: number): Promise<any> {
     const result = await this.query(
       `
+          EXPLAIN 
           SELECT
             r.report_id,
             p.name AS patient_name,

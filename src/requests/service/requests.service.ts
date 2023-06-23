@@ -32,16 +32,16 @@ export class RequestsService {
 
   // 검색 키워드: 날짜, 증상, 증상도, 이름, 지역
   async getSearchRequests(queries: object): Promise<Reports[]> {
+    //병훈님 의견 : 테이블 3개 공간인덱스 컬럼하나에
     try {
       const query = this.reportsRepository
         .createQueryBuilder('reports')
-        .leftJoinAndSelect('reports.patient', 'patient')
         .leftJoinAndSelect('reports.hospital', 'hospital')
+        .leftJoinAndSelect('reports.patient', 'patient')
         .select([
-          'reports.report_id',
-          'reports.symptom_level',
           'reports.symptoms',
           'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
+          'reports.symptom_level',
           'patient.name',
           'reports.age_range',
           'hospital.name',
@@ -49,109 +49,87 @@ export class RequestsService {
           'hospital.emogList',
           'hospital.address',
         ])
-        .where('1 = 1')
-        .andWhere('is_sent = 1')
-        .orderBy('reports_createdAt', 'ASC');
-      // .addSelect('reports.symptoms', 'index_symptoms')
-      // .addSelect('reports.createdAt', 'index_createdAt')
-      // .addSelect('patients.name', 'index_name')
-      // .addSelect('hospitals.address', 'index_site');
-      // .useIndex('index_symptoms')
-      // .useIndex('index_symptoms_level')
-      // .useIndex('index_age_range')
-      // .useIndex('index_createdAt')
-      // .useIndex('index_name')
-      // .useIndex('index_site');
+        .where('reports.hospital_id > 0');
 
-      if (queries['fromDate'] && queries['toDate']) {
-        // URL 쿼리에 fromDate & toDate가 존재하면 실행
-        const rawFromDate: string = queries['fromDate'];
-        const rawToDate: string = queries['toDate'];
-
-        const regex = /^\d{4}-\d{2}-\d{2}$/;
-        if (regex.test(rawFromDate) && regex.test(rawToDate)) {
-          if (rawFromDate > rawToDate) {
+      //----------------------------[Data]----------------------------------//
+      switch (true) {
+        case Boolean(queries['fromDate'] && queries['toDate']): {
+          // URL 쿼리에 fromDate & toDate가 존재하면 실행
+          const rawFromDate: string = queries['fromDate'];
+          const rawToDate: string = queries['toDate'];
+          if (rawFromDate && rawToDate) {
+            if (rawFromDate > rawToDate) {
+              throw new NotFoundException('날짜의 범위를 확인해주세요.');
+            }
+            const transFromDate = new Date(rawFromDate);
+            let transToDate = new Date(rawToDate);
+            transToDate = date.addHours(transToDate, 23);
+            transToDate = date.addMinutes(transToDate, 59);
+            transToDate = date.addSeconds(transToDate, 59);
+            const fromDate: string = date.format(
+              transFromDate,
+              'YYYY-MM-DD HH:mm:ss',
+              true,
+            );
+            const toDate: string = date.format(
+              transToDate,
+              'YYYY-MM-DD HH:mm:ss',
+              true,
+            );
+            query.andWhere(
+              new Brackets((qb) => {
+                qb.andWhere('reports.createdAt BETWEEN :a AND :b', {
+                  a: `${fromDate}`,
+                  b: `${toDate}`,
+                });
+              }),
+            );
+          } else {
             throw new NotFoundException(
-              '정확한 날짜를 찾을 수 없습니다. 날짜의 범위를 확인해주세요.',
+              '정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.',
             );
           }
-          const transFromDate = new Date(rawFromDate);
-          let transToDate = new Date(rawToDate);
+          break;
+        }
+        case Boolean(queries['fromDate']): {
+          // URL 쿼리에 fromDate만 존재하면 실행 (ex. 2023.06.10 00:00:00 이후)
+          const fromDate: string = queries['fromDate'];
+          query.andWhere(
+            new Brackets((qb) => {
+              qb.andWhere('reports.createdAt > :date', {
+                date: `${fromDate}`,
+              });
+            }),
+          );
+          break;
+        }
+        case Boolean(queries['toDate']): {
+          // URL 쿼리에 toDate만 존재하면 실행 (ex. 2023.06.10 23:59:59 이전)
+          const rawToDate: string = queries['toDate'];
+          let transToDate: Date = new Date(rawToDate);
           transToDate = date.addHours(transToDate, 23);
           transToDate = date.addMinutes(transToDate, 59);
           transToDate = date.addSeconds(transToDate, 59);
-
-          const fromDate: string = date.format(
-            transFromDate,
-            'YYYY-MM-DD HH:mm:ss',
-            true,
-          );
           const toDate: string = date.format(
             transToDate,
             'YYYY-MM-DD HH:mm:ss',
             true,
           );
-
-          await query.andWhere(
+          query.andWhere(
             new Brackets((qb) => {
-              qb.andWhere('reports.createdAt BETWEEN :a AND :b', {
-                a: `${fromDate}`,
-                b: `${toDate}`,
+              qb.andWhere('reports.createdAt < :date', {
+                date: `${toDate}`,
               });
             }),
           );
-        } else {
-          throw new NotFoundException(
-            '정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.',
-          );
+          break;
         }
-      } else if (queries['fromDate']) {
-        // URL 쿼리에 fromDate만 존재하면 실행 (ex. 2023.06.10 00:00:00 이후)
-        const fromDate: string = queries['fromDate'];
-
-        const regex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!regex.test(fromDate)) {
-          throw new NotFoundException(
-            '정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.',
-          );
+        default: {
+          break;
         }
-        await query.andWhere(
-          new Brackets((qb) => {
-            qb.andWhere('reports.createdAt > :date', {
-              date: `${fromDate}`,
-            });
-          }),
-        );
-      } else if (queries['toDate']) {
-        // URL 쿼리에 toDate만 존재하면 실행 (ex. 2023.06.10 23:59:59 이전)
-        const rawToDate: string = queries['toDate'];
-
-        const regex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!regex.test(rawToDate)) {
-          throw new NotFoundException(
-            '정확한 날짜를 찾을 수 없습니다. 날짜의 형식을 확인해주세요.',
-          );
-        }
-        let transToDate: Date = new Date(rawToDate);
-        transToDate = date.addHours(transToDate, 23);
-        transToDate = date.addMinutes(transToDate, 59);
-        transToDate = date.addSeconds(transToDate, 59);
-
-        const toDate: string = date.format(
-          transToDate,
-          'YYYY-MM-DD HH:mm:ss',
-          true,
-        );
-
-        await query.andWhere(
-          new Brackets((qb) => {
-            qb.andWhere('reports.createdAt < :date', {
-              date: `${toDate}`,
-            });
-          }),
-        );
       }
 
+      //----------------------------[symptoms]----------------------------------//
       if (queries['symptoms']) {
         // URL 쿼리에 증상이 존재하면 실행
         const symptoms: string[] = queries['symptoms'].split(','); // 쉼표를 기준으로 증상 구분
@@ -162,14 +140,18 @@ export class RequestsService {
         });
       }
 
+      //----------------------------[symptom_level]----------------------------------//
       if (queries['symptom_level']) {
         // URL 쿼리에 증상도가 존재하면 실행 (1 ~ 5)
         const level: number = parseInt(queries['symptom_level']);
-        query.andWhere('reports.symptom_level = :level', {
-          level: `${level}`,
-        });
+        query
+          .andWhere('reports.hospital_id > 0')
+          .andWhere('reports.symptom_level = :level', {
+            level: `${level}`,
+          });
       }
 
+      //------------------------------[site]--------------------------------//
       if (queries['site']) {
         // URL 쿼리에 지역이 존재하면 실행
         const site: string = queries['site'].toString();
@@ -178,6 +160,7 @@ export class RequestsService {
         });
       }
 
+      //-----------------------------[patient-name]---------------------------------//
       if (queries['name']) {
         // URL 쿼리에 이름이 존재하면 실행
         const name: string = queries['name'].toString();
@@ -186,20 +169,21 @@ export class RequestsService {
         });
       }
 
+      //-------------------------[age_range]-------------------------------------//
       if (queries['age_range']) {
         // URL 쿼리에 연령대가 존재하면 실행 (영유아, 청소년, 성인, 임산부, 노인)
-        const age_range: AgeRange = queries['age_range'].toString();
+        const age_range: AgeRange = queries['age_range'];
         query.andWhere('reports.age_range = :age_range', {
           age_range: `${age_range}`,
         });
       }
+      //--------------------------------------------------------------//
 
       const allReports = await query.getRawMany();
 
       if (allReports.length === 0) {
         throw new NotFoundException('검색 결과가 없습니다');
       }
-
       return allReports;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -213,6 +197,7 @@ export class RequestsService {
       }
     }
   }
+  //--------------------------------------------------------------//
 
   // 동시성 제어를 위한 메서드
   async addToRequestQueue(report_id: number, hospital_id: number) {

@@ -11,6 +11,8 @@ import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { Queue } from 'bull';
 import { BullConfigProvider } from '../commons/providers/bull-config.provider';
+import { RedisConfigProvider } from '../commons/providers/redis-config.provider';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -22,6 +24,9 @@ import { BullConfigProvider } from '../commons/providers/bull-config.provider';
     BullModule.registerQueue({
       configKey: 'bullqueue-config',
       name: 'requestQueue',
+    }),
+    CacheModule.registerAsync({
+      useClass: RedisConfigProvider,
     }),
   ],
   controllers: [RequestsController],
