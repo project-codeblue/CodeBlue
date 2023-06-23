@@ -226,7 +226,7 @@ export class HospitalsService {
     };
   }
 
-  async getNearbyHospitals(queries: object): Promise<Object> {
+  async getNearbyHospitals(queries: object): Promise<object> {
     // parseFloat = 문자열을 부동 소수점 숫자로 변환
     const startLat = parseFloat(queries['latitude']);
     const startLng = parseFloat(queries['longitude']);

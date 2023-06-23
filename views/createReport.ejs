@@ -78,7 +78,7 @@
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
 
-                let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
+                let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=&max_count=`;
 
                 return fetch(recommendedHospitals)
                   .then((response) => response.text())
