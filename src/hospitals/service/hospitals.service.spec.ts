@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { HospitalsService } from './hospitals.service';
 import { HospitalsRepository } from '../hospitals.repository';
-import { KakaoMapService } from '../../commons/providers/kakao-map.service';
+import { KakaoMapService } from '../../commons/providers/kakao-map.provider';
 import { ReportsRepository } from '../..//reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';

@@ -30,8 +30,8 @@
         font-family: 'Noto Sans KR', sans-serif;
       }
 
-      .container {
-        margin: 50px 85px 50px 85px;
+      form {
+        display: inline-block;
       }
     </style>
     <script>
@@ -77,16 +77,9 @@
               .then((position) => {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
-                const radius = null;
-                const maxCount = null;
 
                 let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}`;
-                if (radius) {
-                  recommendedHospitals += `&radius=${radius}`;
-                }
-                if (maxCount) {
-                  recommendedHospitals += `&max_count=${maxCount}`;
-                }
+
                 return fetch(recommendedHospitals)
                   .then((response) => response.text())
                   .then((text) => {
@@ -110,14 +103,6 @@
           });
       }
 
-      function scrollToTop() {
-        event.preventDefault();
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-      }
-
       function refreshBrowser() {
         event.preventDefault();
         window.location.reload();
@@ -133,12 +118,11 @@
     >
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <!-- <img
-          src="https://user-images.githubusercontent.com/76824986/246324142-743e6431-3870-4c20-8123-16e11f8582cb.jpg"
-          width="40"
-          height="auto"
-        /> -->
-          CodeBLUE
+          <img
+            src="./image/onlytext-cutout.png"
+            width="120"
+            height="auto"
+          />
         </a>
         <a
           role="button"
@@ -154,12 +138,12 @@
       </div>
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item"> 가까운 응급실 조회 </a>
+              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals"> 가까운 병원 조회 </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
@@ -172,7 +156,7 @@
 
     <div class="container">
       <section class="hero has-background-link-light m-6">
-        <div class="hero-body my-6" style="text-align: center; padding: 20px">
+        <div class="hero-body my-6" style="text-align: center;">
           <p class="title">환자 증상 보고서 입력</p>
           <p class="subtitle">
             <br />
@@ -191,13 +175,18 @@
                     <input
                       class="input"
                       type="text"
-                      placeholder="ex) 990101-2111111"
+                      placeholder="예) 990101-2111111"
                       maxlength="14"
                       name="patient_rrn"
                       id="patient_rrn"
+                      style="font-family: 'Noto Sans KR', sans-serif"
                     />
                   </div>
-                  <p class="help">숫자6자리-숫자7자리로 입력해주세요.</p>
+                  <p
+                    class="help"
+                  >
+                    숫자 6자리-숫자 7자리로 입력해주세요.
+                  </p>
                 </div>
               </div>
             </div>
@@ -267,7 +256,8 @@
                       id="blood_pressure"
                       name="blood_pressure"
                       type="text"
-                      placeholder="ex) 120/80"
+                      placeholder="예) 120/80"
+                      style="font-family: 'Noto Sans KR', sans-serif"
                     />
                   </div>
                   <p class="help">숫자/숫자로 입력해주세요.</p>
@@ -287,6 +277,7 @@
                       name="symptoms"
                       class="textarea is-danger"
                       placeholder="환자의 증상을 서술해주세요"
+                      style="font-family: 'Noto Sans KR', sans-serif"
                     ></textarea>
                   </div>
                   <p class="help is-danger">
@@ -304,14 +295,14 @@
                     <button
                       type="submit"
                       class="button is-link"
-                      onclick="scrollToTop(); sendReport();"
+                      onclick="sendReport();"
                     >
                       제출
                     </button>
                   </div>
                   <div class="control">
                     <button
-                      class="button is-link is-light"
+                      class="button is-danger"
                       onclick="refreshBrowser();"
                     >
                       취소

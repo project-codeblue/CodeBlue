@@ -1,18 +1,22 @@
-import { Controller, Get, Logger, Param, Query, Render } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Query,
+  Render,
+  UseInterceptors,
+} from '@nestjs/common';
 import { HospitalsService } from '../service/hospitals.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('hospital')
+@UseInterceptors(CacheInterceptor)
 export class HospitalsController {
   private logger = new Logger('HospitalsController');
   constructor(private hospitalsService: HospitalsService) {}
 
-  @Get('/local') // hospital/local?site=경기도
-  getLocalHospitals(@Query('site') site: string): Promise<string[]> {
-    this.logger.verbose('Getting Local Hospitals');
-    return this.hospitalsService.getLocalHospitals(site);
-  }
-
-  @Get('/:report_id') // hospital/1?latitude=37.1&longitude=127.1
+  @Get('/:report_id')
   @Render('recommendedHospitals')
   async getRecommendedHospitals(
     @Param('report_id') report_id: number,
@@ -27,8 +31,13 @@ export class HospitalsController {
     return { hospitals_data };
   }
 
-  @Get('/crawl/naver')
-  getSymptomCrawl() {
-    return this.hospitalsService.getSymptomCrawl();
+  @Get('/inquery/nearbyHospitals')
+  @Render('nearbyHospitals')
+  async getNearbyHospitals(@Query() queries: object): Promise<object> {
+    this.logger.verbose('Getting Nearby Hospitals');
+    const hospitals_data = await this.hospitalsService.getNearbyHospitals(
+      queries,
+    );
+    return { hospitals_data };
   }
 }

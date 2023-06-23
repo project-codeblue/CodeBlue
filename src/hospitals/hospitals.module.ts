@@ -6,26 +6,16 @@ import { ReportsRepository } from '../reports/reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hospitals } from './hospitals.entity';
 import { Crawling } from '../commons/middlewares/crawling';
-import { KakaoMapService } from '../commons/providers/kakao-map.service';
+import { KakaoMapService } from '../commons/providers/kakao-map.provider';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-store';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { RedisConfigProvider } from 'src/commons/providers/redis-config.provider';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Hospitals]),
-    CacheModule.register({
-      lagacyMode: true,
-      isGlobal: true,
-      name: 'redis-cache',
-      useFactory: async () => ({
-        store: redisStore,
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT,
-        ttl: 60,
-      }),
+    CacheModule.registerAsync({
+      useClass: RedisConfigProvider,
     }),
   ],
   controllers: [HospitalsController],
