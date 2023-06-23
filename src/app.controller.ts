@@ -12,19 +12,15 @@ export class AppController {
   @Get()
   @Render('index')
   root() {
-    return { name: 'name' };
   }
 
   @Get('/search')
   @Render('reportSearchEngine')
-  async search() {
-    const count = await this.reportService.getDataCount();
-    return { count: count };
+  search() {
   }
 
   @Get('/report')
   @Render('createReport')
   report() {
-    return { name: 'name' };
   }
 }
