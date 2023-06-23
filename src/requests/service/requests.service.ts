@@ -197,8 +197,9 @@ export class RequestsService {
       }
     }
   }
-  //--------------------------------------------------------------//
 
+  // 아래 코드는 1번, 2번 서버에는 주석처리 하여 배포합니다.
+  //--------------------------------------------------------------//
   // 동시성 제어를 위한 메서드
   async addRequestQueue(report_id: number, hospital_id: number) {
     // queue에 넣기 전 report_id와 hospital_id validation
@@ -313,6 +314,7 @@ export class RequestsService {
       });
     }
   }
+  //--------------------------------------------------------------//
 
   async withdrawRequest(report_id: number) {
     const withdrawnRequest = await this.entityManager.transaction(
