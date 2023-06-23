@@ -79,7 +79,7 @@
 
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="/report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
@@ -129,6 +129,7 @@
             <div>
               <strong>생성 일자:</strong> <%= `${year}년 ${month}월 ${date}일
               ${hours}시 ${minutes}분` %>
+              <% console.log(searchedData[i]) %>
               <a
                 href="/report/<%=searchedData[i].reports_report_id %>"
                 class="button is-info"

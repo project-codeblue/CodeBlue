@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="./image/codeblue-favicon.png"/> 
-    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png"/>
+    <link rel="icon" href="../../image/codeblue-favicon.png"/> 
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png"/>
 
     <title>CodeBLUE - 증상 보고서 검색 페이지</title>
 
@@ -79,7 +79,7 @@
       </div>
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="/report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
@@ -100,7 +100,7 @@
           <p class="title">증상보고서 검색 엔진</p>
           <p class="subtitle">
             <br />
-            현재 <%= count %>개의 누적 증상보고서가 있습니다.
+            현재 2,221,467개의 누적 증상보고서가 있습니다.
             <br />
             보고서 생성 날짜, 증상, 중증도 레벨, 이송 병원 지역, 환자 성명을
             통해 검색해보세요.
@@ -162,7 +162,7 @@
                     id="symptoms"
                     placeholder="증상명"
                     name="symptoms"
-                    style="font-family: 'Noto Sans KR', sans-serif"
+                    style="font-family: 'Noto Sans KR', sans-serif; width: 130px;"
                   />
                 </label>
                 <label for="site" class="form-label select m-5 is-hovered">
@@ -214,7 +214,7 @@
                     id="name"
                     placeholder="환자 성명"
                     name="name"
-                    style="font-family: 'Noto Sans KR', sans-serif"
+                    style="font-family: 'Noto Sans KR', sans-serif; width: 130px;"
                   />
                 </label>
               </div>
