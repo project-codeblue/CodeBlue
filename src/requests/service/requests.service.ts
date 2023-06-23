@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager, Brackets } from 'typeorm';
@@ -47,7 +52,7 @@ export class RequestsService {
         .andWhere('is_sent = 1')
         .orderBy('reports_createdAt', 'ASC')
         .limit(100);
-      
+
       if (queries['fromDate'] && queries['toDate']) {
         // URL 쿼리에 fromDate & toDate가 존재하면 실행
         const rawFromDate: string = queries['fromDate'];
@@ -274,7 +279,9 @@ export class RequestsService {
       async () => {
         console.log('*2 sendRequest 진입');
         try {
-          const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+          const hospital = await this.hospitalsRepository.findHospital(
+            hospital_id,
+          );
           const available_beds = hospital.available_beds;
           if (available_beds === 0) {
             throw new HttpException(
@@ -292,7 +299,10 @@ export class RequestsService {
           }
 
           // 증상 보고서에 hospital_id 추가
-          await this.reportsRepository.addTargetHospital(report_id, hospital_id);
+          await this.reportsRepository.addTargetHospital(
+            report_id,
+            hospital_id,
+          );
 
           // 해당 병원의 available_beds를 1 감소
           await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
