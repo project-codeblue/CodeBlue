@@ -197,7 +197,6 @@ export class RequestsService {
       }
     }
   }
-  //--------------------------------------------------------------//
 
   // 동시성 제어를 위한 메서드
   async addRequestQueue(report_id: number, hospital_id: number) {
@@ -220,7 +219,7 @@ export class RequestsService {
 
     console.log('2. requestQueue에 job 추가');
     // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해준다
-    const job = await this.requestQueue.add(
+    await this.requestQueue.add(
       'addRequestQueue',
       { report_id, hospital_id, eventName },
       {
@@ -271,9 +270,7 @@ export class RequestsService {
   async sendRequest(report_id: number, hospital_id: number, eventName: string) {
     console.log('*2 sendRequest 진입');
     try {
-      const hospital = await this.hospitalsRepository.findHospital(
-        hospital_id,
-      );
+      const hospital = await this.hospitalsRepository.findHospital(hospital_id);
       const available_beds = hospital.available_beds;
       if (available_beds === 0) {
         throw new HttpException(
@@ -291,10 +288,7 @@ export class RequestsService {
       }
 
       // 증상 보고서에 hospital_id 추가
-      await this.reportsRepository.addTargetHospital(
-        report_id,
-        hospital_id,
-      );
+      await this.reportsRepository.addTargetHospital(report_id, hospital_id);
 
       // 해당 병원의 available_beds를 1 감소
       await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
