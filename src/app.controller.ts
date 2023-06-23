@@ -22,7 +22,7 @@ export class AppController {
     return { count: count };
   }
 
-  @Get('/report')
+  @Get('/symptom-report')
   @Render('createReport')
   report() {
     return { name: 'name' };
