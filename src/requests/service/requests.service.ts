@@ -26,19 +26,18 @@ export class RequestsService {
   ) {}
 
   async getAllRequests(): Promise<Reports[]> {
-    // is_sent === true인 증상 보고서만 가져옴
     return await this.reportsRepository.getAllRequests();
   }
 
   // 검색 키워드: 날짜, 증상, 증상도, 이름, 지역
   async getSearchRequests(queries: object): Promise<Reports[]> {
-    //병훈님 의견 : 테이블 3개 공간인덱스 컬럼하나에
     try {
       const query = this.reportsRepository
         .createQueryBuilder('reports')
         .leftJoinAndSelect('reports.hospital', 'hospital')
         .leftJoinAndSelect('reports.patient', 'patient')
         .select([
+          'reports.report_id',
           'reports.symptoms',
           'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
           'reports.symptom_level',
@@ -50,6 +49,7 @@ export class RequestsService {
           'hospital.address',
         ])
         .where('reports.hospital_id > 0');
+      //is_sent = 1과 동일한 조건이지만 검색범위는 더 좁게
 
       //----------------------------[Data]----------------------------------//
       switch (true) {
