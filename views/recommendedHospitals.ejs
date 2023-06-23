@@ -15,7 +15,7 @@
     <meta property="og:url" content="https://codeblue.site" />
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="./image/codeblue.png" />
+    <meta property="og:image" content="../../image/codeblue.png" />
     <meta
       property="og:description"
       content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"
@@ -89,9 +89,13 @@
         })
         .then((data) => {
           console.log(data);
-          window.location.reload();
-          const errorMessage = document.querySelector('#errorMessage');
-          errorMessage.style.display = 'block';
+          if (data.report_id === report_id) {
+            window.location.reload();
+          }
+          if (data.statusCode === 400) {
+            const errorMessage = document.querySelector('#errorMessage');
+            errorMessage.style.display = 'block';
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -110,8 +114,6 @@
         .then((data) => {
           console.log(data);
           window.location.reload();
-          const errorMessage = document.querySelector('#errorMessage');
-          errorMessage.style.display = 'none';
         })
         .catch((error) => {
           console.error(error);
@@ -125,23 +127,49 @@
       });
     }
 
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    }
+
     function refreshBrowser() {
-      var currentUrl = window.location.href;
-      console.log(currentUrl);
-      window.location.reload();
+      // 현재 url에서 report_id 가져오기
+      const currentUrl = window.location.href;
+      const reportId = currentUrl.split('/')[4].split('?')[0];
+      // URL에 max_count & radius 쿼리 스트링 추가하기
+      const params = new URLSearchParams(window.location.search);
+      const radius = params.get('radius');
+      const max_count = params.get('max_count');
+
+      // 새로운 위치 좌표 반영
+      getCurrentPosition()
+        .then((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          const recommendedHospitalsUrl = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=${radius}&max_count=${max_count}`;
+
+          // 페이지 다시 로드
+          window.location.href = recommendedHospitalsUrl;
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('위치 정보를 가져오는데 실패했습니다.');
+        });
     }
 
     function addQueryString(position) {
       // 현재 URL 가져오기
-      var currentUrl = window.location.href;
+      const currentUrl = window.location.href;
 
       // URL에 쿼리 스트링 추가하기
-      var params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(window.location.search);
       const radius = document.querySelector('#radius').value;
       const max_count = document.querySelector('#max_count').value;
       params.set('radius', radius);
       params.set('max_count', max_count);
-      var updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
+      const updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
 
       // 페이지 다시 로드
       window.location.href = updatedUrl;
@@ -181,7 +209,9 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals"> 가까운 병원 조회 </a>
+              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals">
+                가까운 병원 조회
+              </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />

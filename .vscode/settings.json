@@ -1,0 +1,4 @@
+{
+    "vscode-mysql.enableTelemetry": true,
+    "vscode-mysql.enableDelimiterOperator": true
+}
