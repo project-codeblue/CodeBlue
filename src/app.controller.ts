@@ -18,11 +18,10 @@ export class AppController {
   @Get('/search')
   @Render('reportSearchEngine')
   async search() {
-    const count = await this.reportService.getDataCount();
-    return { count: count };
+    return { name: 'name' };
   }
 
-  @Get('/report')
+  @Get('/symptom-report')
   @Render('createReport')
   report() {
     return { name: 'name' };

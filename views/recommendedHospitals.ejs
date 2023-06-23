@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="./image/codeblue-favicon.png" />
-    <link rel="apple-touch-icon" href="./image/codeblue-favicon.png" />
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
 
     <title>CodeBlue - 위치 기반 추천 응급실 조회 페이지</title>
 
@@ -15,7 +15,7 @@
     <meta property="og:url" content="https://codeblue.site" />
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="./image/codeblue.png" />
+    <meta property="og:image" content="../../image/codeblue.png" />
     <meta
       property="og:description"
       content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"
@@ -89,7 +89,7 @@
         })
         .then((data) => {
           console.log(data);
-          if (data.report_id === report_id) {
+          if (data.hospital) {
             window.location.reload();
           }
           if (data.statusCode === 400) {
@@ -184,7 +184,11 @@
     >
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <img src="./image/onlytext-cutout.png" width="120" height="auto" />
+          <img
+            src="../../image/onlytext-cutout.png"
+            width="120"
+            height="auto"
+          />
         </a>
         <a
           role="button"
@@ -200,7 +204,7 @@
       </div>
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="/report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
           <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>

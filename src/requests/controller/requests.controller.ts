@@ -32,7 +32,7 @@ export class RequestsController {
   ) {
     this.logger.verbose('환자 이송 신청 POST API');
     // client는 환자 이송 신청 비지니스 로직이 담긴 sendRequest()를 호출하지 않고, 먼저 addToRequestQueue()를 호출한다.
-    return this.requestsService.addToRequestQueue(report_id, hospital_id);
+    return this.requestsService.addRequestQueue(report_id, hospital_id);
   }
 
   @Delete('/:report_id')
