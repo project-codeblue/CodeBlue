@@ -39,7 +39,7 @@ export class RequestsService {
         .select([
           'reports.report_id',
           'reports.symptoms',
-          'DATE_ADD(reports.createdAt, INTERVAL 9 HOUR) AS reports_createdAt',
+          'reports.createdAt',
           'reports.symptom_level',
           'patient.name',
           'reports.age_range',
