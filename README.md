@@ -1,17 +1,25 @@
-# Project. CodeBlue #
+## CodeBlue
 ![image](https://github.com/backEndKwon/CodeBlue/assets/128948886/851aa11f-e71d-4518-81b1-1a47da694003)
 
-## 🏠 HOME 페이지 [Home Page Link](링크 작업ing)
-## 📹 소개 영상 [youtube](링크 작업ing)
-## 🧑🏾‍💻 세부 작업 현황 [Notion](https://www.notion.so/siwonmadang/Code-BLUE-ec7906910dec4f4b9d34da72fc334dd6)
 
-<hr>
+#### 🏠 작품 링크 : [CodeBlue](https://codeblue.site/)
+#### 📹 소개 영상 : [youtube](링크 작업ing)
+#### 🧑🏾‍💻 작업 로그 : [Notion](https://www.notion.so/siwonmadang/Code-BLUE-ec7906910dec4f4b9d34da72fc334dd6)
+-------------------
 
+<br>
+
+# 📝 Intro
+
+* **프로젝트명** : CodeBlue
+* **기간** : 2023년 5월 19일 ~ 2023년 6월 30일
+* **주제** : 인공지능을 활용한 응급환자 중증도 분류 & 사용자 위치 기반 실시간 잔여병상 조회 및 환자 이송신청 시스템
+* **주요기능** : 병원 조회, 증상 보고서 입력/조회, 환자 이송 신청/신청 철회, 이슈사항 메일 발송
 <br>
 
 # 👨‍👩‍👧‍👦Team Members
 
-| Position      | Name          | Github                                            |
+| Position      | Name          |    Github                                            |
 |:--------------|:--------------|:--------------------------------------------------|
 | Backend       | 김시원        | [Siwon-Kim](https://github.com/Siwon-Kim)         |
 | Backend       | 권용재        | [backEndKwon](https://github.com/backEndKwon)     |
@@ -20,17 +28,45 @@
 
 <br>
 
+# ⚒ Tech Stack
+* 업데이트 예정
+<img src="https://img.shields.io/badge/MySql-4479A1?style=flat&logo=MySql&logoColor=white"/>
+<br>
+
+# 🕸 Architecture
+<details>
+<summary> Architecture 펼쳐보기 </summary>
+<div markdown="1">  
+* 업데이트 예정
+
+</div>
+</details>
+
+<br>
+
+#  📒 ERD
+<details>
+<summary> ERD 펼쳐보기 </summary>
+<div markdown="1">  
+* 업데이트 예정
+</div>
+</details>
+
+<br>
+
 # 📝Commit Convention
 
-제목은 최대 50글자까지 아래에 작성: ex) feat: Add Key mapping
+<details>
+<summary> Commit Convention 펼쳐보기 </summary>
+<div markdown="1">  
+  <br>
+● 제목은 최대 30글자이하로 작성: ex) feat: Add Key mapping
+  <br>
+● 본문은 아래에 작성  
+<br><br>
 
-본문은 아래에 작성  
+--- <타입> 리스트 --- 
 
-꼬릿말은 아래에 작성: ex) Github issue #23  
-
---- COMMIT END --- 
-
-<타입> 리스트  
 feat        : 기능 (새로운 기능)  
 fix         : 버그 (버그 수정)  
 refactor    : 리팩토링  
@@ -44,21 +80,17 @@ init        : 초기 생성
 rename      : 파일 혹은 폴더명을 수정하거나 옮기는 작업만 한 경우  
 remove      : 파일을 삭제하는 작업만 수행한 경우 
 
-------------------  
+--- <꼬리말> 필수아닌 옵션 ---   
 
-제목 첫 글자를 대문자로  
-제목은 명령문으로  
-제목 끝에 마침표(.) 금지  
-제목과 본문을 한 줄 띄워 분리하기  
-본문은 "어떻게" 보다 "무엇을", "왜"를 설명한다.  
-본문에 여러줄의 메시지를 작성할 땐 "-"로 구분  
-
-------------------  
-
-<꼬리말>  
-필수가 아닌 optional  
 Fixes        : 이슈 수정중 (아직 해결되지 않은 경우)  
 Resolves     : 이슈 해결했을 때 사용  
 Ref          : 참고할 이슈가 있을 때 사용  
 Related to   : 해당 커밋에 관련된 이슈번호 (아직 해결되지 않은 경우)  
 ex) Fixes: #47 Related to: #32, #21
+
+</div>
+</details>
+
+<br><br><br>
+
+![header](https://capsule-render.vercel.app/api?type=waving&color=auto&height=200&section=header&text=Thank%20you%20for%20watching&fontSize=50)
