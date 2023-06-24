@@ -6,17 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" href="../../image/codeblue-favicon.png"/> 
-    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png"/>
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
 
     <title>CodeBLUE - 증상 보고서 검색 페이지</title>
 
     <!-- Meta Tag -->
-    <meta property="og:url" content="https://codeblue.site">
-    <meta property="og:title" content="CodeBLUE">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="../../image/codeblue.png">
-    <meta property="og:description" content="CodeBLUE - 증상 보고서 검색 페이지">
+    <meta property="og:url" content="https://codeblue.site" />
+    <meta property="og:title" content="CodeBLUE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="../../image/codeblue.png" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 증상 보고서 검색 페이지"
+    />
 
     <link
       rel="stylesheet"
@@ -35,10 +38,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-wrap: wrap;
+        margin: 60px 0 60px 0;
       }
 
       .label {
         width: 50px;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
       }
     </style>
 
@@ -59,11 +71,7 @@
     >
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <img
-            src="./image/onlytext-cutout.png"
-            width="120"
-            height="auto"
-          />
+          <img src="./image/onlytext-cutout.png" width="120" height="auto" />
         </a>
         <a
           role="button"
@@ -84,7 +92,9 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals"> 가까운 병원 조회 </a>
+              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals">
+                가까운 병원 조회
+              </a>
               <a class="navbar-item"> 증상보고서 수정 </a>
               <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
@@ -96,7 +106,7 @@
     </nav>
     <div class="container">
       <section class="hero has-background-link-light m-6">
-        <div class="hero-body my-6" style="text-align: center;">
+        <div class="hero-body my-6" style="text-align: center; padding: 40px">
           <p class="title">증상보고서 검색 엔진</p>
           <p class="subtitle">
             <br />
@@ -116,12 +126,12 @@
                     id="fromDate"
                     name="fromDate"
                     min="2010-01-01"
-                    max=<%= today %>
-                    style="
-                      font-family: 'Noto Sans KR', sans-serif;
-                      margin-bottom: 10px;
-                    "
+                    max="<%"
+                    ="today"
+                    %
                   />
+                  style=" font-family: 'Noto Sans KR', sans-serif;
+                  margin-bottom: 10px; " />
                 </label>
                 <label for="toDate" class="form-label m-5">
                   마지막 일자<br />
@@ -130,12 +140,12 @@
                     id="toDate"
                     name="toDate"
                     min="2010-01-01"
-                    max=<%= today %>
-                    style="
-                      font-family: 'Noto Sans KR', sans-serif;
-                      margin-bottom: 10px;
-                    "
+                    max="<%"
+                    ="today"
+                    %
                   />
+                  style=" font-family: 'Noto Sans KR', sans-serif;
+                  margin-bottom: 10px; " />
                 </label>
                 <label
                   for="symptom_level"
@@ -162,7 +172,10 @@
                     id="symptoms"
                     placeholder="증상명"
                     name="symptoms"
-                    style="font-family: 'Noto Sans KR', sans-serif; width: 130px;"
+                    style="
+                      font-family: 'Noto Sans KR', sans-serif;
+                      width: 110px;
+                    "
                   />
                 </label>
                 <label for="site" class="form-label select m-5 is-hovered">
@@ -214,7 +227,10 @@
                     id="name"
                     placeholder="환자 성명"
                     name="name"
-                    style="font-family: 'Noto Sans KR', sans-serif; width: 130px;"
+                    style="
+                      font-family: 'Noto Sans KR', sans-serif;
+                      width: 110px;
+                    "
                   />
                 </label>
               </div>
@@ -232,9 +248,7 @@
       </section>
     </div>
 
-    <div id="result"></div>
-
-    <footer class="footer mt-5">
+    <footer class="footer">
       <div class="content has-text-centered">
         <p>
           <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
