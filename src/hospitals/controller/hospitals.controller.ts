@@ -11,12 +11,12 @@ import { HospitalsService } from '../service/hospitals.service';
 import { CacheInterceptor } from '../../commons/interceptors/cache.interceptor';
 
 @Controller('hospital')
-@UseInterceptors(CacheInterceptor)
 export class HospitalsController {
   private logger = new Logger('HospitalsController');
   constructor(private hospitalsService: HospitalsService) {}
 
   @Get('/:report_id')
+  @UseInterceptors(CacheInterceptor)
   @Render('recommendedHospitals')
   async getRecommendedHospitals(
     @Param('report_id') report_id: number,
@@ -30,7 +30,7 @@ export class HospitalsController {
     return { hospitals_data };
   }
 
-  @Get('/inquery/nearbyHospitals')
+  @Get('/nearby/site')
   @Render('nearbyHospitals')
   async getNearbyHospitals(@Query() queries: object): Promise<object> {
     this.logger.verbose('Getting Nearby Hospitals');

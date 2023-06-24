@@ -19,3 +19,5 @@ export class RequestQueueConsumer {
     );
   }
 }
+
+// 이 파일은 1번, 2번 서버에는 주석 처리하여 배포합니다.

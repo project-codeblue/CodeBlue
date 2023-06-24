@@ -38,10 +38,6 @@
         width: 95px;
       }
 
-      .container {
-        margin: 50px 235px 50px 235px;
-      }
-
       .box {
         padding: 35px;
       }
@@ -91,7 +87,6 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
           <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
@@ -99,19 +94,19 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals">
+              <a class="navbar-item" href="/hospital/nearby/site">
                 가까운 병원 조회
               </a>
-              <a class="navbar-item"> 증상보고서 수정 </a>
-              <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
-              <a class="navbar-item"> Report an issue </a>
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
             </div>
           </div>
         </div>
       </div>
     </nav>
-    <div class="container">
+    <div class="container  is-max-widescreen">
       <div class="content results" style="margin-top: 30px">
         <h2>증상 보고서 검색 결과</h2>
         <div class="box">
