@@ -16,7 +16,10 @@
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="../../image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE - 증상 보고서 입력 페이지"/>
+    <meta
+      property="og:description"
+      content="CodeBLUE - 증상 보고서 입력 페이지"
+    />
 
     <link
       rel="stylesheet"
@@ -24,7 +27,10 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"/>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       * {
         font-family: 'Noto Sans KR', sans-serif;
@@ -32,6 +38,27 @@
 
       form {
         display: inline-block;
+      }
+
+      .loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.8;
+        background: white;
+        z-index: 99;
+        text-align: center;
+      }
+
+      .loading > iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 100;
+        transform: translate(-50%, -50%);
       }
     </style>
     <script>
@@ -42,7 +69,13 @@
       }
 
       function sendReport() {
+        // form 데이터 요청으로 보내지 않도록 설정
         event.preventDefault();
+
+        // 로딩 이미지 띄우기
+        const loadingElement = document.querySelector('.loading');
+        loadingElement.style.display = 'block';
+
         const patient_rrn = document.querySelector('#patient_rrn').value;
         const age_range_form = document.querySelector('#age_range');
         const age_range = age_range_form.value || null;
@@ -89,16 +122,19 @@
                   })
                   .catch((error) => {
                     console.error(error);
+                    loadingElement.style.display = 'none';
                     alert('병원추천 페이지로 이동하는데 실패했습니다.');
                   });
               })
               .catch((error) => {
                 console.error(error);
+                loadingElement.style.display = 'none';
                 alert('위치 정보를 가져오는데 실패했습니다.');
               });
           })
           .catch((error) => {
             console.error('Error:', error);
+            loadingElement.style.display = 'none';
             alert('데이터 저장 중에 오류가 발생했습니다.');
           });
       }
@@ -119,7 +155,7 @@
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
           <img
-            src="./image/onlytext-cutout.png"
+            src="../../image/onlytext-cutout.png"
             width="120"
             height="auto"
           />
@@ -143,20 +179,24 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/nearby/site"> 가까운 병원 조회 </a>
-              <a class="navbar-item"> 증상보고서 수정 </a>
-              <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
+              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals">
+                가까운 병원 조회
+              </a>
               <hr class="navbar-divider" />
-              <a class="navbar-item"> Report an issue </a>
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
             </div>
           </div>
         </div>
       </div>
     </nav>
-
+    <div class="loading" style="display: none">
+      <iframe src="https://embed.lottiefiles.com/animation/43735"></iframe>
+    </div>
     <div class="container">
       <section class="hero has-background-link-light m-6">
-        <div class="hero-body my-6" style="text-align: center;">
+        <div class="hero-body my-6" style="text-align: center">
           <p class="title">환자 증상 보고서 입력</p>
           <p class="subtitle">
             <br />
@@ -182,11 +222,7 @@
                       style="font-family: 'Noto Sans KR', sans-serif"
                     />
                   </div>
-                  <p
-                    class="help"
-                  >
-                    숫자 6자리-숫자 7자리로 입력해주세요.
-                  </p>
+                  <p class="help">숫자 6자리-숫자 7자리로 입력해주세요.</p>
                 </div>
               </div>
             </div>
