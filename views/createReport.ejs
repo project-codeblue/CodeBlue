@@ -72,10 +72,6 @@
         // form 데이터 요청으로 보내지 않도록 설정
         event.preventDefault();
 
-        // 로딩 이미지 띄우기
-        const loadingElement = document.querySelector('.loading');
-        loadingElement.style.display = 'block';
-
         const patient_rrn = document.querySelector('#patient_rrn').value;
         const age_range_form = document.querySelector('#age_range');
         const age_range = age_range_form.value || null;
@@ -91,52 +87,61 @@
           symptoms,
         };
 
-        console.log('createReportDto', createReportDto);
-        const url = '/report';
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(createReportDto),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            const reportId = data.report_id;
-            // alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+        // 필수 조건인 symptoms를 입력하지 않은 경우
+        if (!symptoms) {
+          alert('환자 증상을 입력해주세요.');
+        } else {
+          // 로딩 이미지 띄우기
+          const loadingElement = document.querySelector('.loading');
+          loadingElement.style.display = 'block';
 
-            getCurrentPosition()
-              .then((position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-
-                let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=&max_count=`;
-
-                return fetch(recommendedHospitals)
-                  .then((response) => response.text())
-                  .then((text) => {
-                    console.log(text);
-                    // alert('병원추천 페이지로 이동합니다.');
-                    window.location.href = recommendedHospitals;
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                    loadingElement.style.display = 'none';
-                    alert('병원추천 페이지로 이동하는데 실패했습니다.');
-                  });
-              })
-              .catch((error) => {
-                console.error(error);
-                loadingElement.style.display = 'none';
-                alert('위치 정보를 가져오는데 실패했습니다.');
-              });
+          console.log('createReportDto', createReportDto);
+          const url = '/report';
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(createReportDto),
           })
-          .catch((error) => {
-            console.error('Error:', error);
-            loadingElement.style.display = 'none';
-            alert('데이터 저장 중에 오류가 발생했습니다.');
-          });
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              const reportId = data.report_id;
+              // alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+
+              getCurrentPosition()
+                .then((position) => {
+                  const latitude = position.coords.latitude;
+                  const longitude = position.coords.longitude;
+
+                  let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=&max_count=`;
+
+                  return fetch(recommendedHospitals)
+                    .then((response) => response.text())
+                    .then((text) => {
+                      console.log(text);
+                      // alert('병원추천 페이지로 이동합니다.');
+                      window.location.href = recommendedHospitals;
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      loadingElement.style.display = 'none';
+                      alert('병원추천 페이지로 이동하는데 실패했습니다.');
+                    });
+                })
+                .catch((error) => {
+                  console.error(error);
+                  loadingElement.style.display = 'none';
+                  alert('위치 정보를 가져오는데 실패했습니다.');
+                });
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              loadingElement.style.display = 'none';
+              alert('데이터 저장 중에 오류가 발생했습니다.');
+            });
+        }
       }
 
       function refreshBrowser() {
@@ -303,7 +308,7 @@
 
             <div class="field is-horizontal">
               <div class="field-label is-normal">
-                <label class="label" for="symptoms">환자증상</label>
+                <label class="label" for="symptoms">환자 증상</label>
               </div>
               <div class="field-body">
                 <div class="field">
