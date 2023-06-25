@@ -40,18 +40,18 @@
         display: grid;
         grid-template-columns: 2fr 5fr 2fr;
         height: 100%;
-        background: #f5f5f5;
+        background: black;
       }
       .center {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #000000;
+        background: white;
       }
       .container {
-        border-radius: 3px;
+        border-radius: 10px;
         box-shadow: 0 4px 6px rgba(104, 102, 102, 0.1);
-        background: white;
+        background: #f5f5f5;
         margin: 30% 15% 0 15%;
         padding: 2% 10% 3% 10%;
         text-align: center;
@@ -74,7 +74,7 @@
         text-decoration: none;
         border-radius: 5px;
         font-weight: 600;
-        background-color: rgb(239, 241, 250);
+        background-color: rgb(224, 227, 240);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         font-size: 20px;
       }
@@ -85,13 +85,14 @@
       }
       .gif-container {
         position: absolute;
-        top: 15%;
+        top: 20%;
         left: 50%;
         transform: translate(-50%, -50%);
         background-image: url('./image/gif.gif');
-        width: 10%;
-        height: 10%;
-        background-size: cover;
+        width: 200px;
+        height: 200px;
+        background-size: contain;
+        background-position: center;
       }
     </style>
   </head>
