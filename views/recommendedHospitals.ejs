@@ -67,6 +67,27 @@
       .input {
         margin: 10px 10px 10px 0px;
       }
+
+      .loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.8;
+        background: white;
+        z-index: 99;
+        text-align: center;
+      }
+
+      .loading > iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 100;
+        transform: translate(-50%, -50%);
+      }
     </style>
 
     <!-- google font -->
@@ -78,7 +99,24 @@
     />
   </head>
   <script>
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    }
+
     function sendRequest(report_id, hospital_id) {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+
       const url = `/request/${report_id}/${hospital_id}`;
 
       fetch(url, {
@@ -95,14 +133,20 @@
           if (data.statusCode === 400) {
             const errorMessage = document.querySelector('#errorMessage');
             errorMessage.style.display = 'block';
+            loadingElement.style.display = 'none';
           }
         })
         .catch((error) => {
           console.error(error);
+          loadingElement.style.display = 'none';
+          alert('이송신청에 실패했습니다.');
         });
     }
 
     function unsendRequest(report_id) {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
       const url = `/request/${report_id}`;
 
       fetch(url, {
@@ -117,23 +161,16 @@
         })
         .catch((error) => {
           console.error(error);
+          loadingElement.style.display = 'none';
+          alert('이송신청 철회에 실패했습니다.');
         });
     }
 
-    function scrollToTop() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-
-    function getCurrentPosition() {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-    }
-
     function refreshBrowser() {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+
       // 현재 url에서 report_id 가져오기
       const currentUrl = window.location.href;
       const reportId = currentUrl.split('/')[4].split('?')[0];
@@ -155,11 +192,16 @@
         })
         .catch((error) => {
           console.error(error);
+          loadingElement.style.display = 'none';
           alert('위치 정보를 가져오는데 실패했습니다.');
         });
     }
 
     function addQueryString(position) {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+
       // 현재 URL 가져오기
       const currentUrl = window.location.href;
 
@@ -174,6 +216,13 @@
       // 페이지 다시 로드
       window.location.href = updatedUrl;
     }
+
+    // 브라우저에서 새로고침 하는 경우 로딩 이미지 띄우기
+    window.addEventListener('beforeunload', function () {
+      // Show loading element when the page is being unloaded (refreshed)
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+    });
   </script>
   <body>
     <nav
@@ -209,13 +258,13 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> More </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" href="/hospital/inquery/nearbyHospitals">
+              <a class="navbar-item" href="/hospital/nearby/site">
                 가까운 병원 조회
               </a>
-              <a class="navbar-item"> 증상보고서 수정 </a>
-              <a class="navbar-item"> 환자 정보 입력 및 수정 </a>
               <hr class="navbar-divider" />
-              <a class="navbar-item"> Report an issue </a>
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
             </div>
           </div>
         </div>
@@ -228,6 +277,9 @@
     >
       새로고침
     </button>
+    <div class="loading" style="display: none">
+      <iframe src="https://embed.lottiefiles.com/animation/43735"></iframe>
+    </div>
     <div class="container is-max-widescreen">
       <div class="content hospitals_block" style="margin-top: 30px">
         <div>

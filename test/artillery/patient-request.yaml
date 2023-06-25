@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:3000"
+  target: "https://codeblue.site/"
   phases:
     - duration: 30
       arrivalRate: 5
@@ -18,4 +18,4 @@ scenarios:
   - flow:
     - log: "사용자가 환자 이송 신청"
     - post:
-        url: "http://localhost:3000/request/{{report_id}}/{{hospital_id}}"
+        url: "https://codeblue.site/request/{{report_id}}/{{hospital_id}}"

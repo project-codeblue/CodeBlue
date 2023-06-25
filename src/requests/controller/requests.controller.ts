@@ -25,6 +25,8 @@ export class RequestsController {
     return this.requestsService.getAllRequests();
   }
 
+  // 이 API는 1번, 2번 서버에는 주석 처리하여 배포합니다.
+  // --------------------------------------------------------- //
   @Post('/:report_id/:hospital_id')
   sendRequest(
     @Param('report_id') report_id: number,
@@ -34,6 +36,7 @@ export class RequestsController {
     // client는 환자 이송 신청 비지니스 로직이 담긴 sendRequest()를 호출하지 않고, 먼저 addToRequestQueue()를 호출한다.
     return this.requestsService.addRequestQueue(report_id, hospital_id);
   }
+  // --------------------------------------------------------- //
 
   @Delete('/:report_id')
   withdrawRequest(@Param('report_id') report_id: number) {

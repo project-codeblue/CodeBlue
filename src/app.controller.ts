@@ -12,18 +12,15 @@ export class AppController {
   @Get()
   @Render('index')
   root() {
-    return { name: 'name' };
   }
 
   @Get('/search')
   @Render('reportSearchEngine')
-  async search() {
-    return { name: 'name' };
+  search() {
   }
 
   @Get('/symptom-report')
   @Render('createReport')
   report() {
-    return { name: 'name' };
   }
 }
