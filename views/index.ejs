@@ -83,6 +83,16 @@
         background-color: rgb(72, 95, 199);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       }
+      .gif-container {
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-image: url('./image/gif.gif');
+        width: 10%;
+        height: 10%;
+        background-size: cover;
+      }
     </style>
   </head>
   <body>
@@ -95,9 +105,10 @@
           <div class="selections">
             <a href="/symptom-report">중증도 판단 및 가용 병상 수 확인</a>
             <a href="/search">증상 보고서 검색</a>
-            <a href="/hospital/inquery/nearbyHospitals">가까운 병원 조회</a>
+            <a href="/hospital/nearby/site">가까운 병원 조회</a>
           </div>
         </div>
+        <div class="gif-container"></div>
       </div>
       <div class="right"></div>
     </div>
