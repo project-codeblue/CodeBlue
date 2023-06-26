@@ -11,7 +11,6 @@ import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
 import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { AgeRange, BloodType } from '../reports.enum';
 import axios from 'axios';
 import { Gender } from '../../patients/patients.enum';
 import appConfig from 'config/app.config';
