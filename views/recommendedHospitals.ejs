@@ -352,12 +352,14 @@
             <div class="hospital_title">
               <h3><%=hospitals_data[i].name %></h3>
               <div class="title-call-button">
-                <button
-                  class="phone button is-dark mr-3 mt-3"
-                  title="<%=hospitals_data[i].phone %>"
-                >
-                  전화 걸기
-                </button>
+                <a href='tel:<%=hospitals_data[i].phone %>'>
+                  <button
+                    class="phone button is-dark mr-3 mt-3"
+                    title="<%=hospitals_data[i].phone %>"
+                  >
+                    전화 걸기
+                  </button>
+                </a>
                 <button
                   class="button is-danger is-dark mt-3"
                   onclick="scrollToTop(); sendRequest(`<%=hospitals_data[1].report_id%>`, `<%=hospitals_data[i].hospital_id%>`);"
