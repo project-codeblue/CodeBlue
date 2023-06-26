@@ -1,26 +1,16 @@
 import { Controller, Get, Render } from '@nestjs/common';
-import { AppService } from './app.service';
-import { ReportsService } from './reports/service/reports.service';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly reportService: ReportsService,
-  ) {}
-
   @Get()
   @Render('index')
-  root() {
-  }
+  root() {}
 
   @Get('/search')
   @Render('reportSearchEngine')
-  search() {
-  }
+  search() {}
 
   @Get('/symptom-report')
   @Render('createReport')
-  report() {
-  }
+  report() {}
 }

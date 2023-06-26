@@ -30,7 +30,7 @@ export class HospitalsController {
     return { hospitals_data };
   }
 
-  @Get('/nearby/site')
+  @Get('/hospital/nearby/site')
   @Render('nearbyHospitals')
   async getNearbyHospitals(@Query() queries: object): Promise<object> {
     this.logger.verbose('Getting Nearby Hospitals');
