@@ -4,20 +4,16 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <!-- Favicon -->
     <link rel="icon" href="./image/codeblue-favicon.png" />
     <link rel="apple-touch-icon" href="./image/codeblue-favicon.png" />
-
     <title>CodeBLUE</title>
-
     <!-- Meta Tag -->
     <meta property="og:url" content="https://codeblue.site" />
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="./image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE"/>
-
+    <meta property="og:description" content="CodeBLUE" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
@@ -33,54 +29,84 @@
       body {
         font-family: 'Noto Sans KR', sans-serif;
         height: 100%;
+        background: #f5f5f5;
+      }
+      .wrapper {
+        display: grid;
+        grid-template-columns: 2fr 5fr 2fr;
+        height: 100%;
+        background: rgb(224, 227, 240);
+      }
+      .center {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f5f5f5;
+        background: white;
       }
       .container {
-        max-width: 600px;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        background: white;
-        padding: 20px;
+        box-shadow: 0 4px 6px rgba(104, 102, 102, 0.1);
+        background: #f5f5f5;
+        margin: 30% 15% 0 15%;
+        padding: 2% 10% 3% 10%;
         text-align: center;
         position: relative;
       }
-      .logo {
-        position: absolute;
-        top: -40px;
-        left: 50%;
-        transform: translate(-50%, 0);
+      .description {
+        margin-top: 15px;
       }
       .selections {
-        margin-top: 20px;
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .selections a {
+        display: block;
+        text-align: center;
+        padding: 20px;
+        color: rgb(71, 69, 97);
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: 600;
+        background-color: rgb(224, 227, 240);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 20px;
+      }
+      .selections a:hover {
+        color: white;
+        background-color: rgb(72, 95, 199);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+      .gif-container {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-image: url('./image/gif.gif');
+        width: 200px;
+        height: 200px;
+        background-size: contain;
+        background-position: center;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1 class="title is-4">
-        응급 환자를 위한 위치 기반 실시간 잔여 병상 조회 및 환자 이송 신청
-        시스템
-      </h1>
-      <p>
-        응급 구조사는 환자의 현재 위치와 입력한 증상 보고서를 기반으로 주변 병원
-        추천 / 실시간 잔여 병실 수를 조회하고, 병원에 환자 이송 신청을 할 수
-        있습니다.
-      </p>
-      <div class="selections">
-        <a
-          href="/symptom-report"
-          class="button is-info is-light is-size-5 has-text-weight-bold"
-          >증상 보고서 입력 및 추천 응급실 조회</a
-        >
-        <a
-          href="/search"
-          class="button is-info is-light is-size-5 has-text-weight-bold"
-          >증상 보고서 검색</a
-        >
+    <div class="wrapper">
+      <div class="left"></div>
+      <div class="center">
+        <div class="container">
+          <h1 class="title">CodeBLUE</h1>
+          <p class="description">실시간 잔여 병상 조회 및 이송 신청 시스템</p>
+          <div class="selections">
+            <a href="/symptom-report">중증도 판단 및 가용 병상 수 확인</a>
+            <a href="/search">증상 보고서 검색</a>
+            <a href="/hospital/nearby/site">가까운 병원 조회</a>
+          </div>
+        </div>
+        <div class="gif-container"></div>
       </div>
+      <div class="right"></div>
     </div>
   </body>
 </html>
