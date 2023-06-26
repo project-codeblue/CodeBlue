@@ -5,7 +5,7 @@ config:
       arrivalRate: 5
     # - pause: 120
   payload:
-    path: "patient-request-01.csv"
+    path: "patient-request.csv"
     order: sequence
     loadAll: true
     # delimiter: ","
