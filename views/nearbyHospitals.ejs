@@ -53,6 +53,7 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
+        z-index: 9999;
       }
 
       .query-container {
@@ -168,11 +169,10 @@
         </div>
         <button
           id="fixedButton"
-          class="button has-background-info-dark has-text-white-bis"
+          class="button has-background-link-dark has-text-white-bis"
           onclick="addQueryString()"
         >
-          현재위치<br>
-          새로고침
+          위치 재반영
         </button>
         <div class="box">
           <% for (let i = 0; i < hospitals_data.length; i++) { %>
