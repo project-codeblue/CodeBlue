@@ -19,23 +19,23 @@
 * **프로젝트명** : CodeBlue
 * **기간** : 2023년 5월 19일 ~ 2023년 6월 30일
 * **주제** : 인공지능을 활용한 응급환자 중증도 분류 & 사용자 위치 기반 실시간 잔여병상 조회 및 환자 이송신청 시스템
-* **주요기능** : 인근 병원조회, 실시간 위치기반 추천 병원조회, 증상보고서 입력/검색, 환자 이송신청
+* **주요기능** : [입력]증상보고서 입력, [조회] 사용자 위치기반 추천 병원조회, 인근 병원조회, 증상보고서 검색, [전송]이송신청
 <br>
 
 # 👨‍👩‍👧‍👦Team Members
 
-| Position      | Name          |    Github                                         | Tech Vlog                               |
-|:--------------|:--------------|:--------------------------------------------------|------------------------------------------|
-| Backend       | 김시원        | [Siwon-Kim](https://github.com/Siwon-Kim)         |https://velog.io/@c1madang                                            |
-| Backend       | 권용재        | [backEndKwon](https://github.com/backEndKwon)     |https://blog.naver.com/rhaehfdl0433/                                  |
-| Backend       | 이병훈        | [ksnx3684](https://github.com/ksnx3684)           |https://ksnx3684.tistory.com/                                         |
-| Backend       | 정혜승        | [hclo99](https://github.com/hclo99)               |https://www.notion.so/4-29-TIL-6e9b9776d5e442808e17403d219e0daa?pvs=4  |
+| Position      | Name          |    Github                                         | Tech Blog                               |
+|:--------------|:--------------|:--------------------------------------------------|-----------------------------------------|
+| Backend       | 김시원        | [Siwon-Kim](https://github.com/Siwon-Kim)         |https://velog.io/@c1madang               |
+| Backend       | 권용재        | [backEndKwon](https://github.com/backEndKwon)     |https://blog.naver.com/rhaehfdl0433/     |
+| Backend       | 이병훈        | [ksnx3684](https://github.com/ksnx3684)           |https://ksnx3684.tistory.com/            |
+| Backend       | 정혜승        | [hclo99](https://github.com/hclo99)               |https://velog.io/@junghs710              |
 
 <br>
 
 # 📹 주요 기능별 영상
 <details>
-<summary> 1️⃣ 인근 병원조회 </summary>
+<summary> 📹 증상보고서 입력 </summary>
 <div markdown="1">
 
 https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1-1970c5511d9f
@@ -44,7 +44,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1
 </details>
 
 <details>
-<summary> 2️⃣ 사용자 위치기반 추천 병원조회 </summary>
+<summary> 📹 사용자 위치기반 추천 병원조회 </summary>
 <div markdown="1">
 
 https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1-1970c5511d9f
@@ -53,7 +53,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1
 </details>
 
 <details>
-<summary> 3️⃣ 증상보고서 입력 </summary>
+<summary> 📹 이송신청 </summary>
 <div markdown="1">
 
 https://github.com/backEndKwon/CodeBlue/assets/128948886/2a2811aa-c2df-4b76-a6ba-ded32bbd1c0e
@@ -62,7 +62,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/2a2811aa-c2df-4b76-a6ba
 </details>
 
 <details>
-<summary> 4️⃣ 증상보고서 검색 </summary>
+<summary> 📹 증상보고서 검색 </summary>
 <div markdown="1">
 
 https://github.com/backEndKwon/CodeBlue/assets/128948886/26562b88-65e8-4691-946a-4fd92ded6dbf
@@ -71,7 +71,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/26562b88-65e8-4691-946a
 </details>
 
 <details>
-<summary> 5️⃣ 환자 이송신청 </summary>
+<summary> 📹 인근 병원조회 </summary>
 <div markdown="1">
 
 https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d-1e9c47a6d1cc
@@ -81,52 +81,30 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d
 <br>
 
 # ⚒ Tech Stack
-<details>
-<summary> Tech Stack 펼쳐보기 </summary>
-<div markdown="1">  
 
 <br>
 
-|분류|기술|
-| :-: |:- |
-|Language|<img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">|
-|Framework|<img src="https://img.shields.io/badge/nestjs-E0234E?style=for-the-badge&logo=nestjs&logoColor=black"> <img src="https://img.shields.io/badge/flask-000000?style=for-the-badge&logo=flask&logoColor=white"> | 
-|DB|<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=black"> <img src="https://img.shields.io/badge/amazonrds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=black"> |
-|Server|<img src="https://img.shields.io/badge/amazonec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=black">|
-|CI/CD|<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
-|Caching|<img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=black">|
-|Test|<img src="https://img.shields.io/badge/jest-C21325?style=for-the-badge&logo=jest&logoColor=white">|
-|Build|<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">|
-|AI|<img src="https://img.shields.io/badge/tensorflow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"> |
-|API|<img src="https://img.shields.io/badge/kakao-FFCD00?style=for-the-badge&logo=kakao&logoColor=white">|
- 
-</div>
-</details>
+|분류|기술|분류|기술|
+| :-: | :-: | :-: | :-: |
+|Runtime|Node.js|Language|TypeScript, Python|
+|Framework|Nest.js, Flask|DB|MySQL(AWS RDS), Redis|
+|Web Crawling|Axios, Cheerio|AI|Tensorflow, Konlpy|
+|DevOps|Docker Compose, AWS EC2, Load Balancer|Front|ejs|
+|CI/CD|Doker, Github Action|Geolocation|Kakao Mobility API, Spatial Index|
+|동시성제어|BullQueue | 대용량데이터 검색|TypeORM, QueryBuilder, Composite Index|
 
+ 
 <br>
 
 # 🕸 Architecture
-<details>
-<summary> Architecture 펼쳐보기 </summary>
-<div markdown="1">  
 
   ![애플리케이션_아키텍쳐_최종](https://github.com/backEndKwon/Algorithm/assets/128948886/4cf96afd-6c57-44ff-a287-2c93a1c6284d)
-
-</div>
-</details>
 
 <br>
 
 #  📒 ERD
-<details>
-<summary> ERD 펼쳐보기 </summary>
-<div markdown="1">  
 
 ![2023-06-26 14;29;26](https://github.com/backEndKwon/Algorithm/assets/128948886/c57c86e2-1efe-4c3d-ae81-cdbfb8a0e2f1)
-
-  
-</div>
-</details>
 
 <br>
 
@@ -168,6 +146,27 @@ ex) Fixes: #47 Related to: #32, #21
 </div>
 </details>
 
+# 🗒️Code Convention
+
+<details>
+<summary> Code Convention 펼쳐보기 </summary>
+<div markdown="1">  
+  <br>
+
+--- Prettier & Eslint 자동 적용 ---   
+```
+singleQuote: true → 작은 따옴표(') 사용
+trailingComma: "all" → 객체 또는 배열의 마지막 요소 뒤에 항상 쉼표(,) 추가
+tabWidth: 2 → 들여쓰기 탭의 너비 2
+semi: true → 문장의 끝에 항상 세미콜론(;) 추가
+arrowParens: "always" → 화살표 함수 매개변수에 항상 괄호(ex, (param)=>expression) 추가 
+endOfLine: "auto" → 자동으로 행 종결 문자를 선택하도록 설정(줄 바꿈 문자(\n)→줄 바꿈 문자(\r\n))
+```
+
+
+ 
+</div>
+</details>
 <br><br><br>
 
 ![header](https://capsule-render.vercel.app/api?type=waving&color=auto&height=200&section=header&text=Thank%20you%20for%20watching&fontSize=50)
