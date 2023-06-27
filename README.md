@@ -89,8 +89,8 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d
 |Runtime|Node.js|Language|TypeScript, Python|
 |Framework|Nest.js, Flask|DB|MySQL(AWS RDS), Redis|
 |Web Crawling|Axios, Cheerio|AI|Tensorflow, Konlpy|
-|DevOps|Docker Compose, AWS EC2, Load Balancer|Front|ejs|
-|CI/CD|Doker, Github Action|Geolocation|Kakao Mobility API, Spatial Index|
+|DevOps|Docker Compose, AWS EC2, ALB|Frontend|ejs|
+|CI/CD|Docker, Github Action|Geolocation|Kakao Mobility API, Spatial Index|
 |동시성제어|BullQueue | 대용량데이터 검색|TypeORM, QueryBuilder, Composite Index|
 
  
