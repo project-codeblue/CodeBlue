@@ -56,6 +56,7 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
+        z-index: 9999;
       }
 
       .query-container {
@@ -272,10 +273,10 @@
     </nav>
     <button
       id="fixedButton"
-      class="button has-background-info-dark has-text-white-bis"
+      class="button has-background-link-dark has-text-white-bis"
       onclick="refreshBrowser()"
     >
-      새로고침
+      위치 재반영
     </button>
     <div class="loading" style="display: none">
       <iframe src="https://embed.lottiefiles.com/animation/43735"></iframe>
@@ -352,12 +353,14 @@
             <div class="hospital_title">
               <h3><%=hospitals_data[i].name %></h3>
               <div class="title-call-button">
-                <button
-                  class="phone button is-dark mr-3 mt-3"
-                  title="<%=hospitals_data[i].phone %>"
-                >
-                  전화 걸기
-                </button>
+                <a href="tel:<%=hospitals_data[i].phone %>">
+                  <button
+                    class="phone button is-dark mr-3 mt-3"
+                    title="<%=hospitals_data[i].phone %>"
+                  >
+                    전화 걸기
+                  </button>
+                </a>
                 <button
                   class="button is-danger is-dark mt-3"
                   onclick="scrollToTop(); sendRequest(`<%=hospitals_data[1].report_id%>`, `<%=hospitals_data[i].hospital_id%>`);"
@@ -395,10 +398,11 @@
     <footer class="footer mt-5">
       <div class="content has-text-centered">
         <p>
-          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
-          is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
+          <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+          The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <br />
+          The website content is licensed
           <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
             >CC BY NC SA 4.0</a
           >.
