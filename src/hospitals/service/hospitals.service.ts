@@ -49,12 +49,13 @@ export class HospitalsService {
 
           let dataSource = [];
           let hospitals = [];
+          let radius: number;
           const max_count = queries['max_count']
             ? parseInt(queries['max_count'])
             : 20;
-
           if (queries['radius']) {
-            const radius = parseInt(queries['radius']) * 1000; // radius in meters
+            radius = parseInt(queries['radius']) * 1000; // radius in meters
+            console.log('withinRadius');
             dataSource =
               await this.hospitalsRepository.getHospitalsWithinRadius(
                 startLat,
@@ -62,6 +63,7 @@ export class HospitalsService {
                 radius,
               );
           } else {
+            console.log('withoutRadius');
             dataSource =
               await this.hospitalsRepository.getHospitalsWithoutRadius(
                 startLng,
@@ -98,12 +100,12 @@ export class HospitalsService {
             }
             const minutes = Math.floor(duration / 60);
             const seconds = Math.floor(duration % 60);
-
+            console.log('debug', result);
             const obj = {
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
-              distance: `${(distance / 1000).toFixed(1)}km`,
+              distance: (distance / 1000).toFixed(1),
               hospital_id: hospital[1]['hospital_id'],
               name: hospital[1]['name'],
               phone: hospital[1]['phone'],
@@ -115,6 +117,11 @@ export class HospitalsService {
 
           const recommendedHospitals = await Promise.all(promises);
 
+          // KaKao Mobility로 구한 거리가 ST_Distance_Sphere로 구한 거리보다 더 큰 경우
+          const filteredHospital = recommendedHospitals.filter(
+            (hospital) => parseInt(hospital['distance']) * 1000 <= radius,
+          );
+
           // 가중치 적용
           const weightsRecommendedHospitals = [];
           const weights = {
@@ -122,14 +129,12 @@ export class HospitalsService {
             available_beds: 0.02,
           };
 
-          for (const hospital of recommendedHospitals) {
+          for (const hospital of filteredHospital) {
             const maxDuration = Math.max(
-              ...recommendedHospitals.map((hospital) => hospital.duration),
+              ...filteredHospital.map((hospital) => hospital.duration),
             );
             const maxAvailable_beds = Math.max(
-              ...recommendedHospitals.map(
-                (hospital) => hospital.available_beds,
-              ),
+              ...filteredHospital.map((hospital) => hospital.available_beds),
             );
             const rating = await this.calculateRating(
               hospital,
