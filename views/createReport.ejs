@@ -60,6 +60,14 @@
         z-index: 100;
         transform: translate(-50%, -50%);
       }
+
+      .buttons {
+        margin-left: 10%;
+      }
+
+      .help {
+        margin-right: 10%;
+      }
     </style>
     <script>
       function getCurrentPosition() {
@@ -73,6 +81,8 @@
         event.preventDefault();
 
         const patient_rrn = document.querySelector('#patient_rrn').value;
+        const name = document.querySelector('#name').value;
+        console.log(name);
         const age_range_form = document.querySelector('#age_range');
         const age_range = age_range_form.value || null;
         const blood_type_form = document.querySelector('#blood_type');
@@ -81,11 +91,14 @@
         const symptoms = document.querySelector('#symptoms').value;
         const createReportDto = {
           patient_rrn,
+          name,
           age_range,
           blood_type,
           blood_pressure,
           symptoms,
         };
+
+        console.log('createReportDto', createReportDto);
 
         // 필수 조건인 symptoms를 입력하지 않은 경우
         if (!symptoms) {
@@ -147,6 +160,17 @@
       function refreshBrowser() {
         event.preventDefault();
         window.location.reload();
+      }
+
+      function showNameField() {
+        var rrnInput = document.getElementById('patient_rrn');
+        var nameFieldContainer = document.getElementById('name-container');
+
+        if (rrnInput.value.length === 14) {
+          nameFieldContainer.style.display = 'flex';
+        } else {
+          nameFieldContainer.style.display = 'none';
+        }
       }
     </script>
   </head>
@@ -224,9 +248,34 @@
                       name="patient_rrn"
                       id="patient_rrn"
                       style="font-family: 'Noto Sans KR', sans-serif"
+                      oninput="showNameField()"
                     />
                   </div>
                   <p class="help">숫자 6자리-숫자 7자리로 입력해주세요.</p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="field is-horizontal"
+              id="name-container"
+              style="display: none"
+            >
+              <div class="field-label is-normal">
+                <label class="label">이름</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="text"
+                      placeholder="이름을 입력해주세요."
+                      name="name"
+                      id="name"
+                      style="font-family: 'Noto Sans KR', sans-serif"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -330,7 +379,7 @@
 
             <div class="field is-horizontal">
               <div class="field-body">
-                <div class="field is-grouped is-grouped-centered">
+                <div class="field is-grouped is-grouped-centered buttons">
                   <div class="control">
                     <button
                       type="submit"
@@ -359,10 +408,11 @@
     <footer class="footer">
       <div class="content has-text-centered">
         <p>
-          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
-          is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
+          <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+          The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <br />
+          The website content is licensed
           <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
             >CC BY NC SA 4.0</a
           >.

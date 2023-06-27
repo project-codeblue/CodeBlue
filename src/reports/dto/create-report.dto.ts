@@ -31,7 +31,10 @@ export class CreateReportDto {
   blood_type?: BloodType;
 
   @Exclude() // patient_rrn을 createReportDto에서 제외
-  patient_rrn?: string;
+  patient_rrn: string;
+
+  @Exclude()
+  name: string;
 
   @IsOptional()
   @IsNumber()
