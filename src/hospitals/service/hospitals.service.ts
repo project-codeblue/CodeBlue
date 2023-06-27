@@ -49,12 +49,13 @@ export class HospitalsService {
 
           let dataSource = [];
           let hospitals = [];
+          let radius: number;
           const max_count = queries['max_count']
             ? parseInt(queries['max_count'])
             : 20;
-
           if (queries['radius']) {
-            const radius = parseInt(queries['radius']) * 1000; // radius in meters
+            radius = parseInt(queries['radius']) * 1000; // radius in meters
+            console.log('withinRadius');
             dataSource =
               await this.hospitalsRepository.getHospitalsWithinRadius(
                 startLat,
@@ -62,6 +63,7 @@ export class HospitalsService {
                 radius,
               );
           } else {
+            console.log('withoutRadius');
             dataSource =
               await this.hospitalsRepository.getHospitalsWithoutRadius(
                 startLng,
@@ -103,7 +105,7 @@ export class HospitalsService {
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
-              distance: `${(distance / 1000).toFixed(1)}km`,
+              distance: (distance / 1000).toFixed(1),
               hospital_id: hospital[1]['hospital_id'],
               name: hospital[1]['name'],
               phone: hospital[1]['phone'],
@@ -113,7 +115,14 @@ export class HospitalsService {
             return obj;
           });
 
-          const recommendedHospitals = await Promise.all(promises);
+          let recommendedHospitals = await Promise.all(promises);
+
+          // KaKao Mobility로 구한 거리가 ST_Distance_Sphere로 구한 거리보다 더 큰 경우
+          if (queries['radius']) {
+            recommendedHospitals = recommendedHospitals.filter(
+              (hospital) => parseFloat(hospital['distance']) * 1000 <= radius,
+            );
+          }
 
           // 가중치 적용
           const weightsRecommendedHospitals = [];
