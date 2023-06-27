@@ -98,7 +98,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d
 
 # 🕸 Architecture
 
-  ![애플리케이션_아키텍쳐_최종](https://github.com/backEndKwon/Algorithm/assets/128948886/4cf96afd-6c57-44ff-a287-2c93a1c6284d)
+  ![애플리케이션_아키텍쳐_최종](https://github.com/project-codeblue/CodeBlue/assets/76824986/e844013d-d099-45e8-97eb-a8890f2edd17)
 
 <br>
 
