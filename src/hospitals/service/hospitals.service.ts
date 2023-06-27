@@ -3,7 +3,6 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
-  Inject,
 } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
