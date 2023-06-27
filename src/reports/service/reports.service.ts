@@ -15,6 +15,7 @@ import axios from 'axios';
 import { Gender } from '../../patients/patients.enum';
 import appConfig from 'config/app.config';
 import { ConfigType } from '@nestjs/config';
+import { Patients } from 'src/patients/patients.entity';
 
 @Injectable()
 export class ReportsService {
@@ -25,7 +26,11 @@ export class ReportsService {
     @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
   ) {}
 
-  async createReport(createReportDto: CreateReportDto, patient_rrn: string) {
+  async createReport(
+    createReportDto: CreateReportDto,
+    patient_rrn: string,
+    name: string,
+  ) {
     const createdReport = await this.entityManager.transaction(
       'READ COMMITTED',
       async () => {
@@ -35,9 +40,8 @@ export class ReportsService {
             const patient = await this.patientsRepository.findByRRN(
               patient_rrn,
             );
-
-            // 환자가 존재하지 않는 경우, 새로운 환자 생성
             let patientId: number;
+
             if (!patient) {
               // 주민등록번호로 gender 판별
               const gender =
@@ -47,15 +51,30 @@ export class ReportsService {
                   ? Gender.F
                   : null;
 
-              const newPatient =
-                await this.patientsRepository.createPatientInfo({
+              let newPatient: Patients;
+              if (name) {
+                newPatient = await this.patientsRepository.createPatientInfo({
+                  patient_rrn,
+                  gender,
+                  name,
+                });
+              } else {
+                newPatient = await this.patientsRepository.createPatientInfo({
                   patient_rrn,
                   gender,
                 });
+              }
               patientId = newPatient.patient_id;
             } else {
               patientId = patient.patient_id;
+
+              if (name) {
+                await this.patientsRepository.updatePatientInfo(patientId, {
+                  name,
+                });
+              }
             }
+
             createReportDto.patient_id = patientId;
           }
 
