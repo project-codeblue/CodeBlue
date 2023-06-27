@@ -53,6 +53,7 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
+        z-index: 9999;
       }
 
       .query-container {
@@ -168,11 +169,10 @@
         </div>
         <button
           id="fixedButton"
-          class="button has-background-info-dark has-text-white-bis"
+          class="button has-background-link-dark has-text-white-bis"
           onclick="addQueryString()"
         >
-          현재위치<br>
-          새로고침
+          위치 재반영
         </button>
         <div class="box">
           <% for (let i = 0; i < hospitals_data.length; i++) { %>
@@ -198,10 +198,11 @@
     <footer class="footer mt-5">
       <div class="content has-text-centered">
         <p>
-          <strong>CodeBLUE</strong> by 항해 14기 챌린지팀 20조. The source code
-          is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
+          <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+          The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <br />
+          The website content is licensed
           <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
             >CC BY NC SA 4.0</a
           >.
