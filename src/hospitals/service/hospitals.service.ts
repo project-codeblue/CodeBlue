@@ -100,7 +100,7 @@ export class HospitalsService {
             }
             const minutes = Math.floor(duration / 60);
             const seconds = Math.floor(duration % 60);
-            console.log('debug', result);
+
             const obj = {
               duration,
               minutes: `${minutes}분`,
@@ -115,12 +115,14 @@ export class HospitalsService {
             return obj;
           });
 
-          const recommendedHospitals = await Promise.all(promises);
+          let recommendedHospitals = await Promise.all(promises);
 
           // KaKao Mobility로 구한 거리가 ST_Distance_Sphere로 구한 거리보다 더 큰 경우
-          const filteredHospital = recommendedHospitals.filter(
-            (hospital) => parseInt(hospital['distance']) * 1000 <= radius,
-          );
+          if (queries['radius']) {
+            recommendedHospitals = recommendedHospitals.filter(
+              (hospital) => parseFloat(hospital['distance']) * 1000 <= radius,
+            );
+          }
 
           // 가중치 적용
           const weightsRecommendedHospitals = [];
@@ -129,12 +131,14 @@ export class HospitalsService {
             available_beds: 0.02,
           };
 
-          for (const hospital of filteredHospital) {
+          for (const hospital of recommendedHospitals) {
             const maxDuration = Math.max(
-              ...filteredHospital.map((hospital) => hospital.duration),
+              ...recommendedHospitals.map((hospital) => hospital.duration),
             );
             const maxAvailable_beds = Math.max(
-              ...filteredHospital.map((hospital) => hospital.available_beds),
+              ...recommendedHospitals.map(
+                (hospital) => hospital.available_beds,
+              ),
             );
             const rating = await this.calculateRating(
               hospital,
