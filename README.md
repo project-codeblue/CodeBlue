@@ -108,6 +108,39 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d
 
 <br>
 
+# 💣 Troubleshooting
+
+<details>
+<summary> #1 거리 기반 추천 병원 조회 </summary>
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/f5096a2d-a707-4ff7-98af-cf92b950ed35">
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/b2a72318-71b8-490d-b2cf-8bad6b5522f2">
+
+</details>
+
+<details>
+<summary> #2 인공지능 모델 학습 및 연결 </summary>
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/fa0ae885-3661-40c8-ae2f-19b9eca08ab5">
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/9791362e-7aef-4795-b1a7-dd9e008b7af7">
+
+</details>
+
+<details>
+<summary> #3 대용량 트래픽 </summary>
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/7b0a06ed-8943-430e-b929-9061c156794a">
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/89952e5d-c4cc-41c2-822b-c3a7fd026260">
+
+</details>
+
+<details>
+<summary> #4 검색 쿼리 최적화 </summary>
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/362faa9e-7c0f-4a87-a742-1fc3d4c69ecb">
+
+
+</details>
+
+
+<br>
+
 # 📝Commit Convention
 
 <details>
