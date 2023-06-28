@@ -11,7 +11,7 @@ import {
 import { RequestsService } from '../service/requests.service';
 import { Logger } from '@nestjs/common';
 import { Reports } from 'src/reports/reports.entity';
-import { ClearCacheInterceptor } from 'src/commons/interceptors/clear-cache.interceptor';
+import { ClearCacheInterceptor } from '../../commons/interceptors/clear-cache.interceptor';
 
 @Controller('request')
 @UseInterceptors(ClearCacheInterceptor)
@@ -57,5 +57,4 @@ export class RequestsController {
   async createDummyRequest() {
     return await this.requestsService.createDummyRequest();
   }
-
 }
