@@ -10,12 +10,14 @@ import { PatientsRepository } from '../../patients/patients.repository';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
 import { EntityManager } from 'typeorm';
-import { InjectEntityManager } from '@nestjs/typeorm';
 import axios from 'axios';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { Gender } from '../../patients/patients.enum';
 import appConfig from 'config/app.config';
 import { ConfigType } from '@nestjs/config';
 import { Patients } from 'src/patients/patients.entity';
+import { AgeRange, BloodType } from '../reports.enum';
+import { data } from './dataset_fifth';
 
 @Injectable()
 export class ReportsService {
@@ -31,10 +33,10 @@ export class ReportsService {
     patient_rrn: string,
     name: string,
   ) {
-    const createdReport = await this.entityManager.transaction(
-      'READ COMMITTED',
-      async () => {
-        try {
+    try {
+      return await this.entityManager.transaction(
+        'READ COMMITTED',
+        async () => {
           // 환자 주민등록번호와 증상이 함께 전달된 경우
           if (patient_rrn) {
             const patient = await this.patientsRepository.findByRRN(
@@ -44,12 +46,7 @@ export class ReportsService {
 
             if (!patient) {
               // 주민등록번호로 gender 판별
-              const gender =
-                patient_rrn[7] === '1' || patient_rrn[7] === '3'
-                  ? Gender.M
-                  : patient_rrn[7] === '2' || patient_rrn[7] === '4'
-                  ? Gender.F
-                  : null;
+              const gender = await this.getGender(patient_rrn);
 
               let newPatient: Patients;
               if (name) {
@@ -81,19 +78,20 @@ export class ReportsService {
           // report 생성
           const { symptoms } = createReportDto;
 
-          const emergencyLevel = await this.getEmergencyLevel(symptoms);
+          const emergencyLevel = await this.callAIServerForEmergencyLevel(
+            symptoms,
+          );
           createReportDto.symptom_level = emergencyLevel;
 
           return this.reportsRepository.createReport(createReportDto);
-        } catch (error) {
-          throw new HttpException(
-            error.response || '증상 보고서 생성에 실패하였습니다.',
-            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      },
-    );
-    return createdReport;
+        },
+      );
+    } catch (error) {
+      throw new HttpException(
+        error.response || '증상 보고서 생성에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   // 증상보고서 상세 조회
@@ -103,7 +101,7 @@ export class ReportsService {
       throw new NotFoundException('일치하는 증상 보고서가 없습니다');
     }
 
-    let result;
+    let result: object;
     // 환자와 병원 정보가 없을 떄
     if (!report.hospital_id && !report.patient_id) {
       result = report;
@@ -138,7 +136,7 @@ export class ReportsService {
 
       // symptoms가 변경된 경우 symptoms_level 재계산
       if (updateReportDto.symptoms) {
-        const emergencyLevel = await this.getEmergencyLevel(
+        const emergencyLevel = await this.callAIServerForEmergencyLevel(
           updateReportDto.symptoms,
         );
         updateReportDto.symptom_level = emergencyLevel;
@@ -156,7 +154,7 @@ export class ReportsService {
     }
   }
 
-  async getEmergencyLevel(symptoms: string) {
+  async callAIServerForEmergencyLevel(symptoms: string) {
     const emergencyLevelApiResponse = await axios.get(this.config.aiServerUrl, {
       params: {
         sentence: symptoms,
@@ -164,5 +162,71 @@ export class ReportsService {
     });
 
     return emergencyLevelApiResponse.data.emergency_level;
+  }
+
+  async getGender(patient_rrn: string): Promise<Gender> {
+    return patient_rrn[7] === '1' || patient_rrn[7] === '3'
+      ? Gender.M
+      : patient_rrn[7] === '2' || patient_rrn[7] === '4'
+      ? Gender.F
+      : null;
+  }
+
+  // 더미 데이터 생성 API (추후 제거 예정)
+  async createDummyReport() {
+    const start: any = new Date();
+    const blood_type_list: BloodType[] = [
+      BloodType.A,
+      BloodType.B,
+      BloodType.AB,
+      BloodType.O,
+    ];
+    const range: AgeRange[] = [
+      AgeRange.노년,
+      AgeRange.성인,
+      AgeRange.영유아,
+      AgeRange.임산부,
+      AgeRange.청소년,
+    ];
+    let count = 0;
+    // for (let i = 1; i <= 10; i++) { // 병원
+    for (let j = 0; j < 4; j++) {
+      // 혈액형
+      for (let k = 0; k < 5; k++) {
+        // 연령대
+        for (let l = 1; l <= 5; l++) {
+          // 증상도
+          for (let m = 0; m < 10; m++) {
+            // const hospital_id: number = i;
+            const blood_pressure = '130/80';
+            const blood_type: BloodType = blood_type_list[j];
+            const age_range: AgeRange = range[k];
+            const symptom_level: number = l;
+            const symptoms: string[] = [];
+            const symptom_count: number =
+              Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+            while (symptoms.length < symptom_count) {
+              const num: number = Math.floor(Math.random() * (40 - 0 + 1)) + 0;
+              if (symptoms.every((e) => data[num] !== e)) {
+                symptoms.push(data[num]);
+              }
+            }
+            await this.reportsRepository.createDummyReport(
+              blood_pressure,
+              blood_type,
+              age_range,
+              symptom_level,
+              symptoms,
+            );
+            count++;
+          }
+        }
+      }
+    }
+    // }
+    const end: any = new Date();
+    const t: number = end - start;
+    console.log(`소요시간 : ${t / 1000}초`);
+    console.log(`${count}개 생성`);
   }
 }

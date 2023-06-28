@@ -312,47 +312,41 @@ export class RequestsService {
   //--------------------------------------------------------------//
 
   async withdrawRequest(report_id: number) {
-    const withdrawnRequest = await this.entityManager.transaction(
-      'SERIALIZABLE',
-      async () => {
-        try {
-          const report = await this.reportsRepository.findReport(report_id);
-          if (!report) {
-            throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-          }
-          if (!report.is_sent) {
-            throw new HttpException(
-              '아직 전송되지 않은 증상 보고서입니다.',
-              HttpStatus.BAD_REQUEST,
-            );
-          }
-
-          const hospital_id = report.hospital_id;
-
-          // 증상 보고서에 hospital_id 제거
-          await this.reportsRepository.deleteTargetHospital(report_id);
-
-          // 해당 병원의 available_beds를 1 증가
-          await this.hospitalsRepository.increaseAvailableBeds(hospital_id);
-
-          // 해당 report의 is_sent를 false로 변경
-          await this.reportsRepository.updateReportBeingNotSent(report_id);
-
-          return await this.reportsRepository.getReportwithPatientInfo(
-            report_id,
-          );
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            throw error;
-          }
+    try {
+      return await this.entityManager.transaction('SERIALIZABLE', async () => {
+        const report = await this.reportsRepository.findReport(report_id);
+        if (!report) {
+          throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+        }
+        if (!report.is_sent) {
           throw new HttpException(
-            error.response || '환자 이송 신청 철회에 실패하였습니다.',
-            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            '아직 전송되지 않은 증상 보고서입니다.',
+            HttpStatus.BAD_REQUEST,
           );
         }
-      },
-    );
-    return withdrawnRequest;
+
+        const hospital_id = report.hospital_id;
+
+        // 증상 보고서에 hospital_id 제거
+        await this.reportsRepository.deleteTargetHospital(report_id);
+
+        // 해당 병원의 available_beds를 1 증가
+        await this.hospitalsRepository.increaseAvailableBeds(hospital_id);
+
+        // 해당 report의 is_sent를 false로 변경
+        await this.reportsRepository.updateReportBeingNotSent(report_id);
+
+        return await this.reportsRepository.getReportwithPatientInfo(report_id);
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        error.response || '환자 이송 신청 철회에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   getPriority = (report: Reports): number => {

@@ -25,10 +25,10 @@ export class PatientsService {
     report_id: number,
     createPatientInfo: CreatePatientDto,
   ): Promise<Patients> {
-    const createdPatientInfo = await this.entityManager.transaction(
-      'READ COMMITTED',
-      async () => {
-        try {
+    try {
+      return await this.entityManager.transaction(
+        'READ COMMITTED',
+        async () => {
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
@@ -46,18 +46,17 @@ export class PatientsService {
           );
 
           return createdPatient;
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            throw error;
-          }
-          throw new HttpException(
-            '환자 정보 입력에 실패하였습니다.',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      },
-    );
-    return createdPatientInfo;
+        },
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        '환자 정보 입력에 실패하였습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   // 환자 정보 수정
