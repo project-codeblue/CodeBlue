@@ -9,7 +9,7 @@ import { Crawling } from '../commons/middlewares/crawling';
 import { KakaoMapService } from '../commons/providers/kakao-map.provider';
 import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
 import { CacheModule } from '@nestjs/cache-manager';
-import { RedisConfigProvider } from 'src/commons/providers/redis-config.provider';
+import { RedisConfigProvider } from '../commons/providers/redis-config.provider';
 
 @Module({
   imports: [

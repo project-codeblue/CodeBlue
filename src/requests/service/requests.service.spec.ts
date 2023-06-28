@@ -3,7 +3,6 @@ import { RequestsService } from './requests.service';
 import { HospitalsRepository } from './../../hospitals/hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { EntityManager } from 'typeorm';
-import { Hospitals } from '../../hospitals/hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Queue } from 'bull';

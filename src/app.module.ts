@@ -11,7 +11,7 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
 import { ConfigValidator } from '../config/config.validator';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import appConfig from 'config/app.config';
+import appConfig from '../config/app.config';
 
 @Module({
   imports: [
