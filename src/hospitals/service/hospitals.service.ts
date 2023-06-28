@@ -8,7 +8,6 @@ import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { KakaoMapService } from '../../commons/providers/kakao-map.provider';
-import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { InjectEntityManager } from '@nestjs/typeorm'; //transaction사용을 위한 모듈 임포트
 import { EntityManager } from 'typeorm'; //transaction사용을 위한 모듈 임포트
@@ -156,13 +155,13 @@ export class HospitalsService {
             10,
           );
 
-          const emogList = [];
+          const emogList = []; // 병원 고유코드 배열
           for (const hospital of top10RecommendedHospitals) {
-            emogList.push(hospital['emogList']);
+            emogList.push(hospital['emogList']); // DB에서 조회하여 최단 시간 순으로 갖고온 추천 병원들의 고유코드를 배열에 넣는다.
           }
-          const datas = await this.crawling.getNearbyHospitals(emogList);
+          const datas = await this.crawling.getRealTimeHospitalsBeds(emogList); // 고유코드를 기반으로 병상 정보 크롤링
           const results: Array<string | object> = await Promise.all(
-            top10RecommendedHospitals.map(async (hospital) => {
+            top10RecommendedHospitals.map(async (hospital) => { // 추천 병원 리스트와 크롤링해온 데이터 리스트의 순서 정렬 
               const result = { ...hospital, report_id };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
