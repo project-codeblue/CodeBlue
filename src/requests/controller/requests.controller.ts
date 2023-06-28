@@ -52,4 +52,10 @@ export class RequestsController {
     const searchedData = await this.requestsService.getSearchRequests(queries);
     return { searchedData };
   }
+
+  @Get('/create/dummy')
+  async createDummyRequest() {
+    return await this.requestsService.createDummyRequest();
+  }
+
 }

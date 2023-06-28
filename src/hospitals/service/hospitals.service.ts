@@ -8,7 +8,6 @@ import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { KakaoMapService } from '../../commons/providers/kakao-map.provider';
-import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { InjectEntityManager } from '@nestjs/typeorm'; //transaction사용을 위한 모듈 임포트
 import { EntityManager } from 'typeorm'; //transaction사용을 위한 모듈 임포트

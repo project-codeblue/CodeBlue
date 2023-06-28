@@ -367,4 +367,33 @@ export class RequestsService {
   getRequestQueueForBoard() {
     return this.requestQueue;
   }
+
+  getRandomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  async createDummyRequest() {
+    for (let i = 1; i <= 1000; i++) {
+      const report_id = i;
+      const hospital_id = this.getRandomNumber(1, 412);
+
+      const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+      const available_beds = hospital.available_beds;
+      if (available_beds === 0) {
+        throw new HttpException(
+          '병원 이송 신청이 마감되었습니다. 다른 병원에 신청하시길 바랍니다.',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      }
+
+      // 증상 보고서에 hospital_id 추가
+      await this.reportsRepository.addTargetHospital(report_id, hospital_id);
+
+      // 해당 병원의 available_beds를 1 감소
+      await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
+
+      // 해당 report의 is_sent를 true로 변경
+      await this.reportsRepository.updateReportBeingSent(report_id);
+    }
+  }
 }
