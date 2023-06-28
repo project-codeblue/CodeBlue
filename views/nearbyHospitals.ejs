@@ -96,6 +96,7 @@
     function addQueryString(position) {
       // 현재 URL 가져오기
       var currentUrl = window.location.href;
+      self.name = 'reload';
       
       getCurrentPosition()
         .then((position) => {
