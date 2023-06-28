@@ -20,7 +20,6 @@ export class HospitalsService {
     private reportsRepository: ReportsRepository,
     private crawling: Crawling,
     private kakaoMapService: KakaoMapService,
-    private openAPI: MedicalOpenAPI,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
   ) {}
 
@@ -33,10 +32,10 @@ export class HospitalsService {
     report_id: number,
     queries: object,
   ): Promise<any> {
-    const getHospitals = await this.entityManager.transaction(
-      'READ COMMITTED',
-      async () => {
-        try {
+    try {
+      return await this.entityManager.transaction(
+        'READ COMMITTED',
+        async () => {
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException(
@@ -80,7 +79,7 @@ export class HospitalsService {
             hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
           }
 
-          // 카카오map API적용 최단시간 거리 계산
+          // 카카오 mobility API적용 최단시간 거리 계산
           const promises = hospitals.map(async (hospital) => {
             const endLat = hospital[1]['latitude'];
             const endLng = hospital[1]['longitude'];
@@ -184,18 +183,17 @@ export class HospitalsService {
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline - index 0번 저장
 
           return results;
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            throw error;
-          }
-          throw new HttpException(
-            error.response.data || '병원 조회에 실패하였습니다.',
-            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      },
-    );
-    return getHospitals;
+        },
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        error.response.data || '병원 조회에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async calculateRating(

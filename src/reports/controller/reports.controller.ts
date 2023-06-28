@@ -48,4 +48,9 @@ export class ReportsController {
     this.logger.verbose('증상 보고서 수정 PATCH API');
     return await this.reportsService.updateReport(report_id, updatedReport);
   }
+
+  @Get('/create/dummy')
+  createDummyReport() {
+    return this.reportsService.createDummyReport();
+  }
 }
