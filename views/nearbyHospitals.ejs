@@ -96,7 +96,8 @@
     function addQueryString(position) {
       // 현재 URL 가져오기
       var currentUrl = window.location.href;
-
+      self.name = 'reload';
+      
       getCurrentPosition()
         .then((position) => {
           const latitude = position.coords.latitude;
@@ -136,6 +137,14 @@
         });
       });
     });
+
+    if (self.name != 'reload') {
+      self.name = 'reload';
+      addQueryString();
+    } else {
+      self.name = '';
+    };
+
   </script>
   <body>
     <nav
