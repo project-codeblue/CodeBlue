@@ -7,6 +7,8 @@ import { AppModule } from '../../src/app.module';
 import { HttpExceptionFilter } from '../../src/commons/exceptions/http-exception.filter';
 import { MysqlConfigProvider } from '../../src/commons/providers/typeorm-config.provider';
 import { Hospitals } from '../../src/hospitals/hospitals.entity';
+import { BloodType, AgeRange } from '../../src/reports/reports.enum';
+import { join } from 'path';
 
 // !!!!!!!! e2e test 전 반드시 .env 파일의 mode를 test로 변경해주어야합니다 !!!!!!!!
 
@@ -68,13 +70,18 @@ describe('CodeBLUE E2E Test', () => {
     `); // 가용 병상이 없는 병원
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   // 1. 증상 보고서 입력
   describe('/report', () => {
     it('201 증상 보고서 입력 성공 - 주민번호 없이 (POST)', () => {
       return request(app.getHttpServer())
         .post('/report')
         .send({
-          symptoms: '소실된 의식,심부전,사지 마비',
+          symptoms:
+            '환자의 심장 박동이 중단되었으며, 구급대원이 CPR을 실시 중입니다.',
         })
         .expect(201);
     });
@@ -83,19 +90,10 @@ describe('CodeBLUE E2E Test', () => {
       return request(app.getHttpServer())
         .post('/report')
         .send({
-          symptoms: '소실된 의식,심부전,사지 마비',
+          symptoms: '환자의 혈압이 급격하게 상승한 것 같습니다.',
           patient_rrn: '000000-3111111',
         })
         .expect(201);
-    });
-
-    it('400 BAD_REQUEST: 존재하지 않는 symptoms를 입력하였을때 (POST)', () => {
-      return request(app.getHttpServer())
-        .post('/report')
-        .send({
-          symptoms: '두통',
-        })
-        .expect(400);
     });
   });
 
@@ -146,6 +144,7 @@ describe('CodeBLUE E2E Test', () => {
   // 4. 병원 조회
   describe('/hospital/:report_id?latitude=latitude?longitude=longitude', () => {
     it('200 병원 조회 성공 (GET)', () => {
+      // 체크
       return request(app.getHttpServer())
         .get('/hospital/1?latitude=37.199188&longitude=127.0722199')
         .expect(200);
@@ -191,7 +190,7 @@ describe('CodeBLUE E2E Test', () => {
   describe('/request/search', () => {
     it('200 검색 성공 (GET)', () => {
       return request(app.getHttpServer())
-        .get('/request/search?symptom_level=2')
+        .get('/request/search?symptom_level=1')
         .expect(200);
     });
 
@@ -206,6 +205,7 @@ describe('CodeBLUE E2E Test', () => {
   // 8. 증상 보고서 수정
   describe('/report/:report_id', () => {
     it('200 상세 조회 성공 (GET)', () => {
+      // 체크
       return request(app.getHttpServer()).get('/report/1').expect(200);
     });
 
@@ -213,12 +213,13 @@ describe('CodeBLUE E2E Test', () => {
       return request(app.getHttpServer()).get('/report/100000').expect(404);
     });
 
-    it('200 환자 정보 업데이트 성공 (PATCH)', () => {
+    it('200 증상보고서 정보 업데이트 성공 (PATCH)', () => {
       return request(app.getHttpServer())
         .patch('/report/1')
         .send({
-          blood_type: 'A',
-          blood_pressure: 130,
+          blood_type: BloodType.A,
+          blood_pressure: '120/80',
+          age_range: AgeRange.임산부,
         })
         .expect(200);
     });
@@ -241,9 +242,5 @@ describe('CodeBLUE E2E Test', () => {
     it('400 BAD_REQUEST: 이송 신청하지 않은 증상 보고서일 때 (DELETE)', () => {
       return request(app.getHttpServer()).delete('/request/2').expect(400);
     });
-  });
-
-  afterAll(async () => {
-    await app.close();
   });
 });

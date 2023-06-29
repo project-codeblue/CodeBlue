@@ -13,11 +13,13 @@ import { EntityManager } from 'typeorm';
 import axios from 'axios';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Gender } from '../../patients/patients.enum';
-import appConfig from 'config/app.config';
+import appConfig from '../../../config/app.config';
 import { ConfigType } from '@nestjs/config';
-import { Patients } from 'src/patients/patients.entity';
+import { Patients } from '../../patients/patients.entity';
 import { AgeRange, BloodType } from '../reports.enum';
 import { data } from './dataset_fifth';
+import * as fs from 'fs';
+const filePath = 'src/reports/service/patient-update.txt';
 
 @Injectable()
 export class ReportsService {
@@ -154,6 +156,7 @@ export class ReportsService {
     }
   }
 
+  // 배포된 Flask 서버에 증상 문장을 전달하여 응급도를 얻는 메서드
   async callAIServerForEmergencyLevel(symptoms: string) {
     const emergencyLevelApiResponse = await axios.get(this.config.aiServerUrl, {
       params: {
@@ -164,6 +167,7 @@ export class ReportsService {
     return emergencyLevelApiResponse.data.emergency_level;
   }
 
+  // 입력된 주민등록번호를 바탕으로 성별을 판별하는 메서드
   async getGender(patient_rrn: string): Promise<Gender> {
     return patient_rrn[7] === '1' || patient_rrn[7] === '3'
       ? Gender.M
@@ -172,61 +176,126 @@ export class ReportsService {
       : null;
   }
 
+  getRandomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  async generateRandomRRN() {
+    const year = this.getRandomNumber(1900, 2022);
+    const month = this.getRandomNumber(1, 12).toString().padStart(2, '0');
+    const day = this.getRandomNumber(1, 28).toString().padStart(2, '0');
+    const genderCode = this.getRandomNumber(1, 4);
+    const randomNum = this.getRandomNumber(100000, 999999).toString();
+
+    let rrn = '';
+    rrn += year.toString().slice(2);
+    rrn += month;
+    rrn += day;
+    rrn += '-';
+    rrn += genderCode;
+    rrn += randomNum;
+
+    return rrn;
+  }
+
+  readFileAsync(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, 'utf-8', (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(data);
+      });
+    });
+  }
+
+  async generateRandomName() {
+    try {
+      const data = await this.readFileAsync(filePath);
+      const lines = data.split('\n');
+      const name_index = this.getRandomNumber(0, 9999);
+      const line = lines[name_index];
+      const name = line.split(',')[3];
+      return name;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async generateAgeRange(rrn) {
+    const age = parseInt(rrn.substring(0, 2));
+
+    if (
+      age == 0 ||
+      age == 1 ||
+      age == 2 ||
+      age == 3 ||
+      age == 4 ||
+      (age <= 99 && age >= 60)
+    ) {
+      return AgeRange.성인;
+    } else if (age <= 61 && age >= 24) {
+      return AgeRange.노년;
+    } else if (age >= 5 && age <= 16) {
+      return AgeRange.청소년;
+    } else if (age >= 17 && age <= 23) {
+      return AgeRange.영유아;
+    }
+
+    return null;
+  }
+
   // 더미 데이터 생성 API (추후 제거 예정)
   async createDummyReport() {
-    const start: any = new Date();
     const blood_type_list: BloodType[] = [
       BloodType.A,
       BloodType.B,
       BloodType.AB,
       BloodType.O,
     ];
-    const range: AgeRange[] = [
-      AgeRange.노년,
-      AgeRange.성인,
-      AgeRange.영유아,
-      AgeRange.임산부,
-      AgeRange.청소년,
+    const blood_pressure_list: string[] = [
+      '120/80',
+      '130/85',
+      '140/90',
+      '150/95',
+      '160/100',
     ];
-    let count = 0;
-    // for (let i = 1; i <= 10; i++) { // 병원
-    for (let j = 0; j < 4; j++) {
-      // 혈액형
-      for (let k = 0; k < 5; k++) {
-        // 연령대
-        for (let l = 1; l <= 5; l++) {
-          // 증상도
-          for (let m = 0; m < 10; m++) {
-            // const hospital_id: number = i;
-            const blood_pressure = '130/80';
-            const blood_type: BloodType = blood_type_list[j];
-            const age_range: AgeRange = range[k];
-            const symptom_level: number = l;
-            const symptoms: string[] = [];
-            const symptom_count: number =
-              Math.floor(Math.random() * (5 - 1 + 1)) + 1;
-            while (symptoms.length < symptom_count) {
-              const num: number = Math.floor(Math.random() * (40 - 0 + 1)) + 0;
-              if (symptoms.every((e) => data[num] !== e)) {
-                symptoms.push(data[num]);
-              }
-            }
-            await this.reportsRepository.createDummyReport(
-              blood_pressure,
-              blood_type,
-              age_range,
-              symptom_level,
-              symptoms,
-            );
-            count++;
-          }
-        }
-      }
+    for (let j = 0; j < 827; j++) {
+      // 증상 문장 랜덤 생성
+      const symptom_sentence_index: number =
+        Math.floor(Math.random() * (2484 - 0 + 1)) + 0;
+      const symptoms = data[symptom_sentence_index];
+
+      // 이름 랜덤 생성
+      const name = await this.generateRandomName();
+
+      // 주민등록번호 랜덤 생성
+      const patient_rrn = await this.generateRandomRRN();
+
+      // 연령대 생성
+      const age_range = await this.generateAgeRange(patient_rrn);
+
+      // 혈액형 랜덤 생성
+      const blood_type_index = this.getRandomNumber(0, 3);
+      const blood_type = blood_type_list[blood_type_index];
+      // 혈압
+      const blood_pressure_index = this.getRandomNumber(0, 4);
+      const blood_pressure = blood_pressure_list[blood_pressure_index];
+
+      const createReportDto = {
+        symptoms,
+        blood_type,
+        blood_pressure,
+        patient_rrn,
+        name,
+        age_range,
+      };
+
+      console.log('createReportDto: ', createReportDto);
+
+      await this.createReport(createReportDto, patient_rrn, name);
     }
-    // }
-    const end: any = new Date();
-    const t: number = end - start;
-    console.log(`소요시간 : ${t / 1000}초`);
-    console.log(`${count}개 생성`);
   }
 }
