@@ -133,6 +133,9 @@
       <div class="content results" style="margin-top: 30px">
         <h2>증상 보고서 검색 결과</h2>
         <div class="box">
+          <% if (searchedData.length === 0) { %>
+            <h3>검색 결과가 없습니다</h3>
+          <% } %>
           <% for (let i = 0; i < searchedData.length; i++) { %>
           <div class="box has-background-light">
             <table>
