@@ -368,6 +368,8 @@
             <% } %>
           </div>
         </div>
+
+        <% console.log(hospitals_data) %>
         <div class="box">
           <% for (let i = 3; i < hospitals_data.length; i++) { %>
           <div class="box has-background-light">
@@ -413,6 +415,11 @@
             </div>
           </div>
           <% } %>
+        </div>
+
+        <div class="box error-box">
+          <h1>404</h1>
+          <p>검색 결과가 없습니다.</p>
         </div>
       </div>
     </div>
