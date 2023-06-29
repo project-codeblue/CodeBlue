@@ -22,12 +22,15 @@ export class HospitalsController {
     @Param('report_id') report_id: number,
     @Query() queries: object,
   ): Promise<object> {
-    this.logger.verbose('Getting Recommended hospitals');
-    const hospitals_data = await this.hospitalsService.getRecommendedHospitals(
-      report_id,
-      queries,
-    );
-    return { hospitals_data };
+    try {
+      this.logger.verbose('Getting Recommended hospitals');
+      const hospitals_data =
+        await this.hospitalsService.getRecommendedHospitals(report_id, queries);
+      return { hospitals_data };
+    } catch (error) {
+      console.log('error: ', { hospitals_data: error });
+      return { hospitals_data: error };
+    }
   }
 
   @Get('/nearby/site')

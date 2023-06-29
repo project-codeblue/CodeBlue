@@ -153,7 +153,6 @@ export class HospitalsService {
           const datas = await this.crawling.getRealTimeHospitalsBeds(emogList);
           const results: Array<string | object> = await Promise.all(
             weightsRecommendedHospitals.map(async (hospital) => {
-
               const result = { ...hospital, report_id };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
@@ -225,6 +224,7 @@ export class HospitalsService {
 
   async getNearbyHospitals(queries: object): Promise<object> {
     // parseFloat = 문자열을 부동 소수점 숫자로 변환
+    console.log('queries', queries);
     const startLat = parseFloat(queries['latitude']);
     const startLng = parseFloat(queries['longitude']);
 
@@ -253,17 +253,53 @@ export class HospitalsService {
     }
 
     hospitals = Object.entries(dataSource); // 배열로 반환
-
+    console.log('debug!!!', hospitals[0][1]['distance']);
     const datas = hospitals.map((data) => {
       const obj = {
         name: data[1]['name'],
         address: data[1]['address'],
         phone: data[1]['phone'],
-        distance: `${(data[1]['distance'] / 1000).toFixed(1)}km`,
+        distance: data[1]['distance'],
       };
       return obj;
     });
 
     return datas;
+  }
+
+  async calculateRating(
+    hospital,
+    weights: {
+      duration: number;
+      available_beds: number;
+    },
+    maxDuration: number,
+    maxAvailable_beds: number,
+  ) {
+    const durationWeight = weights.duration; //98%
+    const available_bedsWeight = weights.available_beds; //2%
+
+    //duration = 값이 낮을 수록 높은 점수
+    const durationScore = 1 - hospital.duration / maxDuration;
+    //available_beds = 값이 높을 수록 높은 점수
+    const available_bedsScore = hospital.available_beds / maxAvailable_beds;
+    const rating =
+      durationWeight * durationScore +
+      available_bedsWeight * available_bedsScore;
+    return rating;
+  }
+
+  async parseHospitalData(data: string) {
+    const emergencyRoomRegex = /응급실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const surgeryRoomRegex = /수술실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const wardRegex = /입원실:\s*(\d+(?:\s\/\s\d+)?)/;
+    const emergencyRoom = data.match(emergencyRoomRegex);
+    const surgeryRoom = data.match(surgeryRoomRegex);
+    const ward = data.match(wardRegex);
+    return {
+      emergencyRoom: emergencyRoom ? emergencyRoom[1] : '정보없음',
+      surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
+      ward: ward ? ward[1] : '정보없음',
+    };
   }
 }

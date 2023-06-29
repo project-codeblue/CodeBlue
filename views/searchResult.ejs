@@ -50,6 +50,25 @@
       td {
         padding: 10px;
       }
+
+      .error-box {
+        text-align: center;
+        border: 2px solid #f44336;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .error-box h1 {
+        font-size: 72px;
+        color: #f44336;
+        margin-bottom: 20px;
+      }
+
+      .error-box p {
+        font-size: 18px;
+        color: #f44336;
+      }
     </style>
 
     <!-- google font -->
@@ -132,11 +151,11 @@
     <div class="container is-max-widescreen">
       <div class="content results" style="margin-top: 30px">
         <h2>증상 보고서 검색 결과</h2>
+        <% if (searchedData.length > 0) { %>
         <div class="box">
           <% if (searchedData.length === 0) { %>
-            <h3>검색 결과가 없습니다</h3>
-          <% } %>
-          <% for (let i = 0; i < searchedData.length; i++) { %>
+          <h3>검색 결과가 없습니다</h3>
+          <% } %> <% for (let i = 0; i < searchedData.length; i++) { %>
           <div class="box has-background-light">
             <table>
               <tbody>
@@ -156,11 +175,15 @@
                 </tr>
                 <tr>
                   <td><strong>중증도</strong></td>
-                  <td><%=searchedData[i].reports_symptom_level %></td>
+                  <td class="has-text-danger">
+                    <%=searchedData[i].reports_symptom_level %>
+                  </td>
                 </tr>
                 <tr>
                   <td><strong>증상</strong></td>
-                  <td><%=searchedData[i].reports_symptoms %></td>
+                  <td class="has-text-link">
+                    <%=searchedData[i].reports_symptoms %>
+                  </td>
                 </tr>
                 <% const originalDate = searchedData[i].reports_createdAt; %> <%
                 const year = originalDate.getFullYear(); %> <% const month =
@@ -185,6 +208,12 @@
           </div>
           <% } %>
         </div>
+        <% } else { %> <% console.log('searchedData: ', searchedData); %>
+        <div class="box error-box">
+          <h1>404</h1>
+          <p>검색 결과가 없습니다.</p>
+        </div>
+        <% } %>
       </div>
     </div>
   </body>
