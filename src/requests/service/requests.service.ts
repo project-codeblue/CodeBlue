@@ -179,11 +179,8 @@ export class RequestsService {
       }
       //--------------------------------------------------------------//
 
-      const allReports = await query.getRawMany();
+      const allReports: Reports[] = await query.getRawMany();
 
-      if (allReports.length === 0) {
-        throw new NotFoundException('검색 결과가 없습니다');
-      }
       return allReports;
     } catch (error) {
       if (error instanceof NotFoundException) {
