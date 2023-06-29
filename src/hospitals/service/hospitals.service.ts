@@ -240,13 +240,6 @@ export class HospitalsService {
         radius,
       );
     }
-    // else {
-    //   dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
-    //     37.56615,
-    //     126.97814,
-    //     radius,
-    //   );
-    // }
 
     if (dataSource.length === 0) {
       throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
@@ -265,41 +258,5 @@ export class HospitalsService {
     });
 
     return datas;
-  }
-
-  async calculateRating(
-    hospital,
-    weights: {
-      duration: number;
-      available_beds: number;
-    },
-    maxDuration: number,
-    maxAvailable_beds: number,
-  ) {
-    const durationWeight = weights.duration; //98%
-    const available_bedsWeight = weights.available_beds; //2%
-
-    //duration = 값이 낮을 수록 높은 점수
-    const durationScore = 1 - hospital.duration / maxDuration;
-    //available_beds = 값이 높을 수록 높은 점수
-    const available_bedsScore = hospital.available_beds / maxAvailable_beds;
-    const rating =
-      durationWeight * durationScore +
-      available_bedsWeight * available_bedsScore;
-    return rating;
-  }
-
-  async parseHospitalData(data: string) {
-    const emergencyRoomRegex = /응급실:\s*(\d+(?:\s\/\s\d+)?)/;
-    const surgeryRoomRegex = /수술실:\s*(\d+(?:\s\/\s\d+)?)/;
-    const wardRegex = /입원실:\s*(\d+(?:\s\/\s\d+)?)/;
-    const emergencyRoom = data.match(emergencyRoomRegex);
-    const surgeryRoom = data.match(surgeryRoomRegex);
-    const ward = data.match(wardRegex);
-    return {
-      emergencyRoom: emergencyRoom ? emergencyRoom[1] : '정보없음',
-      surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
-      ward: ward ? ward[1] : '정보없음',
-    };
   }
 }
