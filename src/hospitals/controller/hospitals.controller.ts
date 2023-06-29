@@ -28,6 +28,7 @@ export class HospitalsController {
         await this.hospitalsService.getRecommendedHospitals(report_id, queries);
       return { hospitals_data };
     } catch (error) {
+      console.log('error: ', { hospitals_data: error });
       return { hospitals_data: error };
     }
   }
