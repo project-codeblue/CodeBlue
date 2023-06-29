@@ -47,10 +47,15 @@ export class RequestsController {
   @Get('/search')
   @Render('searchResult')
   async getSearchRequests(@Query() queries: object): Promise<object> {
-    this.logger.verbose('증상 보고서 검색 GET API');
-    console.log(queries);
-    const searchedData = await this.requestsService.getSearchRequests(queries);
-    return { searchedData };
+    try {
+      this.logger.verbose('증상 보고서 검색 GET API');
+      const searchedData = await this.requestsService.getSearchRequests(
+        queries,
+      );
+      return { searchedData };
+    } catch (error) {
+      return { searchedData: error };
+    }
   }
 
   @Get('/create/dummy')

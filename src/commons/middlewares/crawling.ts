@@ -1,11 +1,9 @@
-import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
 export class Crawling {
-
   // 종합상황판 크롤링
   async getRealTimeHospitalsBeds(emogList: string[]) {
     const start: any = new Date();
@@ -49,5 +47,4 @@ export class Crawling {
 
     return results;
   }
-
 }

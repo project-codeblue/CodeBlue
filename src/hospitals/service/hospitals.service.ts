@@ -161,7 +161,8 @@ export class HospitalsService {
           }
           const datas = await this.crawling.getRealTimeHospitalsBeds(emogList); // 고유코드를 기반으로 병상 정보 크롤링
           const results: Array<string | object> = await Promise.all(
-            top10RecommendedHospitals.map(async (hospital) => { // 추천 병원 리스트와 크롤링해온 데이터 리스트의 순서 정렬 
+            top10RecommendedHospitals.map(async (hospital) => {
+              // 추천 병원 리스트와 크롤링해온 데이터 리스트의 순서 정렬
               const result = { ...hospital, report_id };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
@@ -193,6 +194,50 @@ export class HospitalsService {
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getNearbyHospitals(queries: object): Promise<object> {
+    // parseFloat = 문자열을 부동 소수점 숫자로 변환
+    console.log('queries', queries);
+    const startLat = parseFloat(queries['latitude']);
+    const startLng = parseFloat(queries['longitude']);
+
+    let dataSource = [];
+    let hospitals = [];
+
+    const radius = 10 * 1000; // radius in meters
+
+    if (startLat && startLng) {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        startLat,
+        startLng,
+        radius,
+      );
+    } else {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        37.56615,
+        126.97814,
+        radius,
+      );
+    }
+
+    if (dataSource.length === 0) {
+      throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
+    }
+
+    hospitals = Object.entries(dataSource); // 배열로 반환
+    console.log('debug!!!', hospitals[0][1]['distance']);
+    const datas = hospitals.map((data) => {
+      const obj = {
+        name: data[1]['name'],
+        address: data[1]['address'],
+        phone: data[1]['phone'],
+        distance: data[1]['distance'],
+      };
+      return obj;
+    });
+
+    return datas;
   }
 
   async calculateRating(
@@ -229,48 +274,5 @@ export class HospitalsService {
       surgeryRoom: surgeryRoom ? surgeryRoom[1] : '정보없음',
       ward: ward ? ward[1] : '정보없음',
     };
-  }
-
-  async getNearbyHospitals(queries: object): Promise<object> {
-    // parseFloat = 문자열을 부동 소수점 숫자로 변환
-    const startLat = parseFloat(queries['latitude']);
-    const startLng = parseFloat(queries['longitude']);
-
-    let dataSource = [];
-    let hospitals = [];
-
-    const radius = 10 * 1000; // radius in meters
-
-    if (startLat && startLng) {
-      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
-        startLat,
-        startLng,
-        radius,
-      );
-    } else {
-      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
-        37.56615,
-        126.97814,
-        radius,
-      );
-    }
-
-    if (dataSource.length === 0) {
-      throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
-    }
-
-    hospitals = Object.entries(dataSource); // 배열로 반환
-
-    const datas = hospitals.map((data) => {
-      const obj = {
-        name: data[1]['name'],
-        address: data[1]['address'],
-        phone: data[1]['phone'],
-        distance: `${(data[1]['distance'] / 1000).toFixed(1)}km`,
-      };
-      return obj;
-    });
-
-    return datas;
   }
 }

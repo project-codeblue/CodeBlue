@@ -88,6 +88,11 @@
           });
         });
       });
+
+      function refreshBrowser() {
+        event.preventDefault();
+        window.location.reload();
+      }
     </script>
   </head>
   <body>
@@ -271,6 +276,13 @@
               style="width: 130px"
             >
               검색
+            </button>
+            <button
+              class="button is-large is-responsive"
+              style="width: 130px; margin-left: 30px"
+              onclick="refreshBrowser();"
+            >
+              초기화
             </button>
           </form>
         </div>
