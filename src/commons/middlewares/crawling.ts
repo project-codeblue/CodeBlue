@@ -63,7 +63,7 @@ export class Crawling {
   }
 
   // 종합상황판 크롤링
-  async getNearbyHospitals(emogList: string[]) {
+  async getRealTimeHospitalsBeds(emogList: string[]) {
     const start: any = new Date();
 
     let url = `https://portal.nemc.or.kr:444/medi_info/dashboards/dash_total_emer_org_popup_for_egen.do?`;

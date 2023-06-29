@@ -115,6 +115,21 @@
           alert('위치 정보를 가져오는데 실패했습니다.');
         });
     }
+    // 사용자 위치를 저장할 변수
+let userLocation = null;
+
+// 위치 정보 가져오기
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+    // 성공적으로 위치 정보를 가져왔을 때 호출되는 콜백 함수
+    const { latitude, longitude } = position.coords;
+    userLocation = { latitude, longitude };
+  },
+  (error) => {
+    // 위치 정보를 가져오지 못했을 때 호출되는 콜백 함수
+    console.error('Failed to get user location:', error);
+  }
+);
   </script>
   <body>
     <nav

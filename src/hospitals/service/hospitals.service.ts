@@ -35,6 +35,7 @@ export class HospitalsService {
     queries: object,
   ): Promise<any> {
     const getHospitals = await this.entityManager.transaction(
+      //트랜잭션리팩토링필요
       'READ COMMITTED',
       async () => {
         try {
@@ -118,10 +119,6 @@ export class HospitalsService {
 
           // 가중치 적용
           const weightsRecommendedHospitals = [];
-          const weights = {
-            duration: 0.98,
-            available_beds: 0.02,
-          };
 
           for (const hospital of recommendedHospitals) {
             const maxDuration = Math.max(
@@ -134,7 +131,6 @@ export class HospitalsService {
             );
             const rating = await this.calculateRating(
               hospital,
-              weights,
               maxDuration,
               maxAvailable_beds,
             );
@@ -144,18 +140,14 @@ export class HospitalsService {
 
           // 최단거리 병원 duration 낮은 순(단위:sec)
           weightsRecommendedHospitals.sort((a, b) => b.rating - a.rating);
-          const top10RecommendedHospitals = weightsRecommendedHospitals.slice(
-            0,
-            10,
-          );
 
           const emogList = [];
-          for (const hospital of top10RecommendedHospitals) {
+          for (const hospital of weightsRecommendedHospitals) {
             emogList.push(hospital['emogList']);
           }
-          const datas = await this.crawling.getNearbyHospitals(emogList);
+          const datas = await this.crawling.getRealTimeHospitalsBeds(emogList);
           const results: Array<string | object> = await Promise.all(
-            top10RecommendedHospitals.map(async (hospital) => {
+            weightsRecommendedHospitals.map(async (hospital) => {
               const result = { ...hospital, report_id };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
@@ -192,13 +184,13 @@ export class HospitalsService {
 
   async calculateRating(
     hospital,
-    weights: {
-      duration: number;
-      available_beds: number;
-    },
     maxDuration: number,
     maxAvailable_beds: number,
   ) {
+    const weights = {
+      duration: 0.98,
+      available_beds: 0.02,
+    };
     const durationWeight = weights.duration; //98%
     const available_bedsWeight = weights.available_beds; //2%
 
@@ -235,20 +227,21 @@ export class HospitalsService {
     let hospitals = [];
 
     const radius = 10 * 1000; // radius in meters
-
+    console.log('radius============>', radius);
     if (startLat && startLng) {
       dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
         startLat,
         startLng,
         radius,
       );
-    } else {
-      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
-        37.56615,
-        126.97814,
-        radius,
-      );
     }
+    // else {
+    //   dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+    //     37.56615,
+    //     126.97814,
+    //     radius,
+    //   );
+    // }
 
     if (dataSource.length === 0) {
       throw new NotFoundException('해당 반경 내에 병원이 없습니다.');

@@ -8,7 +8,7 @@
 
 #### 🏠 작품 링크 : [CodeBlue](https://codeblue.site/)
 #### 🧑🏾‍💻 작업 로그 : [Notion](https://www.notion.so/siwonmadang/Code-BLUE-ec7906910dec4f4b9d34da72fc334dd6)
-#### 📹 소개 영상 : [youtube](작업ing)
+#### 📹 소개 영상 : [youtube](https://youtu.be/7SRAehiz8jE)
 #### 📑 브로 슈어 : [brochure](작업ing)
 -------------------
 
@@ -19,7 +19,11 @@
 * **프로젝트명** : CodeBlue
 * **기간** : 2023년 5월 19일 ~ 2023년 6월 30일
 * **주제** : 인공지능을 활용한 응급환자 중증도 분류 & 사용자 위치 기반 실시간 잔여병상 조회 및 환자 이송신청 시스템
-* **주요기능** : [입력]증상보고서 입력, [조회] 사용자 위치기반 추천 병원조회, 인근 병원조회, 증상보고서 검색, [전송]이송신청
+* **주요기능** :<br> 
+[입력] 증상보고서 입력<br>
+[조회] 사용자 위치기반 추천 병원조회, 인근 병원조회, 증상보고서 검색<br>
+[전송]이송신청
+
 <br>
 
 # 👨‍👩‍👧‍👦Team Members
@@ -38,7 +42,10 @@
 <summary> #1 증상보고서 입력 </summary>
 <div markdown="1">
 
-https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1-1970c5511d9f
+
+
+https://github.com/backEndKwon/CodeBlue/assets/128948886/3db6882f-c55c-46fa-98df-2fecacc53cde
+
 
 </div>
 </details>
@@ -47,7 +54,10 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1
 <summary> #2 사용자 위치기반 추천 병원조회 </summary>
 <div markdown="1">
 
-https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1-1970c5511d9f
+
+
+https://github.com/backEndKwon/CodeBlue/assets/128948886/adc761d1-06a5-4463-ae5f-a62764b7d229
+
 
 </div>
 </details>
@@ -56,7 +66,10 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a6ca31e3-3951-4e9d-bec1
 <summary> #3 이송신청 </summary>
 <div markdown="1">
 
-https://github.com/backEndKwon/CodeBlue/assets/128948886/2a2811aa-c2df-4b76-a6ba-ded32bbd1c0e
+
+https://github.com/backEndKwon/CodeBlue/assets/128948886/7e0393e9-5328-44c9-bc50-fb9fe3e7bd9a
+
+
 
 </div>
 </details>
@@ -65,7 +78,10 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/2a2811aa-c2df-4b76-a6ba
 <summary> #4 증상보고서 검색 </summary>
 <div markdown="1">
 
-https://github.com/backEndKwon/CodeBlue/assets/128948886/26562b88-65e8-4691-946a-4fd92ded6dbf
+
+
+https://github.com/backEndKwon/CodeBlue/assets/128948886/078fa385-f992-43a3-a3ed-bc42bd005163
+
 
 </div>
 </details>
@@ -74,7 +90,10 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/26562b88-65e8-4691-946a
 <summary> #5 인근 병원조회 </summary>
 <div markdown="1">
 
-https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d-1e9c47a6d1cc
+
+https://github.com/backEndKwon/CodeBlue/assets/128948886/df25786c-7415-4b66-be66-98d54eecfbe4
+
+
 
 </div>
 </details>
@@ -89,8 +108,8 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d
 |Runtime|Node.js|Language|TypeScript, Python|
 |Framework|Nest.js, Flask|DB|MySQL(AWS RDS), Redis|
 |Web Crawling|Axios, Cheerio|AI|Tensorflow, Konlpy|
-|DevOps|Docker Compose, AWS EC2, Load Balancer|Front|ejs|
-|CI/CD|Doker, Github Action|Geolocation|Kakao Mobility API, Spatial Index|
+|DevOps|Docker Compose, AWS EC2, ALB|Frontend|ejs|
+|CI/CD|Docker, Github Action|Geolocation|Kakao Mobility API, Spatial Index|
 |동시성제어|BullQueue | 대용량데이터 검색|TypeORM, QueryBuilder, Composite Index|
 
  
@@ -98,7 +117,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/a5708c6e-0cf1-4bb7-b41d
 
 # 🕸 Architecture
 
-  ![애플리케이션_아키텍쳐_최종](https://github.com/backEndKwon/Algorithm/assets/128948886/4cf96afd-6c57-44ff-a287-2c93a1c6284d)
+  ![애플리케이션_아키텍쳐_최종](https://github.com/project-codeblue/CodeBlue/assets/76824986/e844013d-d099-45e8-97eb-a8890f2edd17)
 
 <br>
 

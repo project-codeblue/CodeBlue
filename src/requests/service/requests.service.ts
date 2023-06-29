@@ -49,7 +49,7 @@ export class RequestsService {
           'hospital.address',
         ])
         .where('reports.hospital_id > 0');
-      //is_sent = 1과 동일한 조건이지만 검색범위는 더 좁게
+      //is_sent = 1과 동일한 조건이지만 최적의 인덱스 설정
 
       //----------------------------[Data]----------------------------------//
       switch (true) {
