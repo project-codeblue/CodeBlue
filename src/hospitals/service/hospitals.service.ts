@@ -231,22 +231,24 @@ export class HospitalsService {
     let dataSource = [];
     let hospitals = [];
 
-    const radius = 10 * 1000; // radius in meters
-    console.log('radius============>', radius);
+    const radius = 20 * 1000; // radius in meters
+
     if (startLat && startLng) {
       dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
         startLat,
         startLng,
         radius,
       );
-    }
-
-    if (dataSource.length === 0) {
-      throw new NotFoundException('해당 반경 내에 병원이 없습니다.');
+    } else {
+      dataSource = await this.hospitalsRepository.getHospitalsWithinRadius(
+        37.56615,
+        126.97814,
+        radius,
+      );
     }
 
     hospitals = Object.entries(dataSource); // 배열로 반환
-    console.log('debug!!!', hospitals[0][1]['distance']);
+
     const datas = hospitals.map((data) => {
       const obj = {
         name: data[1]['name'],

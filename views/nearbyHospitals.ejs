@@ -205,6 +205,9 @@
           위치 재반영
         </button>
         <div class="box">
+          <% if (hospitals_data.length == 0) { %>
+            <h3>반경 20km 내에 병원이 없습니다</h3>
+          <% } %>
           <% for (let i = 0; i < hospitals_data.length; i++) { %>
           <div class="box has-background-light">
             <div class="hospital_title">
