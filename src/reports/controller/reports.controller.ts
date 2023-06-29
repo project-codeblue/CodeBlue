@@ -27,6 +27,7 @@ export class ReportsController {
     @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
   ) {
     this.logger.verbose('증상 보고서 생성 POST API');
+    console.log('디버깅=============>', patient_rrn, name, createReportDto);
     return this.reportsService.createReport(createReportDto, patient_rrn, name);
   }
 
