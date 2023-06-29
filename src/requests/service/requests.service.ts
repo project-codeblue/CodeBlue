@@ -179,11 +179,8 @@ export class RequestsService {
       }
       //--------------------------------------------------------------//
 
-      const allReports = await query.getRawMany();
+      const allReports: Reports[] = await query.getRawMany();
 
-      if (allReports.length === 0) {
-        throw new NotFoundException('검색 결과가 없습니다');
-      }
       return allReports;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -312,47 +309,41 @@ export class RequestsService {
   //--------------------------------------------------------------//
 
   async withdrawRequest(report_id: number) {
-    const withdrawnRequest = await this.entityManager.transaction(
-      'SERIALIZABLE',
-      async () => {
-        try {
-          const report = await this.reportsRepository.findReport(report_id);
-          if (!report) {
-            throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
-          }
-          if (!report.is_sent) {
-            throw new HttpException(
-              '아직 전송되지 않은 증상 보고서입니다.',
-              HttpStatus.BAD_REQUEST,
-            );
-          }
-
-          const hospital_id = report.hospital_id;
-
-          // 증상 보고서에 hospital_id 제거
-          await this.reportsRepository.deleteTargetHospital(report_id);
-
-          // 해당 병원의 available_beds를 1 증가
-          await this.hospitalsRepository.increaseAvailableBeds(hospital_id);
-
-          // 해당 report의 is_sent를 false로 변경
-          await this.reportsRepository.updateReportBeingNotSent(report_id);
-
-          return await this.reportsRepository.getReportwithPatientInfo(
-            report_id,
-          );
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            throw error;
-          }
+    try {
+      return await this.entityManager.transaction('SERIALIZABLE', async () => {
+        const report = await this.reportsRepository.findReport(report_id);
+        if (!report) {
+          throw new NotFoundException('증상 보고서가 존재하지 않습니다.');
+        }
+        if (!report.is_sent) {
           throw new HttpException(
-            error.response || '환자 이송 신청 철회에 실패하였습니다.',
-            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            '아직 전송되지 않은 증상 보고서입니다.',
+            HttpStatus.BAD_REQUEST,
           );
         }
-      },
-    );
-    return withdrawnRequest;
+
+        const hospital_id = report.hospital_id;
+
+        // 증상 보고서에 hospital_id 제거
+        await this.reportsRepository.deleteTargetHospital(report_id);
+
+        // 해당 병원의 available_beds를 1 증가
+        await this.hospitalsRepository.increaseAvailableBeds(hospital_id);
+
+        // 해당 report의 is_sent를 false로 변경
+        await this.reportsRepository.updateReportBeingNotSent(report_id);
+
+        return await this.reportsRepository.getReportwithPatientInfo(report_id);
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        error.response || '환자 이송 신청 철회에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   getPriority = (report: Reports): number => {
@@ -372,5 +363,34 @@ export class RequestsService {
 
   getRequestQueueForBoard() {
     return this.requestQueue;
+  }
+
+  getRandomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  async createDummyRequest() {
+    for (let i = 1; i <= 1000; i++) {
+      const report_id = i;
+      const hospital_id = this.getRandomNumber(1, 412);
+
+      const hospital = await this.hospitalsRepository.findHospital(hospital_id);
+      const available_beds = hospital.available_beds;
+      if (available_beds === 0) {
+        throw new HttpException(
+          '병원 이송 신청이 마감되었습니다. 다른 병원에 신청하시길 바랍니다.',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      }
+
+      // 증상 보고서에 hospital_id 추가
+      await this.reportsRepository.addTargetHospital(report_id, hospital_id);
+
+      // 해당 병원의 available_beds를 1 감소
+      await this.hospitalsRepository.decreaseAvailableBeds(hospital_id);
+
+      // 해당 report의 is_sent를 true로 변경
+      await this.reportsRepository.updateReportBeingSent(report_id);
+    }
   }
 }

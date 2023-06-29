@@ -16,7 +16,7 @@
     <meta property="og:title" content="CodeBLUE" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="../../image/codeblue.png" />
-    <meta property="og:description" content="CodeBLUE - 가까운 병원 조회"/>
+    <meta property="og:description" content="CodeBLUE - 가까운 병원 조회" />
 
     <link
       rel="stylesheet"
@@ -96,7 +96,8 @@
     function addQueryString(position) {
       // 현재 URL 가져오기
       var currentUrl = window.location.href;
-
+      self.name = 'reload';
+      
       getCurrentPosition()
         .then((position) => {
           const latitude = position.coords.latitude;
@@ -115,21 +116,35 @@
           alert('위치 정보를 가져오는데 실패했습니다.');
         });
     }
-    // 사용자 위치를 저장할 변수
-let userLocation = null;
 
-// 위치 정보 가져오기
-navigator.geolocation.getCurrentPosition(
-  (position) => {
-    // 성공적으로 위치 정보를 가져왔을 때 호출되는 콜백 함수
-    const { latitude, longitude } = position.coords;
-    userLocation = { latitude, longitude };
-  },
-  (error) => {
-    // 위치 정보를 가져오지 못했을 때 호출되는 콜백 함수
-    console.error('Failed to get user location:', error);
-  }
-);
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(
+        document.querySelectorAll('.navbar-burger'),
+        0,
+      );
+
+      // Add a click event on each of them
+      $navbarBurgers.forEach((el) => {
+        el.addEventListener('click', () => {
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    });
+
+    if (self.name != 'reload') {
+      self.name = 'reload';
+      addQueryString();
+    } else {
+      self.name = '';
+    };
+
   </script>
   <body>
     <nav

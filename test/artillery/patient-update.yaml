@@ -1,8 +1,8 @@
 config:
   target: "http://localhost:3000"
   phases:
-    - duration: 60
-      arrivalRate: 20
+    - duration: 10000
+      arrivalRate: 1
   payload:
     path: "patient-update.csv"
     order: random
@@ -30,9 +30,3 @@ scenarios:
         capture:
           json: "$.patient_id"
           as: "patient_id"
-    - patch:
-        url: "http://localhost:3000/patient/{{patient_id}}"
-        json:
-          patient_rrn: "{{up_patient_rrn}}"
-          name: "{{up_name}}"
-          gender: "{{up_gender}}"

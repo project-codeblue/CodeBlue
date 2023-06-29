@@ -1,7 +1,7 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, Inject } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigType } from '@nestjs/config';
 import { ReportsModule } from './reports/reports.module';
 import { PatientsModule } from './patients/patients.module';
 import { HospitalsModule } from './hospitals/hospitals.module';
@@ -11,6 +11,7 @@ import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middlewa
 import { ConfigValidator } from '../config/config.validator';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import appConfig from '../config/app.config';
 
 @Module({
   imports: [
@@ -28,9 +29,12 @@ import { AppService } from './app.service';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  configService = new ConfigService();
+  constructor(
+    @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
+  ) {}
+
   private readonly isDev: boolean =
-    this.configService.get('MODE') === 'development' ? true : false;
+    this.config.mode === 'development' ? true : false;
 
   // dev mode일 때 HTTP 요청 로그 남기는 부분
   configure(consumer: MiddlewareConsumer) {

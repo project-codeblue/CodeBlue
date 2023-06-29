@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "MODE=test jest --config ./test/supertest-e2e/jest-e2e.json"
+    "test:e2e": "jest --config ./test/supertest-e2e/jest-e2e.json"
   },
   "dependencies": {
     "@bull-board/api": "^5.2.1",
@@ -47,12 +47,10 @@
     "cron": "^2.3.1",
     "cross-env": "^7.0.3",
     "date-and-time": "^3.0.0",
-    "dotenv": "^16.0.3",
     "ejs": "^3.1.9",
     "joi": "^17.9.2",
     "js-yaml": "^4.1.0",
     "mysql2": "^3.3.2",
-    "playwright": "^1.34.3",
     "puppeteer": "^20.4.0",
     "redis": "^4.6.7",
     "reflect-metadata": "^0.1.13",

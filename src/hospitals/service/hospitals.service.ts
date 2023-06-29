@@ -3,13 +3,11 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
-  Inject,
 } from '@nestjs/common';
 import { HospitalsRepository } from '../hospitals.repository';
 import { ReportsRepository } from '../../reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
 import { KakaoMapService } from '../../commons/providers/kakao-map.provider';
-import { MedicalOpenAPI } from '../../commons/middlewares/medicalOpenAPI';
 import { Hospitals } from '../hospitals.entity';
 import { InjectEntityManager } from '@nestjs/typeorm'; //transaction사용을 위한 모듈 임포트
 import { EntityManager } from 'typeorm'; //transaction사용을 위한 모듈 임포트
@@ -21,7 +19,6 @@ export class HospitalsService {
     private reportsRepository: ReportsRepository,
     private crawling: Crawling,
     private kakaoMapService: KakaoMapService,
-    private openAPI: MedicalOpenAPI,
     @InjectEntityManager() private readonly entityManager: EntityManager, // 트랜젝션을 위해 DI
   ) {}
 
@@ -34,11 +31,10 @@ export class HospitalsService {
     report_id: number,
     queries: object,
   ): Promise<any> {
-    const getHospitals = await this.entityManager.transaction(
-      //트랜잭션리팩토링필요
-      'READ COMMITTED',
-      async () => {
-        try {
+    try {
+      return await this.entityManager.transaction(
+        'READ COMMITTED',
+        async () => {
           const report = await this.reportsRepository.findReport(report_id);
           if (!report) {
             throw new NotFoundException(
@@ -51,12 +47,13 @@ export class HospitalsService {
 
           let dataSource = [];
           let hospitals = [];
+          let radius: number;
           const max_count = queries['max_count']
             ? parseInt(queries['max_count'])
             : 20;
-
           if (queries['radius']) {
-            const radius = parseInt(queries['radius']) * 1000; // radius in meters
+            radius = parseInt(queries['radius']) * 1000; // radius in meters
+            console.log('withinRadius');
             dataSource =
               await this.hospitalsRepository.getHospitalsWithinRadius(
                 startLat,
@@ -64,6 +61,7 @@ export class HospitalsService {
                 radius,
               );
           } else {
+            console.log('withoutRadius');
             dataSource =
               await this.hospitalsRepository.getHospitalsWithoutRadius(
                 startLng,
@@ -80,7 +78,7 @@ export class HospitalsService {
             hospitals = hospitals.slice(0, max_count); // 사용자가 원하는 만큼만 추천
           }
 
-          // 카카오map API적용 최단시간 거리 계산
+          // 카카오 mobility API적용 최단시간 거리 계산
           const promises = hospitals.map(async (hospital) => {
             const endLat = hospital[1]['latitude'];
             const endLng = hospital[1]['longitude'];
@@ -105,7 +103,7 @@ export class HospitalsService {
               duration,
               minutes: `${minutes}분`,
               seconds: `${seconds}초`,
-              distance: `${(distance / 1000).toFixed(1)}km`,
+              distance: (distance / 1000).toFixed(1),
               hospital_id: hospital[1]['hospital_id'],
               name: hospital[1]['name'],
               phone: hospital[1]['phone'],
@@ -115,7 +113,14 @@ export class HospitalsService {
             return obj;
           });
 
-          const recommendedHospitals = await Promise.all(promises);
+          let recommendedHospitals = await Promise.all(promises);
+
+          // KaKao Mobility로 구한 거리가 ST_Distance_Sphere로 구한 거리보다 더 큰 경우
+          if (queries['radius']) {
+            recommendedHospitals = recommendedHospitals.filter(
+              (hospital) => parseFloat(hospital['distance']) * 1000 <= radius,
+            );
+          }
 
           // 가중치 적용
           const weightsRecommendedHospitals = [];
@@ -148,6 +153,7 @@ export class HospitalsService {
           const datas = await this.crawling.getRealTimeHospitalsBeds(emogList);
           const results: Array<string | object> = await Promise.all(
             weightsRecommendedHospitals.map(async (hospital) => {
+
               const result = { ...hospital, report_id };
               for (const data of datas) {
                 if (data.slice(0, 8) === hospital.emogList) {
@@ -168,18 +174,17 @@ export class HospitalsService {
           results.unshift(datas[0]); // 크롤링 데이터 받아온 timeline - index 0번 저장
 
           return results;
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            throw error;
-          }
-          throw new HttpException(
-            error.response.data || '병원 조회에 실패하였습니다.',
-            error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      },
-    );
-    return getHospitals;
+        },
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new HttpException(
+        error.response.data || '병원 조회에 실패하였습니다.',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async calculateRating(
