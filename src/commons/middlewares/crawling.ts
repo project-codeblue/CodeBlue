@@ -12,7 +12,7 @@ export class Crawling {
     emogList.forEach((e) => {
       url += `&emogList=${e}`;
     });
-    url += `&rltmEmerCd=O001&rltmCd=O017&rltmCd=O008&rltmCd=O006&rltmCd=O011&rltmCd=O007&rltmCd=O012&rltmCd=O016&rltmCd=O038&rltmCd=O022&afterSearch=org&theme=WHITE&refreshTime=60&spreadAllMsg=allSpread&searchYn=Y`;
+    url += `&rltmEmerCd=O001&rltmCd=O038&rltmCd=O022&afterSearch=org&theme=WHITE&refreshTime=60&spreadAllMsg=allClose&searchYn=Y`;
 
     const results: string[] = [];
 
@@ -32,8 +32,8 @@ export class Crawling {
         const emogList = $data('#area_dashboards > div > div.dash_header > div > span > input.emogcode',).val();
         const name = $data('#area_dashboards > div > div.dash_header > div > span > a',).text().replace(/\s+/g, ' ');
         const ungeup = $data('#area_dashboards > div > div.dash_data > div:nth-child(2) > table > tbody > tr > td:nth-child(1) > div.data_data.emer_bed.data_td_O001 > span:nth-child(2)').text().replace(/\s+/g, ' ');
-        const susul = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(2) > td:nth-child(2) > div.data_data.data_td_O022`).text().replace(/\s+/g, ' ');
-        const ibwon = $data(`#rltmList_${idx} > table > tbody > tr:nth-child(2) > td:nth-child(1) > div.data_data.data_td_O038`).text().replace(/\s+/g, ' ');
+        const susul = $data(`#rltmList_${idx} > table > tbody > tr > td:nth-child(2) > div.data_data.data_td_O022`).text().replace(/\s+/g, ' ');
+        const ibwon = $data(`#rltmList_${idx} > table > tbody > tr > td:nth-child(1) > div.data_data.data_td_O038`).text().replace(/\s+/g, ' ');
 
         results.push(
           `${emogList} / ${name} 응급실: ${ungeup}, 수술실: ${susul}, 입원실: ${ibwon}`,
