@@ -121,6 +121,10 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/df25786c-7415-4b66-be66
 
 <br>
 
+# 🚩 [API 명세서](https://www.notion.so/siwonmadang/26358f682bfc4cd8b6a32b743b077ef8?v=a4d6475c44cc4c4b9e2ed8e925c7db17)
+
+<br>
+
 #  📒 ERD
 
 ![2023-06-26 14;29;26](https://github.com/backEndKwon/Algorithm/assets/128948886/c57c86e2-1efe-4c3d-ae81-cdbfb8a0e2f1)
