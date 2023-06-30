@@ -7,7 +7,6 @@ import { Crawling } from '../../commons/middlewares/crawling';
 import { Hospitals } from '../hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
 import { EntityManager } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
 
 describe('ReportsService Unit Testing', () => {
   let hospitalsService: HospitalsService;
@@ -153,7 +152,6 @@ describe('ReportsService Unit Testing', () => {
 
       const rating = 99;
       const hospital = [];
-      const weights = { duration: 200, available_beds: 5 };
       const maxDuration = 1000;
       const maxAvailable_beds = 5;
       const calculate = jest.spyOn(hospitalsService, `calculateRating`);
@@ -208,7 +206,6 @@ describe('ReportsService Unit Testing', () => {
       expect(
         await hospitalsService.calculateRating(
           hospital,
-          weights,
           maxDuration,
           maxAvailable_beds,
         ),
@@ -216,7 +213,6 @@ describe('ReportsService Unit Testing', () => {
       expect(calculate).toBeCalledTimes(1);
       expect(calculate).toBeCalledWith(
         hospital,
-        weights,
         maxDuration,
         maxAvailable_beds,
       );

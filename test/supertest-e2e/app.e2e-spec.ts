@@ -8,7 +8,6 @@ import { HttpExceptionFilter } from '../../src/commons/exceptions/http-exception
 import { MysqlConfigProvider } from '../../src/commons/providers/typeorm-config.provider';
 import { Hospitals } from '../../src/hospitals/hospitals.entity';
 import { BloodType, AgeRange } from '../../src/reports/reports.enum';
-import { join } from 'path';
 
 // !!!!!!!! e2e test 전 반드시 .env 파일의 mode를 test로 변경해주어야합니다 !!!!!!!!
 
