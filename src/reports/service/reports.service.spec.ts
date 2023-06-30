@@ -8,18 +8,19 @@ import { NotFoundException } from '@nestjs/common';
 import { Reports } from '../reports.entity';
 import { AgeRange, BloodType } from '../reports.enum';
 import { EntityManager } from 'typeorm';
+import { ConfigType } from '@nestjs/config';
+import appConfig from '../../../config/app.config';
 
 describe('ReportsService Unit Testing', () => {
   let reportsService: ReportsService;
   let reportsRepository: ReportsRepository;
+  let patientsRepository: PatientsRepository;
   let entityManager: EntityManager;
+  let config: ConfigType<typeof appConfig>;
 
   beforeEach(async () => {
     const mockReportsRepository = {
-      createReport: jest.fn((dto, level) => ({
-        ...dto,
-        symptom_level: level,
-      })),
+      createReport: jest.fn().mockReturnValue({ symptom_level: 1 }),
       findReport: jest.fn(),
       updateReport: jest.fn(),
       getReportwithPatientInfo: jest.fn(),
@@ -28,11 +29,9 @@ describe('ReportsService Unit Testing', () => {
     };
 
     const mockPatientsRepository = {
-      findByRRN: jest.fn(),
-      createPatientInfo: jest.fn((dto) => ({
-        ...dto,
-        patient_id: 1,
-      })),
+      findByRRN: jest.fn().mockReturnValue(null),
+      createPatientInfo: jest.fn().mockReturnValue({ patient_id: 1 }),
+      updatedPatientInfo: jest.fn(),
     };
 
     const mockTransaction = {
@@ -40,6 +39,10 @@ describe('ReportsService Unit Testing', () => {
         // transaction 메소드에 대한 Mock 구현을 제공합니다.
         return callback(); // 테스트 시에는 콜백 함수를 실행합니다.
       }),
+    };
+
+    const mockConfig = {
+      KEY: 'value',
     };
 
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -57,42 +60,56 @@ describe('ReportsService Unit Testing', () => {
           provide: EntityManager,
           useValue: mockTransaction,
         },
+        {
+          provide: appConfig.KEY,
+          useValue: mockConfig,
+        },
       ],
     }).compile();
 
     reportsService = moduleRef.get<ReportsService>(ReportsService);
     reportsRepository = moduleRef.get<ReportsRepository>(ReportsRepository);
+    patientsRepository = moduleRef.get<PatientsRepository>(PatientsRepository);
     entityManager = moduleRef.get<EntityManager>(EntityManager);
+    config = moduleRef.get<ConfigType<typeof appConfig>>(appConfig.KEY);
   });
 
   describe('createReport()', () => {
+    const patient_rrn = '123456-4890123';
+    const name = '홍길동';
     const createReportDto: CreateReportDto = {
-      symptoms: '청각 손실,소실된 의식,사지 마비,가슴 통증',
+      symptoms: '환자는 의식을 잃었으며, 호흡이 없습니다',
+      patient_rrn,
+      name,
     };
-    const patient_rrn = '123456-7890123';
 
     it('should create a report with correct symptom level', async () => {
-      const expectedEmergencyLevel = 3;
+      const expectedEmergencyLevel = 1;
+      jest
+        .spyOn(reportsService, 'callAIServerForEmergencyLevel')
+        .mockResolvedValue(1);
 
       const result = await reportsService.createReport(
         createReportDto,
         patient_rrn,
+        name,
       );
+
+      console.log('result', result);
 
       expect(reportsRepository.createReport).toHaveBeenCalledWith(
         createReportDto,
-        expectedEmergencyLevel,
       );
       expect(result.symptom_level).toEqual(expectedEmergencyLevel);
     });
   });
 
   describe('getReportDetails()', () => {
-    const reportId = 1;
+    const report_id = 1;
 
     it('should return the report details', async () => {
       const reportDetails = {
-        report_id: reportId,
+        report_id,
         blood_pressure: '130/80',
       } as Reports;
       jest
@@ -108,16 +125,16 @@ describe('ReportsService Unit Testing', () => {
         .spyOn(reportsRepository, 'getReportwithPatientAndHospitalInfo')
         .mockResolvedValueOnce(reportDetails);
 
-      const result = await reportsService.getReportDetails(reportId);
+      const result = await reportsService.getReportDetails(report_id);
 
-      expect(reportsRepository.findReport).toHaveBeenCalledWith(reportId);
+      expect(reportsRepository.findReport).toHaveBeenCalledWith(report_id);
       expect(result).toEqual(reportDetails);
     });
 
     it('should throw NotFoundException if the report does not exist', async () => {
       jest.spyOn(reportsRepository, 'findReport').mockResolvedValueOnce(null);
 
-      await expect(reportsService.getReportDetails(reportId)).rejects.toThrow(
+      await expect(reportsService.getReportDetails(report_id)).rejects.toThrow(
         NotFoundException,
       );
     });

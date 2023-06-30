@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon -->
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
+
+    <title>CodeBLUE - 증상 보고서 입력 페이지</title>
+
+    <!-- Meta Tag -->
+    <meta property="og:url" content="https://codeblue.site" />
+    <meta property="og:title" content="CodeBLUE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="../../image/codeblue.png" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 증상 보고서 입력 페이지"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      form {
+        display: -ms-inline-grid;
+        padding-right: 15%;
+        padding-left: 12%;
+      }
+
+      .loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.8;
+        background: white;
+        z-index: 99;
+        text-align: center;
+      }
+
+      .loading > iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 100;
+        transform: translate(-50%, -50%);
+      }
+
+      .buttons {
+        margin-left: 10%;
+      }
+
+      .help {
+        margin-right: 10%;
+      }
+    </style>
+    <script>
+      function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+      }
+
+      function sendReport() {
+        // form 데이터 요청으로 보내지 않도록 설정
+        event.preventDefault();
+
+        const patient_rrn = document.querySelector('#patient_rrn').value;
+        const name = document.querySelector('#name').value;
+        console.log(name);
+        const age_range_form = document.querySelector('#age_range');
+        const age_range = age_range_form.value || null;
+        const blood_type_form = document.querySelector('#blood_type');
+        const blood_type = blood_type_form.value || null;
+        const blood_pressure = document.querySelector('#blood_pressure').value;
+        const symptoms = document.querySelector('#symptoms').value;
+        const createReportDto = {
+          patient_rrn,
+          name,
+          age_range,
+          blood_type,
+          blood_pressure,
+          symptoms,
+        };
+
+        console.log('createReportDto', createReportDto);
+
+        // 필수 조건인 symptoms를 입력하지 않은 경우
+        if (!symptoms) {
+          alert('환자 증상을 입력해주세요.');
+        } else {
+          // 로딩 이미지 띄우기
+          const loadingElement = document.querySelector('.loading');
+          loadingElement.style.display = 'block';
+
+          console.log('createReportDto', createReportDto);
+          const url = '/report';
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(createReportDto),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              const reportId = data.report_id;
+              // alert('데이터가 성공적으로 저장되었습니다. 보고서 ID: ' + reportId);
+
+              getCurrentPosition()
+                .then((position) => {
+                  const latitude = position.coords.latitude;
+                  const longitude = position.coords.longitude;
+
+                  let recommendedHospitals = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=&max_count=`;
+
+                  return fetch(recommendedHospitals)
+                    .then((response) => response.text())
+                    .then((text) => {
+                      console.log(text);
+                      // alert('병원추천 페이지로 이동합니다.');
+                      window.location.href = recommendedHospitals;
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      loadingElement.style.display = 'none';
+                      alert('병원추천 페이지로 이동하는데 실패했습니다.');
+                    });
+                })
+                .catch((error) => {
+                  console.error(error);
+                  loadingElement.style.display = 'none';
+                  alert('위치 정보를 가져오는데 실패했습니다.');
+                });
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              loadingElement.style.display = 'none';
+              alert('데이터 저장 중에 오류가 발생했습니다.');
+            });
+        }
+      }
+
+      function refreshBrowser() {
+        event.preventDefault();
+        window.location.reload();
+      }
+
+      function showNameField() {
+        var rrnInput = document.getElementById('patient_rrn');
+        var nameFieldContainer = document.getElementById('name-container');
+
+        if (rrnInput.value.length === 14) {
+          nameFieldContainer.style.display = 'flex';
+        } else {
+          nameFieldContainer.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll('.navbar-burger'),
+          0,
+        );
+
+        // Add a click event on each of them
+        $navbarBurgers.forEach((el) => {
+          el.addEventListener('click', () => {
+            // Get the target from the "data-target" attribute
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <nav
+      class="navbar is-info is-light"
+      role="navigation"
+      aria-label="main navigation"
+      style="padding: 0 10px 0 75px"
+    >
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img
+            src="../../image/onlytext-cutout.png"
+            width="120"
+            height="auto"
+          />
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span> <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/hospital/nearby/site">
+                가까운 병원 조회
+              </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="loading" style="display: none">
+      <iframe src="https://embed.lottiefiles.com/animation/43735"></iframe>
+    </div>
+    <div class="container">
+      <section class="hero has-background-link-light m-6">
+        <div class="hero-body my-6" style="text-align: center">
+          <p class="title">환자 증상 보고서 입력</p>
+          <p class="subtitle">
+            <br />
+            환자의 상태는 필수로 입력해주시고, 나머지 항목은 선택사항입니다.
+            <br />
+            <br />
+          </p>
+          <form action="./report" method="POST">
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">주민등록번호</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="text"
+                      placeholder="예) 990101-2111111"
+                      maxlength="14"
+                      name="patient_rrn"
+                      id="patient_rrn"
+                      style="font-family: 'Noto Sans KR', sans-serif"
+                      oninput="showNameField()"
+                    />
+                  </div>
+                  <p class="help">숫자 6자리-숫자 7자리로 입력해주세요.</p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="field is-horizontal"
+              id="name-container"
+              style="display: none"
+            >
+              <div class="field-label is-normal">
+                <label class="label">이름</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="text"
+                      placeholder="이름을 입력해주세요."
+                      name="name"
+                      id="name"
+                      style="font-family: 'Noto Sans KR', sans-serif"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">연령대</label>
+              </div>
+              <div class="field-body">
+                <div class="field is-narrow">
+                  <div class="control">
+                    <div class="select is-fullwidth">
+                      <select
+                        class="form-select"
+                        id="age_range"
+                        name="age_range"
+                        style="font-family: 'Noto Sans KR', sans-serif"
+                      >
+                        <option disabled selected value="">연령대 선택</option>
+                        <option value="영유아">영유아</option>
+                        <option value="청소년">청소년</option>
+                        <option value="성인">성인</option>
+                        <option value="노년">노년</option>
+                        <option value="임산부">임산부</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">혈액형</label>
+              </div>
+              <div class="field-body">
+                <div class="field is-narrow">
+                  <div class="control">
+                    <div class="select is-fullwidth">
+                      <select
+                        class="form-select"
+                        id="blood_type"
+                        name="blood_type"
+                        style="font-family: 'Noto Sans KR', sans-serif"
+                      >
+                        <option disabled selected value="">혈액형 선택</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="AB">AB</option>
+                        <option value="O">O</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">혈압</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input"
+                      id="blood_pressure"
+                      name="blood_pressure"
+                      type="text"
+                      placeholder="예) 120/80"
+                      style="font-family: 'Noto Sans KR', sans-serif"
+                    />
+                  </div>
+                  <p class="help">숫자/숫자로 입력해주세요.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label" for="symptoms">환자 증상</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <textarea
+                      id="symptoms"
+                      name="symptoms"
+                      class="textarea is-danger"
+                      placeholder="환자의 증상을 서술해주세요"
+                      style="font-family: 'Noto Sans KR', sans-serif"
+                    ></textarea>
+                  </div>
+                  <p class="help is-danger">
+                    필수 입력값 입니다. 환자의 증상을 최대한 상세하게
+                    적어주세요.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-body">
+                <div class="field is-grouped is-grouped-centered buttons">
+                  <div class="control">
+                    <button
+                      type="submit"
+                      class="button is-link"
+                      onclick="sendReport();"
+                    >
+                      제출
+                    </button>
+                  </div>
+                  <div class="control">
+                    <button
+                      class="button is-danger"
+                      onclick="refreshBrowser();"
+                    >
+                      취소
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+          The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <br />
+          The website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

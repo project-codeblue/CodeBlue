@@ -10,36 +10,42 @@ export class ReportsRepository extends Repository<Reports> {
     super(Reports, dataSource.createEntityManager());
   }
 
-  async createReport(createReportDto: CreateReportDto, emergencyLevel: number) {
-    const { patient_rrn, ...createReportDtoWithOutPatient } = createReportDto;
+  // 증상 보고서 생성
+  async createReport(createReportDto: CreateReportDto): Promise<Reports> {
+    const { ...createReportDtoWithOutPatient } = createReportDto;
     const report = this.create({
       ...createReportDtoWithOutPatient,
-      symptom_level: emergencyLevel,
     });
     return this.save(report);
   }
 
-  async getReportwithPatientInfo(report_id: number): Promise<any> {
-    return await this.createQueryBuilder('r')
-      .select([
-        'r.report_id',
-        'p.name',
-        'p.patient_rrn',
-        'p.gender',
-        'r.symptom_level',
-        'r.symptoms',
-        'r.blood_pressure',
-        'r.age_range',
-        'r.is_sent',
-        'r.createdAt',
-        'r.updatedAt',
-      ])
-      .leftJoin('r.patient', 'p')
-      .where('r.report_id = :report_id', { report_id })
-      .getOne();
+  // 증상 보고서 상세 조회 (보고서 + 환자 정보)
+  async getReportwithPatientInfo(report_id: number): Promise<object> {
+    const report = await this.query(
+      `
+          SELECT
+            r.report_id,
+            r.symptom_level,
+            r.symptoms,
+            r.blood_pressure,
+            r.age_range,
+            r.is_sent,
+            r.createdAt,
+            r.updatedAt,
+            r.hospital_id,
+            p.name AS patient_name,
+            p.patient_rrn,
+            p.gender
+          FROM reports r
+          LEFT JOIN patients p ON r.patient_id = p.patient_id
+          WHERE r.report_id = ${report_id};      
+        `,
+    );
+    return report[0];
   }
 
-  async getReportwithHospitalInfo(report_id: number): Promise<any> {
+  // 증상 보고서 상세 조회 (보고서 + 병원 정보)
+  async getReportwithHospitalInfo(report_id: number): Promise<object> {
     const result = await this.query(
       `
           SELECT
@@ -52,6 +58,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
+            h.name AS hospital_name,
             h.address,
             h.phone
           FROM reports r
@@ -62,12 +69,15 @@ export class ReportsRepository extends Repository<Reports> {
     return result[0];
   }
 
-  async getReportwithPatientAndHospitalInfo(report_id: number): Promise<any> {
+  // 증상 보고서 상세 조회 (보고서 + 환자 정보 + 병원 정보)
+  async getReportwithPatientAndHospitalInfo(
+    report_id: number,
+  ): Promise<object> {
     const result = await this.query(
       `
           SELECT
             r.report_id,
-            p.name,
+            p.name AS patient_name,
             p.patient_rrn,
             p.gender,
             r.symptom_level,
@@ -78,6 +88,7 @@ export class ReportsRepository extends Repository<Reports> {
             r.createdAt,
             r.updatedAt,
             r.hospital_id,
+            h.name AS hospital_name,
             h.address,
             h.phone
           FROM reports r
@@ -89,13 +100,18 @@ export class ReportsRepository extends Repository<Reports> {
     return result[0];
   }
 
+  // 해당 report_id 의 증상 보고서 조회
   async findReport(report_id: number): Promise<Reports | undefined> {
     return await this.findOne({
       where: { report_id },
     });
   }
 
-  async updateReport(report_id: number, updatedReport: UpdateReportDto) {
+  // 해당 report_id 의 증상 보고서 수정
+  async updateReport(
+    report_id: number,
+    updatedReport: UpdateReportDto,
+  ): Promise<Reports> {
     const report = await this.findOne({
       where: { report_id },
     });
@@ -110,7 +126,8 @@ export class ReportsRepository extends Repository<Reports> {
     return await report.save();
   }
 
-  async updateReportBeingSent(report_id: number) {
+  // 해당 report_id의 증상보고서를 병원 이송 신청
+  async updateReportBeingSent(report_id: number): Promise<Reports> {
     const report = await this.findOne({
       where: { report_id },
     });
@@ -118,7 +135,8 @@ export class ReportsRepository extends Repository<Reports> {
     return await report.save();
   }
 
-  async updateReportBeingNotSent(report_id: number) {
+  // 해당 report_id의 증상보고서를 병원 이송 철회
+  async updateReportBeingNotSent(report_id: number): Promise<Reports> {
     const report = await this.findOne({
       where: { report_id },
     });
@@ -126,28 +144,12 @@ export class ReportsRepository extends Repository<Reports> {
     return await report.save();
   }
 
-  async createDummyReport(
-    hospital_id: number,
-    patient_id: number,
-    symptom_level: number,
-    symptom: string[],
-    latitude: number,
-    longitude: number,
-  ) {
-    await this.save({
-      hospital_id,
-      patient_id,
-      symptom_level,
-      symptoms: `[${symptom}]`,
-      latitude,
-      longitude,
-    });
-  }
-
+  // 모든 이송 신청 증상보고서 조회
   async getAllRequests(): Promise<Reports[]> {
     return await this.find({ where: { is_sent: true } });
   }
 
+  // 해당 report_id의 증상보고서를 해당 hospitals_id의 병원으로 이송 신청
   async addTargetHospital(
     report_id: number,
     hospital_id: number,
@@ -160,6 +162,7 @@ export class ReportsRepository extends Repository<Reports> {
     await report.save();
   }
 
+  // 해당 report_id의 증상보고서를 해당 hospitals_id의 병원으로 이송 철회
   async deleteTargetHospital(report_id: number): Promise<void> {
     const report = await this.findOne({
       where: { report_id },
@@ -169,15 +172,11 @@ export class ReportsRepository extends Repository<Reports> {
     await report.save();
   }
 
-  async getReportWithPatientInfo(report_id: number): Promise<Reports> {
-    const report = await this.findOne({
-      where: { report_id },
-      relations: ['patient'],
-    });
-    return report;
-  }
-
-  async addPatientIdInReport(report_id: number, patient_id: number) {
+  // 해당 report_id의 증상보고서에 환자 정보 추가
+  async addPatientIdInReport(
+    report_id: number,
+    patient_id: number,
+  ): Promise<void> {
     const report = await this.findOne({ where: { report_id } });
     report.patient_id = patient_id;
     await this.save(report);
