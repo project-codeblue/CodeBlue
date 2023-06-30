@@ -8,7 +8,7 @@
 
 #### 🏠 배포 주소 : [CodeBLUE](https://codeblue.site/)
 #### 🧑🏾‍💻 작업 로그 : [Notion](https://www.notion.so/siwonmadang/Code-BLUE-ec7906910dec4f4b9d34da72fc334dd6)
-#### 📹 소개 영상 : [youtube](https://youtu.be/7SRAehiz8jE)
+#### 📹 소개 영상 : [YouTube](https://youtu.be/7SRAehiz8jE)
 #### 📑 브로 슈어 : [Brochure](https://www.notion.so/siwonmadang/CodeBLUE-AI-20-06c507a9eeb540cd9ae4d6e2135dbc75?pvs=4)
 -------------------
 
@@ -18,7 +18,7 @@
 
 * **프로젝트명** : CodeBLUE
 * **기간** : 2023년 5월 19일 ~ 2023년 6월 30일
-* **주제** : 인공지능을 활용한 응급환자 중증도 분류 & 사용자 위치 기반 실시간 잔여병상 조회 및 환자 이송신청 시스템
+* **주제** : 인공지능을 활용한 응급 환자 중증도 분류 & 사용자 위치 기반 실시간 잔여 병상 조회 및 환자 이송 신청 시스템
 * **주요기능** :<br> 
 [입력] 증상 보고서 입력<br>
 [조회] 사용자 위치 기반 추천 병원 조회, 인근 병원 조회, 증상 보고서 검색<br>
