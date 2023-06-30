@@ -30,7 +30,7 @@ export class HospitalsService {
   async getRecommendedHospitals(
     report_id: number,
     queries: object,
-  ): Promise<any> {
+  ): Promise<object> {
     try {
       return await this.entityManager.transaction(
         'READ COMMITTED',
