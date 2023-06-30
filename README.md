@@ -1,4 +1,4 @@
-# <img src="https://github.com/backEndKwon/CodeBlue/assets/128948886/ac4f1ee7-80e6-4b45-860a-3b96a07f2fd2"  width="30" height="30"/> CodeBlue 
+# <img src="https://github.com/backEndKwon/CodeBlue/assets/128948886/ac4f1ee7-80e6-4b45-860a-3b96a07f2fd2"  width="30" height="30"/> CodeBLUE
 
 <img src="https://github.com/backEndKwon/CodeBlue/assets/128948886/851aa11f-e71d-4518-81b1-1a47da694003"  width="300" height="270"/>
 
@@ -38,7 +38,7 @@
 
 # 📹 주요 기능별 영상
 <details>
-<summary> #1 증상보고서 입력 </summary>
+<summary> #1 증상 보고서 입력 </summary>
 <div markdown="1">
 
 
@@ -50,7 +50,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/3db6882f-c55c-46fa-98df
 </details>
 
 <details>
-<summary> #2 사용자 위치기반 추천 병원조회 </summary>
+<summary> #2 사용자 위치 기반 추천 병원 조회 </summary>
 <div markdown="1">
 
 
@@ -62,7 +62,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/adc761d1-06a5-4463-ae5f
 </details>
 
 <details>
-<summary> #3 이송신청 </summary>
+<summary> #3 환자 병원 이송 신청 </summary>
 <div markdown="1">
 
 
@@ -74,7 +74,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/7e0393e9-5328-44c9-bc50
 </details>
 
 <details>
-<summary> #4 증상보고서 검색 </summary>
+<summary> #4 증상 보고서 검색 </summary>
 <div markdown="1">
 
 
@@ -86,7 +86,7 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/078fa385-f992-43a3-a3ed
 </details>
 
 <details>
-<summary> #5 인근 병원조회 </summary>
+<summary> #5 인근 병원 조회 </summary>
 <div markdown="1">
 
 
