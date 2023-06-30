@@ -4,7 +4,6 @@ import { HospitalsRepository } from '../hospitals.repository';
 import { KakaoMapService } from '../../commons/providers/kakao-map.provider';
 import { ReportsRepository } from '../..//reports/reports.repository';
 import { Crawling } from '../../commons/middlewares/crawling';
-import { Hospitals } from '../hospitals.entity';
 import { Reports } from '../../reports/reports.entity';
 import { EntityManager } from 'typeorm';
 
@@ -74,52 +73,6 @@ describe('ReportsService Unit Testing', () => {
     kakaoMapService = moduleRef.get(KakaoMapService);
     crawling = moduleRef.get(Crawling);
     entityManager = moduleRef.get(EntityManager);
-  });
-
-  describe('getHospitals()', () => {
-    it('getHospitals request must be performed successfully', async () => {
-      const hospitals: Hospitals[] = [];
-      jest
-        .spyOn(hospitalsRepository, 'getHospitals')
-        .mockResolvedValueOnce(hospitals);
-
-      expect(await hospitalsService.getHospitals()).toBe(hospitals);
-      expect(hospitalsRepository.getHospitals).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('getNearbyHospitals()', () => {
-    it('must be performed successfully', async () => {
-      const hospitals = [
-        {
-          name: '한림대학교동탄성심병원',
-          address: '경기도 화성시 큰재봉길 7 (석우동)',
-          phone: '031-8086-3000',
-          distance: '3.1km',
-        },
-        {
-          name: '오산한국병원',
-          address: '경기도 오산시 밀머리로1번길 16 (원동)',
-          phone: '031-379-8300',
-          distance: '5.3km',
-        },
-      ];
-      const queries = { latitude: 37.1886258, longitude: 127.0766825 };
-
-      jest
-        .spyOn(hospitalsRepository, 'getHospitalsWithinRadius')
-        .mockResolvedValueOnce(hospitals);
-
-      const result = await hospitalsService.getNearbyHospitals(queries);
-
-      console.log('result: ', result);
-
-      expect(result).toStrictEqual(hospitals);
-
-      expect(
-        hospitalsRepository.getHospitalsWithinRadius,
-      ).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe('getRecommendHospitals()', () => {
@@ -216,6 +169,40 @@ describe('ReportsService Unit Testing', () => {
         maxDuration,
         maxAvailable_beds,
       );
+    });
+  });
+
+  describe('getNearbyHospitals()', () => {
+    it('must be performed successfully', async () => {
+      const hospitals = [
+        {
+          name: '한림대학교동탄성심병원',
+          address: '경기도 화성시 큰재봉길 7 (석우동)',
+          phone: '031-8086-3000',
+          distance: '3.1km',
+        },
+        {
+          name: '오산한국병원',
+          address: '경기도 오산시 밀머리로1번길 16 (원동)',
+          phone: '031-379-8300',
+          distance: '5.3km',
+        },
+      ];
+      const queries = { latitude: 37.1886258, longitude: 127.0766825 };
+
+      jest
+        .spyOn(hospitalsRepository, 'getHospitalsWithinRadius')
+        .mockResolvedValueOnce(hospitals);
+
+      const result = await hospitalsService.getNearbyHospitals(queries);
+
+      console.log('result: ', result);
+
+      expect(result).toStrictEqual(hospitals);
+
+      expect(
+        hospitalsRepository.getHospitalsWithinRadius,
+      ).toHaveBeenCalledTimes(1);
     });
   });
 });

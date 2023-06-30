@@ -19,31 +19,31 @@ export class RequestsController {
   private logger = new Logger('RequestsController');
   constructor(private requestsService: RequestsService) {}
 
+  // GET: 이송 신청된 증상보고서 전체 조회 API
   @Get()
   getAllRequests(): Promise<Reports[]> {
     this.logger.verbose('증상 보고서 전체 조회 GET API');
     return this.requestsService.getAllRequests();
   }
 
-  // 이 API는 1번, 2번 서버에는 주석 처리하여 배포합니다.
-  // --------------------------------------------------------- //
+  // POST: 환자 이송 신청 API
   @Post('/:report_id/:hospital_id')
   sendRequest(
     @Param('report_id') report_id: number,
     @Param('hospital_id') hospital_id: number,
-  ) {
+  ): Promise<object> {
     this.logger.verbose('환자 이송 신청 POST API');
-    // client는 환자 이송 신청 비지니스 로직이 담긴 sendRequest()를 호출하지 않고, 먼저 addToRequestQueue()를 호출한다.
     return this.requestsService.addRequestQueue(report_id, hospital_id);
   }
-  // --------------------------------------------------------- //
 
+  // DELETE: 환자 이송 신청 철회 API
   @Delete('/:report_id')
-  withdrawRequest(@Param('report_id') report_id: number) {
+  withdrawRequest(@Param('report_id') report_id: number): Promise<object> {
     this.logger.verbose('환자 이송 신청 철회 DELETE API');
     return this.requestsService.withdrawRequest(report_id);
   }
 
+  // GET: 이송 신청된 증상보고서 검색 API
   @Get('/search')
   @Render('searchResult')
   async getSearchRequests(@Query() queries: object): Promise<object> {
@@ -56,10 +56,5 @@ export class RequestsController {
     } catch (error) {
       return { searchedData: error };
     }
-  }
-
-  @Get('/create/dummy')
-  async createDummyRequest() {
-    return await this.requestsService.createDummyRequest();
   }
 }

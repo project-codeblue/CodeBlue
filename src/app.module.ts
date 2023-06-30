@@ -10,7 +10,6 @@ import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
 import { ConfigValidator } from '../config/config.validator';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import appConfig from '../config/app.config';
 
 @Module({
@@ -26,7 +25,6 @@ import appConfig from '../config/app.config';
     PatientsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule implements NestModule {
   constructor(

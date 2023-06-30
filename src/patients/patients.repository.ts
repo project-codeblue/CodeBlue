@@ -10,12 +10,14 @@ export class PatientsRepository extends Repository<Patients> {
     super(Patients, dataSource.createEntityManager());
   }
 
+  // 해당 patient_id의 환자 정보 조회
   async findPatient(patient_id: number): Promise<Patients | undefined> {
     return await this.findOne({
       where: { patient_id },
     });
   }
 
+  // 환자 정보 입력
   async createPatientInfo(
     createPatientInfo: CreatePatientDto,
   ): Promise<Patients> {
@@ -29,6 +31,7 @@ export class PatientsRepository extends Repository<Patients> {
     return this.save(patient);
   }
 
+  // 환자 정보 수정
   async updatePatientInfo(
     patient_id: number,
     updatedPatient: UpdatePatientDto,
@@ -36,8 +39,6 @@ export class PatientsRepository extends Repository<Patients> {
     const patient = await this.findOne({
       where: { patient_id },
     });
-    console.log('patient: ', patient);
-    console.log('updatedPatient: ', updatedPatient);
 
     for (const field in updatedPatient) {
       if (updatedPatient.hasOwnProperty(field)) {
@@ -48,6 +49,7 @@ export class PatientsRepository extends Repository<Patients> {
     return await patient.save();
   }
 
+  // 환자의 고유값인 주민등록번호를 통해 환자 정보 조회
   async findByRRN(patient_rrn: string): Promise<Patients | undefined> {
     return await this.findOne({
       where: { patient_rrn },
