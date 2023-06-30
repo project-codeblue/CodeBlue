@@ -253,7 +253,7 @@ export class RequestsService {
       }, time * 1000); // 2초가 지나도 비지니스로직이 수행 완료되었다는 이벤트 알림이 없으면, 실패 메시지를 반환
 
       // wait과 동시에 this.eventEmitter에 전달받은 eventName에 대해 콜백함수로 세팅된다
-      const listenEvent = ({
+      const listeningCallback = ({
         success,
         exception,
       }: {
@@ -268,7 +268,7 @@ export class RequestsService {
       console.log('6. this.eventEmitter.addListener 세팅');
       // sendRequest()에서 전해준 비지니스로직이 성공이든 실패든,
       // 기다리고 있던 waitingForJobCompleted()의 이벤트 리스너가 이벤트를 전달받아, 클라이언트에 응답을 보낼 수 있다
-      this.eventEmitter.addListener(eventName, listenEvent);
+      this.eventEmitter.addListener(eventName, listeningCallback);
     });
   }
 
