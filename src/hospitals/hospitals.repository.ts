@@ -11,14 +11,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     super(Hospitals, dataSource.createEntityManager());
   }
 
-  async getHospitals(): Promise<Hospitals[]> {
-    return await this.query(
-      `
-        SELECT * FROM hospitals;
-      `,
-    );
-  }
-
+  // hospital_id로 해당 병원 조회
   async findHospital(hospital_id: number): Promise<Hospitals> {
     const hospital = await this.query(
       `
@@ -28,6 +21,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     return hospital[0];
   }
 
+  // 해당 hospital_id를 가진 병원의 가용 병상 수 1 감소
   async decreaseAvailableBeds(hospital_id: number): Promise<void> {
     await this.query(
       `
@@ -36,6 +30,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
+  // 해당 hospital_id를 가진 병원의 가용 병상 수 1 증가
   async increaseAvailableBeds(hospital_id: number): Promise<void> {
     await this.query(
       `
@@ -44,7 +39,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
-  // 1시간마다 모든 병원의 가용 병상을 초기화
+  // 1시간마다 default 값을 가지지 않은 병원들의 가용 병상 수를 초기화
   @Cron(CronExpression.EVERY_HOUR)
   async setDefaultAvailableBeds(): Promise<void> {
     const beds = DEFAULT_AVAILABLE_BEDS;
@@ -56,6 +51,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
+  // 반경 내 병원 조회
   async getHospitalsWithinRadius(
     startLat: number,
     startLng: number,
@@ -72,6 +68,7 @@ export class HospitalsRepository extends Repository<Hospitals> {
     );
   }
 
+  // 반경 없이 병원 조회
   async getHospitalsWithoutRadius(startLng: number, startLat: number) {
     return await this.query(
       `

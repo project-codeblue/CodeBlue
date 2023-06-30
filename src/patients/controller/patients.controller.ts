@@ -10,6 +10,7 @@ export class PatientsController {
   private logger = new Logger('PatientsController');
   constructor(private readonly patientsService: PatientsService) {}
 
+  // POST: 환자 정보 입력 API
   @Post('/:report_id')
   createPatientInfo(
     @Param('report_id') report_id: number,
@@ -19,6 +20,7 @@ export class PatientsController {
     return this.patientsService.createPatientInfo(report_id, createPatientDto);
   }
 
+  // PATCH: 환자 정보 수정 API
   @Patch('/:patient_id')
   async updatePatientInfo(
     @Param('patient_id') patient_id: number,

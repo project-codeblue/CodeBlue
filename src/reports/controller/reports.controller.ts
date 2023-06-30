@@ -20,17 +20,18 @@ export class ReportsController {
   private logger = new Logger('ReportsController');
   constructor(private readonly reportsService: ReportsService) {}
 
+  // POST: 증상 보고서 생성 API
   @Post()
   createReport(
     @Body('patient_rrn', new RrnValidationPipe()) patient_rrn: string,
     @Body('name') name: string,
     @Body(new ReportBodyValidationPipe()) createReportDto: CreateReportDto,
-  ) {
+  ): Promise<Partial<Reports>> {
     this.logger.verbose('증상 보고서 생성 POST API');
-    console.log('디버깅=============>', patient_rrn, name, createReportDto);
     return this.reportsService.createReport(createReportDto, patient_rrn, name);
   }
 
+  // GET: 증상 보고서 상세 조회 API
   @Get('/:report_id')
   @Render('reportDetail')
   async getReportDetails(
@@ -41,17 +42,13 @@ export class ReportsController {
     return { reportDetails };
   }
 
+  // PATCH: 증상 보고서 수정 API
   @Patch('/:report_id')
   async updateReport(
     @Param('report_id') report_id: number,
     @Body(new ReportBodyValidationPipe()) updatedReport: UpdateReportDto,
-  ): Promise<Reports> {
+  ): Promise<Partial<Reports>> {
     this.logger.verbose('증상 보고서 수정 PATCH API');
     return await this.reportsService.updateReport(report_id, updatedReport);
-  }
-
-  @Get('/create/dummy')
-  createDummyReport() {
-    return this.reportsService.createDummyReport();
   }
 }

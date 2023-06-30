@@ -20,7 +20,7 @@ export class PatientsService {
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
-  // 환자 정보 입력
+  // POST: 환자 정보 입력 API
   async createPatientInfo(
     report_id: number,
     createPatientInfo: CreatePatientDto,
@@ -59,7 +59,7 @@ export class PatientsService {
     }
   }
 
-  // 환자 정보 수정
+  // PATCH: 환자 정보 수정 API
   async updatePatientInfo(
     patient_id: number,
     updatedPatient: UpdatePatientDto,
