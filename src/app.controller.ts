@@ -1,9 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Render } from '@nestjs/common';
 
 @Controller()
 export class AppController {
   @Get()
-  getHello(): string {
-    return 'typeorm in nest, just coding';
-  }
+  @Render('index')
+  root() {}
+
+  @Get('/search')
+  @Render('reportSearchEngine')
+  search() {}
+
+  @Get('/symptom-report')
+  @Render('createReport')
+  report() {}
 }

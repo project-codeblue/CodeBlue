@@ -1,22 +1,38 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, Inject } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigType } from '@nestjs/config';
 import { ReportsModule } from './reports/reports.module';
+import { PatientsModule } from './patients/patients.module';
 import { HospitalsModule } from './hospitals/hospitals.module';
 import { RequestsModule } from './requests/requests.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeORMConfig } from './commons/typeorm.config';
+import { MysqlConfigProvider } from './commons/providers/typeorm-config.provider';
 import { HTTPLoggerMiddleware } from './commons/middlewares/http-logger.middleware';
+import { ConfigValidator } from '../config/config.validator';
+import { AppController } from './app.controller';
+import appConfig from '../config/app.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeORMConfig),
+    ConfigModule.forRoot(ConfigValidator), // config 설정을 위해 import
+    TypeOrmModule.forRootAsync({
+      useClass: MysqlConfigProvider,
+    }), // mySQL 연결을 위해 import
+    ScheduleModule.forRoot(), // task scheduling을 위해 import
     ReportsModule,
     HospitalsModule,
     RequestsModule,
+    PatientsModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule implements NestModule {
+  constructor(
+    @Inject(appConfig.KEY) private config: ConfigType<typeof appConfig>,
+  ) {}
+
   private readonly isDev: boolean =
-    process.env.MODE === 'development' ? true : false;
+    this.config.mode === 'development' ? true : false;
 
   // dev mode일 때 HTTP 요청 로그 남기는 부분
   configure(consumer: MiddlewareConsumer) {

@@ -1,0 +1,11 @@
+config:
+  target: "https://codeblue.site/"
+  phases:
+    - duration: 60
+      arrivalRate: 100
+
+scenarios:
+  - flow:
+    - log: "사용자가 동일한 위치 환경에서 반복적인 병원 추천 조회 실행"
+    - get:
+        url: "https://codeblue.site/hospital/142?latitude=37.4539861&longitude=126.7031036&radius=&max_count="

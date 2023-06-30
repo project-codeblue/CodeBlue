@@ -1,0 +1,26 @@
+config:
+  target: "https://codeblue.site/"
+  phases:
+    - duration: 60
+      arrivalRate: 500
+
+scenarios:
+  - flow:
+    - log: "사용자가 증상 보고서 검색"
+    - get:
+        url: "https://codeblue.site/request/search"
+        qs:
+          fromDate: "2023-06-01"
+          toDate: "2023-06-18"
+          symptom_level: 1
+          symptoms: "저체온증"
+          age_range: "노년"
+          site: "서울"
+          name: "원우재"
+    - get: 
+        url: "https://codeblue.site/request/search"
+        qs:
+          fromDate: "2023-06-01"
+          symptom_level: 3
+          age_range: "성인"
+          site: "서울"

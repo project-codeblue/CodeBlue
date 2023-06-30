@@ -1,0 +1,21 @@
+config:
+  target: "https://codeblue.site/"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+    # - pause: 120
+  payload:
+    path: "patient-request.csv"
+    order: sequence
+    loadAll: true
+    # delimiter: ","
+    skipHeader: true
+    fields:
+      - "report_id"
+      - "hospital_id"
+    
+scenarios:
+  - flow:
+    - log: "사용자가 환자 이송 신청"
+    - post:
+        url: "https://codeblue.site/request/{{report_id}}/{{hospital_id}}"

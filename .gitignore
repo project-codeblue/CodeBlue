@@ -35,5 +35,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Environmental Variable
-config
 .env

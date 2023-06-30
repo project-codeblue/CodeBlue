@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
+
+    <title>CodeBLUE - 증상 보고서 검색 결과 페이지</title>
+
+    <!-- Meta Tag -->
+    <meta property="og:url" content="https://codeblue.site" />
+    <meta property="og:title" content="CodeBLUE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="../../image/codeblue.png" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 증상 보고서 검색 결과 페이지"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .button {
+        font-family: 'Noto Sans KR', sans-serif;
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+        width: 95px;
+      }
+
+      .box {
+        padding: 35px;
+      }
+
+      table {
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      td {
+        padding: 10px;
+      }
+
+      .error-box {
+        text-align: center;
+        border: 2px solid #f44336;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .error-box h1 {
+        font-size: 72px;
+        color: #f44336;
+        margin-bottom: 20px;
+      }
+
+      .error-box p {
+        font-size: 18px;
+        color: #f44336;
+      }
+    </style>
+
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll('.navbar-burger'),
+          0,
+        );
+
+        // Add a click event on each of them
+        $navbarBurgers.forEach((el) => {
+          el.addEventListener('click', () => {
+            // Get the target from the "data-target" attribute
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <nav
+      class="navbar is-info is-light"
+      role="navigation"
+      aria-label="main navigation"
+      style="padding: 0 10px 0 75px"
+    >
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img
+            src="../../image/onlytext-cutout.png"
+            width="120"
+            height="auto"
+          />
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/hospital/nearby/site">
+                가까운 병원 조회
+              </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container is-max-widescreen">
+      <div class="content results" style="margin-top: 30px">
+        <h2>증상 보고서 검색 결과</h2>
+        <% if (searchedData.length > 0) { %>
+        <div class="box">
+          <% if (searchedData.length === 0) { %>
+          <h3>검색 결과가 없습니다</h3>
+          <% } %> <% for (let i = 0; i < searchedData.length; i++) { %>
+          <div class="box has-background-light">
+            <table>
+              <tbody>
+                <% if (searchedData[i].patient_name) { %>
+                <tr>
+                  <td><strong>환자 성명</strong></td>
+                  <td><%=searchedData[i].patient_name %></td>
+                </tr>
+                <% } %>
+                <tr>
+                  <td><strong>환자 연령대</strong></td>
+                  <td><%=searchedData[i].reports_age_range%></td>
+                </tr>
+                <tr>
+                  <td><strong>이송 병원</strong></td>
+                  <td><%=searchedData[i].hospital_name %></td>
+                </tr>
+                <tr>
+                  <td><strong>중증도</strong></td>
+                  <td class="has-text-danger">
+                    <%=searchedData[i].reports_symptom_level %>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>증상</strong></td>
+                  <td class="has-text-link">
+                    <%=searchedData[i].reports_symptoms %>
+                  </td>
+                </tr>
+                <% const originalDate = searchedData[i].reports_createdAt; %> <%
+                const year = originalDate.getFullYear(); %> <% const month =
+                originalDate.getMonth() + 1; %> <% const date =
+                originalDate.getDate(); %> <% const hours =
+                originalDate.getHours(); %> <% const minutes =
+                originalDate.getMinutes(); %>
+                <tr>
+                  <td><strong>생성 일자</strong></td>
+                  <td>
+                    <%= `${year}년 ${month}월 ${date}일 ${hours}시 ${minutes}분`
+                    %>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <a
+              href="/report/<%=searchedData[i].reports_report_id %>"
+              class="button is-info"
+              >상세 보기</a
+            >
+          </div>
+          <% } %>
+        </div>
+        <% } else { %> <% console.log('searchedData: ', searchedData); %>
+        <div class="box error-box">
+          <h1>404</h1>
+          <p>검색 결과가 없습니다.</p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+  <footer class="footer mt-5">
+    <div class="content has-text-centered">
+      <p>
+        <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+        The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+        <br />
+        The website content is licensed
+        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+          >CC BY NC SA 4.0</a
+        >.
+      </p>
+    </div>
+  </footer>
+</html>

@@ -13,27 +13,33 @@ export class Hospitals extends BaseEntity {
   @PrimaryGeneratedColumn()
   hospital_id: number;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   address: string;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   phone: string;
 
-  @Column('int')
+  @Column({ type: 'int', nullable: false, default: 5 })
   available_beds: number;
 
-  @Column('float')
+  @Column('decimal', { precision: 15, scale: 10 })
   latitude: number;
 
-  @Column('float')
+  @Column('decimal', { precision: 15, scale: 10 })
   longitude: number;
+
+  @Column({ type: 'varchar', nullable: false })
+  emogList: string;
+
+  @Column({ type: 'point', nullable: false })
+  point: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Reports, (report) => report.hospital)
+  @OneToMany(() => Reports, (report) => report.hospital_id)
   reports: Reports[];
 }
