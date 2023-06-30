@@ -33,7 +33,7 @@ export class RequestsController {
     @Param('hospital_id') hospital_id: number,
   ): Promise<object> {
     this.logger.verbose('환자 이송 신청 POST API');
-    return this.requestsService.addRequestQueue(report_id, hospital_id);
+    return this.requestsService.addToRequestQueue(report_id, hospital_id);
   }
 
   // DELETE: 환자 이송 신청 철회 API
