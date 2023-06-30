@@ -1,6 +1,6 @@
 # <img src="https://github.com/backEndKwon/CodeBlue/assets/128948886/ac4f1ee7-80e6-4b45-860a-3b96a07f2fd2"  width="30" height="30"/> CodeBLUE
 
-<img src="https://github.com/backEndKwon/CodeBlue/assets/128948886/851aa11f-e71d-4518-81b1-1a47da694003"  width="300" height="270"/>
+<img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/9d3f493a-039b-4f9a-9714-229e9f71a0bf"/>
 
 #### 한줄 한줄 사람을 살리는 코드, 코드블루
 
@@ -106,9 +106,9 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/df25786c-7415-4b66-be66
 | :-: | :-: | :-: | :-: |
 |Runtime|Node.js|Language|TypeScript, Python|
 |Framework|Nest.js, Flask|DB|MySQL(AWS RDS), Redis|
-|Web Crawling|Axios, Cheerio|AI|Tensorflow, Konlpy|
+|Machine Learning|Tensorflow|Text Mining|Konlpy|
 |DevOps|Docker Compose, AWS EC2, ALB|Frontend|ejs|
-|CI/CD|Docker, Github Action|Geolocation|Kakao Mobility API, Spatial Index|
+|Web Crawling|Axios, Cheerio|Geolocation|Kakao Mobility API, Spatial Index|
 |동시성제어|BullQueue | 대용량데이터 검색|TypeORM, QueryBuilder, Composite Index|
 
  
@@ -116,7 +116,8 @@ https://github.com/backEndKwon/CodeBlue/assets/128948886/df25786c-7415-4b66-be66
 
 # 🕸 Architecture
 
-  ![애플리케이션_아키텍쳐_최종](https://github.com/project-codeblue/CodeBlue/assets/76824986/e844013d-d099-45e8-97eb-a8890f2edd17)
+  ![애플리케이션_아키텍쳐_최종](https://github.com/project-codeblue/CodeBlue/assets/76824986/437cb2af-e22f-43f6-beb9-f9e56d6f6a0f)
+
 
 <br>
 
