@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
+
+    <title>CodeBLUE - 가까운 병원 조회</title>
+
+    <!-- Meta Tag -->
+    <meta property="og:url" content="https://codeblue.site" />
+    <meta property="og:title" content="CodeBLUE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="../../image/codeblue.png" />
+    <meta property="og:description" content="CodeBLUE - 가까운 병원 조회" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .hospital_title {
+        display: flex;
+        align-items: center;
+      }
+
+      .hospital_title h3 {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .title-call-button {
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+      }
+
+      .button {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      #fixedButton {
+        position: fixed;
+        bottom: 50px;
+        right: 45px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        z-index: 9999;
+      }
+
+      .query-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .input {
+        margin: 10px 10px 10px 0px;
+      }
+    </style>
+
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <script>
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    }
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+
+    function refreshBrowser() {
+      window.location.reload();
+    }
+
+    function addQueryString(position) {
+      // 현재 URL 가져오기
+      var currentUrl = window.location.href;
+      self.name = 'reload';
+      
+      getCurrentPosition()
+        .then((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          // URL에 쿼리 스트링 추가하기
+          var params = new URLSearchParams(window.location.search);
+          params.set('latitude', latitude);
+          params.set('longitude', longitude);
+          var updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
+          console.log(updatedUrl);
+          // 페이지 다시 로드
+          window.location.href = updatedUrl;
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('위치 정보를 가져오는데 실패했습니다.');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(
+        document.querySelectorAll('.navbar-burger'),
+        0,
+      );
+
+      // Add a click event on each of them
+      $navbarBurgers.forEach((el) => {
+        el.addEventListener('click', () => {
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    });
+
+    if (self.name != 'reload') {
+      self.name = 'reload';
+      addQueryString();
+    } else {
+      self.name = '';
+    };
+
+  </script>
+  <body>
+    <nav
+      class="navbar is-info is-light"
+      role="navigation"
+      aria-label="main navigation"
+      style="padding: 0 10px 0 75px"
+    >
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img
+            src="../../image/onlytext-cutout.png"
+            width="120"
+            height="auto"
+          />
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/hospital/nearby/site">
+                가까운 병원 조회
+              </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container is-max-widescreen">
+      <div class="content hospitals_block" style="margin-top: 30px">
+        <div>
+          <h2>현재 위치 기반 가까운 병원 조회</h2>
+        </div>
+        <button
+          id="fixedButton"
+          class="button has-background-link-dark has-text-white-bis"
+          onclick="addQueryString()"
+        >
+          위치 재반영
+        </button>
+        <div class="box">
+          <% if (hospitals_data.length == 0) { %>
+            <h3>반경 20km 내에 병원이 없습니다</h3>
+          <% } %>
+          <% for (let i = 0; i < hospitals_data.length; i++) { %>
+          <div class="box has-background-light">
+            <div class="hospital_title">
+              <h3><%=hospitals_data[i].name %></h3>
+              <div class="title-call-button">
+                <a href="tel:<%=hospitals_data[i].phone %>">
+                  <button
+                    class="phone button is-dark mr-3 mt-3"
+                    title="<%=hospitals_data[i].phone %>"
+                  >
+                    전화 걸기
+                  </button>
+                </a>
+              </div>
+            </div>
+            <h6><%=hospitals_data[i].address %></h6>
+            <h6>이동 거리: <%= `${(parseFloat(hospitals_data[i].distance) / 1000).toFixed(1)}km` %></h6>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <footer class="footer mt-5">
+      <div class="content has-text-centered">
+        <p>
+          <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+          The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <br />
+          The website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

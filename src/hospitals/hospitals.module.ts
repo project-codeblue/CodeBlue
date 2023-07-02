@@ -6,11 +6,17 @@ import { ReportsRepository } from '../reports/reports.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hospitals } from './hospitals.entity';
 import { Crawling } from '../commons/middlewares/crawling';
-import { KakaoMapService } from '../commons/providers/kakao-map.service';
-import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
+import { KakaoMapService } from '../commons/providers/kakao-map.provider';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisConfigProvider } from '../commons/providers/redis-config.provider';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Hospitals])],
+  imports: [
+    TypeOrmModule.forFeature([Hospitals]),
+    CacheModule.registerAsync({
+      useClass: RedisConfigProvider,
+    }),
+  ],
   controllers: [HospitalsController],
   providers: [
     HospitalsService,
@@ -18,7 +24,6 @@ import { MedicalOpenAPI } from '../commons/middlewares/medicalOpenAPI';
     ReportsRepository,
     Crawling,
     KakaoMapService,
-    MedicalOpenAPI,
   ],
   exports: [HospitalsService, HospitalsRepository],
 })

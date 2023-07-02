@@ -1,0 +1,32 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 10000
+      arrivalRate: 1
+  payload:
+    path: "patient-update.csv"
+    order: random
+    delimiter: ","
+    skipHeader: true
+    fields:
+      - "patient_id"
+      - "report_id"
+      - "patient_rrn"
+      - "name"
+      - "gender"
+      - "up_patient_rrn"
+      - "up_name"
+      - "up_gender"
+
+scenarios:
+  - flow:
+    - log: "사용자가 환자 정보를 입력 후 정보 수정"
+    - post:
+        url: "http://localhost:3000/patient/{{report_id}}"
+        json:
+          patient_rrn: "{{patient_rrn}}"
+          name: "{{name}}"
+          gender: "{{gender}}"
+        capture:
+          json: "$.patient_id"
+          as: "patient_id"

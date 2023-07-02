@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="../../image/codeblue-favicon.png" />
+    <link rel="apple-touch-icon" href="../../image/codeblue-favicon.png" />
+
+    <title>CodeBlue - 위치 기반 추천 응급실 조회 페이지</title>
+
+    <!-- Meta Tag -->
+    <meta property="og:url" content="https://codeblue.site" />
+    <meta property="og:title" content="CodeBLUE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="../../image/codeblue.png" />
+    <meta
+      property="og:description"
+      content="CodeBLUE - 위치 기반 추천 응급실 조회 페이지"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      * {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      .hospital_title {
+        display: flex;
+        align-items: center;
+      }
+
+      .hospital_title h3 {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .title-call-button {
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+      }
+
+      .button {
+        font-family: 'Noto Sans KR', sans-serif;
+      }
+
+      #fixedButton {
+        position: fixed;
+        bottom: 50px;
+        right: 45px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        z-index: 9999;
+      }
+
+      .query-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .input {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .loading {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.8;
+        background: white;
+        z-index: 99;
+        text-align: center;
+      }
+
+      .loading > iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 100;
+        transform: translate(-50%, -50%);
+      }
+
+      .error-box {
+        text-align: center;
+        border: 2px solid #f44336;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .error-box h1 {
+        font-size: 72px;
+        color: #f44336;
+        margin-bottom: 20px;
+      }
+
+      .error-box p {
+        font-size: 18px;
+        color: #f44336;
+      }
+    </style>
+
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <script>
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    }
+
+    function sendRequest(report_id, hospital_id) {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+
+      const url = `/request/${report_id}/${hospital_id}`;
+
+      fetch(url, {
+        method: 'POST',
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log('디버깅', data);
+          if (data.hospital || data.message === '다시 시도해주세요.') {
+            window.location.reload();
+          }
+          if (data.statusCode === 400) {
+            const errorMessage = document.querySelector('#errorMessage');
+            errorMessage.style.display = 'block';
+            loadingElement.style.display = 'none';
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          loadingElement.style.display = 'none';
+          alert('이송신청에 실패했습니다.');
+        });
+    }
+
+    function unsendRequest(report_id) {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+      const url = `/request/${report_id}`;
+
+      fetch(url, {
+        method: 'DELETE',
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error(error);
+          loadingElement.style.display = 'none';
+          alert('이송신청 철회에 실패했습니다.');
+        });
+    }
+
+    function refreshBrowser() {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+
+      // 현재 url에서 report_id 가져오기
+      const currentUrl = window.location.href;
+      const reportId = currentUrl.split('/')[4].split('?')[0];
+      // URL에 max_count & radius 쿼리 스트링 추가하기
+      const params = new URLSearchParams(window.location.search);
+      const radius = params.get('radius');
+      const max_count = params.get('max_count');
+
+      // 새로운 위치 좌표 반영
+      getCurrentPosition()
+        .then((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          const recommendedHospitalsUrl = `/hospital/${reportId}?latitude=${latitude}&longitude=${longitude}&radius=${radius}&max_count=${max_count}`;
+
+          // 페이지 다시 로드
+          window.location.href = recommendedHospitalsUrl;
+        })
+        .catch((error) => {
+          console.error(error);
+          loadingElement.style.display = 'none';
+          alert('위치 정보를 가져오는데 실패했습니다.');
+        });
+    }
+
+    function addQueryString(position) {
+      // 로딩 이미지 띄우기
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+
+      // 현재 URL 가져오기
+      const currentUrl = window.location.href;
+
+      // URL에 쿼리 스트링 추가하기
+      const params = new URLSearchParams(window.location.search);
+      const radius = document.querySelector('#radius').value;
+      const max_count = document.querySelector('#max_count').value;
+      params.set('radius', radius);
+      params.set('max_count', max_count);
+      const updatedUrl = currentUrl.split('?')[0] + '?' + params.toString();
+
+      // 페이지 다시 로드
+      window.location.href = updatedUrl;
+    }
+
+    // 브라우저에서 새로고침 하는 경우 로딩 이미지 띄우기
+    window.addEventListener('beforeunload', function () {
+      // Show loading element when the page is being unloaded (refreshed)
+      const loadingElement = document.querySelector('.loading');
+      loadingElement.style.display = 'block';
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(
+        document.querySelectorAll('.navbar-burger'),
+        0,
+      );
+
+      // Add a click event on each of them
+      $navbarBurgers.forEach((el) => {
+        el.addEventListener('click', () => {
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    });
+  </script>
+  <body>
+    <nav
+      class="navbar is-info is-light"
+      role="navigation"
+      aria-label="main navigation"
+      style="padding: 0 10px 0 75px"
+    >
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img
+            src="../../image/onlytext-cutout.png"
+            width="120"
+            height="auto"
+          />
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/symptom-report"> 증상보고서 입력 </a>
+          <a class="navbar-item" href="/search"> 증상보고서 검색 </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/hospital/nearby/site">
+                가까운 병원 조회
+              </a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="mailto:codebluejjang@gmail.com">
+                Report an issue
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <button
+      id="fixedButton"
+      class="button has-background-link-dark has-text-white-bis"
+      onclick="refreshBrowser()"
+    >
+      위치 재반영
+    </button>
+    <div class="loading" style="display: none">
+      <iframe src="https://embed.lottiefiles.com/animation/43735"></iframe>
+    </div>
+    <div class="container is-max-widescreen">
+      <div class="content hospitals_block" style="margin-top: 30px">
+        <div>
+          <h2>
+            현재 위치 기반 추천 병원 목록 <% if(!hospitals_data.response) { %>
+            (<%=hospitals_data[0] %> 기준) <% } %>
+          </h2>
+          <div class="query-container">
+            <input
+              class="input is-info"
+              type="text"
+              name="radius"
+              id="radius"
+              style="font-family: 'Noto Sans KR', sans-serif"
+              placeholder="몇 km 반경 내 병원 검색 (숫자 입력)"
+            />
+            <input
+              class="input is-info"
+              type="text"
+              name="max_count"
+              id="max_count"
+              style="font-family: 'Noto Sans KR', sans-serif"
+              placeholder="추천 병원 최대 개수 (숫자 입력)"
+            />
+            <button class="button is-info" onclick="addQueryString()">
+              검색
+            </button>
+          </div>
+        </div>
+        <% if(hospitals_data.response) { %>
+        <div class="box error-box">
+          <h1>404</h1>
+          <p>해당 반경 내 병원 검색 결과가 없습니다.</p>
+        </div>
+        <% } else { %>
+        <div class="card">
+          <div class="card-content">
+            <div class="content">
+              <h5>환자 증상 정보</h5>
+
+              <div class="has-text-weight-bold">
+                환자의 중증도 등급: <%=hospitals_data[1].symptom_level%> 
+                <% if(hospitals_data[1].symptom_level == 1) { %> 🔴 <% } %>
+                <% if(hospitals_data[1].symptom_level == 2) { %> 🟠 <% } %>
+                <% if(hospitals_data[1].symptom_level == 3) { %> 🟡 <% } %>
+                <% if(hospitals_data[1].symptom_level == 4) { %> 🟢 <% } %>
+                <% if (hospitals_data[1].symptom_level == 5) { %> 🔵 <% } %>
+              </div>
+              <% if (hospitals_data[1].blood_pressure) { %>
+              <div>환자의 혈압: <%=hospitals_data[1].blood_pressure%></div>
+              <% } %> <% if (hospitals_data[1].blood_type) { %>
+              <div>환자의 혈액형: <%=hospitals_data[1].blood_type%></div>
+              <% } %>
+            </div>
+            <% if (hospitals_data[1].is_sent) { %>
+            <button
+              class="withdraw button is-link is-light"
+              onclick="scrollToTop(); unsendRequest(`<%=hospitals_data[1].report_id%>`);"
+            >
+              병원 이송 신청 철회
+            </button>
+            <div class="notification is-warning is-light mt-3">
+              <strong><%= hospitals_data[2].name%></strong>에 환자 이송 신청이
+              접수되었습니다. <br />
+              환자의 증상 보고서가 병원측으로 정상 전달되었습니다. <br />
+              <strong>병원 주소</strong>: <%= hospitals_data[2].address%> <br />
+              <strong>병원 전화번호</strong>: <%= hospitals_data[2].phone%>
+              <br />
+            </div>
+            <div
+              class="notification is-danger is-light mt-3"
+              id="errorMessage"
+              style="display: none"
+            >
+              이미 병원에 이송 신청이 접수되었습니다. <br />
+              다른 병원에 신청을 하시려면 이전 신청을 철회해주세요.
+            </div>
+            <% } %>
+          </div>
+        </div>
+        <div class="box">
+          <% for (let i = 3; i < hospitals_data.length; i++) { %>
+          <div class="box has-background-light">
+            <div class="hospital_title">
+              <h3><%=hospitals_data[i].name %></h3>
+              <div class="title-call-button">
+                <a href="tel:<%=hospitals_data[i].phone %>">
+                  <button
+                    class="phone button is-dark mr-3 mt-3"
+                    title="<%=hospitals_data[i].phone %>"
+                  >
+                    전화 걸기
+                  </button>
+                </a>
+                <button
+                  class="button is-danger is-dark mt-3"
+                  onclick="scrollToTop(); sendRequest(`<%=hospitals_data[1].report_id%>`, `<%=hospitals_data[i].hospital_id%>`);"
+                >
+                  환자 이송신청
+                </button>
+              </div>
+            </div>
+            <h6 class="mb-2">
+              소요시간: <%=hospitals_data[i].minutes %>
+              <%=hospitals_data[i].seconds %>
+            </h6>
+            <h6>이동거리: <%=hospitals_data[i].distance %>km</h6>
+            <div class="columns has-background-white m-1">
+              <div class="column"><strong>실시간 가용병상 ➡️</strong></div>
+              <div class="column has-text-danger has-text-weight-bold">
+                응급실: <%=hospitals_data[i].real_time_beds_info.emergencyRoom
+                %>
+              </div>
+              <div class="column has-text-weight-bold">
+                수술실: <%=hospitals_data[i].real_time_beds_info.surgeryRoom %>
+              </div>
+              <div class="column has-text-weight-bold">
+                입원실: <%=hospitals_data[i].real_time_beds_info.ward %>
+              </div>
+              <div class="column has-text-link has-text-weight-bold">
+                이송신청 잔여병상: <%=hospitals_data[i].available_beds %>/5
+              </div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <footer class="footer mt-5">
+      <div class="content has-text-centered">
+        <p>
+          <strong>한줄한줄 사람을 살리는 코드, CodeBLUE</strong> <br />
+          The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <br />
+          The website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
