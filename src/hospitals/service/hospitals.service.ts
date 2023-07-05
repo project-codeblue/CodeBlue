@@ -159,9 +159,9 @@ export class HospitalsService {
                 if (data.slice(0, 8) === hospital.emogList) { // 둘의 고유코드가 같다면
                   const beds_object = await this.parseHospitalData(data);
                   result['real_time_beds_info'] = beds_object; // 병상 정보를 넣고 반환
+                  return result;
                 }
               }
-              return result;
             }),
           );
 

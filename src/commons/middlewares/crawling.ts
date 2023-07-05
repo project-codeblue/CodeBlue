@@ -6,7 +6,6 @@ import axios from 'axios';
 export class Crawling {
   // 종합상황판 크롤링
   async getRealTimeHospitalsBeds(emogList: string[]) {
-    const start: any = new Date();
 
     let url = `https://portal.nemc.or.kr:444/medi_info/dashboards/dash_total_emer_org_popup_for_egen.do?`;
     emogList.forEach((e) => {
@@ -21,7 +20,6 @@ export class Crawling {
       method: 'GET',
       responseType: 'arraybuffer',
     }).then((response) => {
-      // 크롤링
       const $ = cheerio.load(response.data);
 
       const time = $('#area_top_info > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)',);
@@ -40,10 +38,6 @@ export class Crawling {
         );
       });
     });
-
-    const end: any = new Date();
-    const t = end - start;
-    console.log(`크롤링 소요시간 : ${t}ms`);
 
     return results;
   }
