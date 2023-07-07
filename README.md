@@ -10,6 +10,9 @@
 #### 🧑🏾‍💻 작업 로그 : [Notion](https://www.notion.so/siwonmadang/Code-BLUE-ec7906910dec4f4b9d34da72fc334dd6)
 #### 📹 소개 영상 : [youtube](https://youtu.be/7SRAehiz8jE)
 #### 📑 브로 슈어 : [Brochure](https://www.notion.so/siwonmadang/CodeBLUE-AI-20-06c507a9eeb540cd9ae4d6e2135dbc75?pvs=4)
+#### 🏆 수상 내역
+![최고의 프로젝트상_코드블루](https://github.com/backEndKwon/CodeBlue/assets/128948886/dee16c51-5fd3-4824-89d9-167a120b9e0c)
+
 -------------------
 
 <br>
