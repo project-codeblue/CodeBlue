@@ -196,7 +196,7 @@ export class RequestsService {
 
   // POST: 환자 이송 신청 API
   // 1. 이송 신청 요청을 queue에 넣는 메서드
-  async addRequestQueue(
+  async addToRequestQueue(
     report_id: number,
     hospital_id: number,
   ): Promise<object> {
@@ -220,7 +220,7 @@ export class RequestsService {
     // requestQueue에 해당 event를 report_id와 hospital_id와 함께 add해줌
     console.log('2. requestQueue에 job 추가');
     await this.requestQueue.add(
-      'addRequestQueue',
+      'addToRequestQueue',
       { report_id, hospital_id, eventName },
       {
         removeOnComplete: true,
@@ -229,18 +229,18 @@ export class RequestsService {
       },
     );
 
-    // 대기열 큐에 job을 넣은 후, service 내에서 waitFinish() 함수로 해당 job을 넘겨줌
-    console.log('3. waitFinish() 호출');
-    return this.waitFinish(eventName, 2, hospital); // 2 = time
+    // 대기열 큐에 job을 넣은 후, service 내에서 waitingForJobCompleted() 함수로 해당 job을 넘겨줌
+    console.log('3. waitingForJobCompleted() 호출');
+    return this.waitingForJobCompleted(eventName, 2, hospital); // 2 = time
   }
 
   // 2. 해당 요청에 대한 비지니스로직 (sendRequest())이 완료될 때까지 대기 후 결과를 반환하는 메서드
-  async waitFinish(
+  async waitingForJobCompleted(
     eventName: string,
     time: number,
     hospital: object,
   ): Promise<object> {
-    console.log('4. waitFinish() 진입');
+    console.log('4. waitingForJobCompleted() 진입');
     return new Promise((resolve, reject) => {
       console.log('5. Promise 진입');
       // wait으로 들어와 2초짜리 setTimeout() 함수가 설정된다
@@ -253,7 +253,7 @@ export class RequestsService {
       }, time * 1000); // 2초가 지나도 비지니스로직이 수행 완료되었다는 이벤트 알림이 없으면, 실패 메시지를 반환
 
       // wait과 동시에 this.eventEmitter에 전달받은 eventName에 대해 콜백함수로 세팅된다
-      const listenFn = ({
+      const listeningCallback = ({
         success,
         exception,
       }: {
@@ -267,8 +267,8 @@ export class RequestsService {
       };
       console.log('6. this.eventEmitter.addListener 세팅');
       // sendRequest()에서 전해준 비지니스로직이 성공이든 실패든,
-      // 기다리고 있던 waitFinish()의 이벤트 리스너가 이벤트를 전달받아, 클라이언트에 응답을 보낼 수 있다
-      this.eventEmitter.addListener(eventName, listenFn);
+      // 기다리고 있던 waitingForJobCompleted()의 이벤트 리스너가 이벤트를 전달받아, 클라이언트에 응답을 보낼 수 있다
+      this.eventEmitter.addListener(eventName, listeningCallback);
     });
   }
 

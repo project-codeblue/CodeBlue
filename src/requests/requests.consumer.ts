@@ -9,8 +9,8 @@ export class RequestQueueConsumer {
 
   // 큐에 job이 추가되면 이를 감지하고,
   // 큐에 쌓인 job들을 FIFO (First In First Out)으로 가져와서 sendRequest() 함수에 전달한다
-  @Process('addRequestQueue')
-  async handleAddRequestQueue(job: Job): Promise<boolean> {
+  @Process('addToRequestQueue')
+  async handleAddToRequestQueue(job: Job): Promise<boolean> {
     console.log('*1 handleAddRequestQueue 진입');
     console.log(`${job.data} 작업 수행 중`);
 

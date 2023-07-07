@@ -147,21 +147,21 @@ export class HospitalsService {
           weightsRecommendedHospitals.sort((a, b) => b.rating - a.rating);
 
           // 실시간 가용 병상 정보 크롤링
-          const emogList = [];
+          const emogList = []; // 병원 고유코드를 담기 위한 배열
           for (const hospital of weightsRecommendedHospitals) {
-            emogList.push(hospital['emogList']);
+            emogList.push(hospital['emogList']); // duration이 낮은 순으로 정렬된 병원들의 고유코드를 배열에 넣는다
           }
-          const datas = await this.crawling.getRealTimeHospitalsBeds(emogList);
+          const datas = await this.crawling.getRealTimeHospitalsBeds(emogList); // 병원 고유코드를 기반으로 병상 정보 크롤링
           const results: Array<string | object> = await Promise.all(
-            weightsRecommendedHospitals.map(async (hospital) => {
+            weightsRecommendedHospitals.map(async (hospital) => { // 최단시간으로 정렬된 병원 리스트와 크롤링한 병원 리스트의 순서가 불일치하므로 정렬이 필요
               const result = { ...hospital, report_id };
-              for (const data of datas) {
-                if (data.slice(0, 8) === hospital.emogList) {
+              for (const data of datas) { // 반복문을 돌면서 추천 병원 리스트와 크롤링해온 병원 리스트의 순서를 정렬한다
+                if (data.slice(0, 8) === hospital.emogList) { // 둘의 고유코드가 같다면
                   const beds_object = await this.parseHospitalData(data);
-                  result['real_time_beds_info'] = beds_object;
+                  result['real_time_beds_info'] = beds_object; // 병상 정보를 넣고 반환
+                  return result;
                 }
               }
-              return result;
             }),
           );
 
