@@ -3,6 +3,9 @@
 <img src="https://github.com/project-codeblue/CodeBlue/assets/76824986/9d3f493a-039b-4f9a-9714-229e9f71a0bf"/>
 
 #### 한줄 한줄 사람을 살리는 코드, 코드블루
+<br>
+![항해14기_앙케이트_상장 pptx pptx_(28)](https://github.com/project-codeblue/CodeBlue/assets/76824986/25dae0d3-d925-4dd5-89c5-2f32010cb19e)
+
 
 <br>
 
